@@ -11,7 +11,7 @@
       </div>
       <router-link class="back" to="/">返回测试中心</router-link>
     </div>
-    <TestRunner v-else />
+    <TestRunner v-else mode="verification" />
   </div>
 </template>
 

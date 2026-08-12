@@ -10,11 +10,13 @@
     </header>
 
     <div v-if="quota" class="quota">
-      当前套餐：<b>{{ quota.packageName }}</b>
+      <router-link class="plan-link" to="/plan">
+        当前套餐：<b>{{ quota.packageName }}</b> · 查看套餐详情 ›
+      </router-link>
       <template v-if="quota.remainingDailyTests !== null">
-        · 今日剩余测试：<b>{{ quota.remainingDailyTests }}</b> 次
+        <span class="remain">今日剩余测试：<b>{{ quota.remainingDailyTests }}</b> 次</span>
       </template>
-      <template v-else> · 不限次数</template>
+      <template v-else><span class="remain">不限次数</span></template>
     </div>
 
     <div class="cards">
@@ -90,6 +92,16 @@ nav a,
   background: #ecf5ff;
   border-radius: 8px;
   color: #31708f;
+}
+.plan-link {
+  color: #31708f;
+  text-decoration: none;
+}
+.plan-link:hover {
+  text-decoration: underline;
+}
+.remain {
+  margin-left: 8px;
 }
 .cards {
   display: grid;

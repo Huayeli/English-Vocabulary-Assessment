@@ -1,5 +1,5 @@
 <template>
-  <TestRunner />
+  <TestRunner mode="adaptive" />
 </template>
 
 <script setup lang="ts">

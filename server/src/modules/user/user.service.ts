@@ -28,7 +28,11 @@ export async function getHome(userId: number) {
     estimatedVocabulary: latest?.estimatedVocabulary ?? null,
     testCount,
     wrongWordCount,
-    package: { code: user.package.code, name: user.package.name },
+    package: {
+      code: user.package.code,
+      name: user.package.name,
+      expireTime: user.packageExpireTime
+    },
     recentTests: recentTests.map((t) => ({
       id: t.id,
       type: t.type,

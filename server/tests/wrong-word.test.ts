@@ -112,4 +112,42 @@ describe("wrong word book", () => {
     expect(res.body.data.question.word).toBe("abandon");
     await prisma.testSession.delete({ where: { id: res.body.data.sessionId } });
   });
+
+  it("finishes wrong-word test early and shows result", async () => {
+    const secondWord = await prisma.word.findUniqueOrThrow({ where: { headword: "accept" } });
+    await prisma.wrongWord.create({
+      data: { userId, wordId: secondWord.id, correctMeaningText: "接受" }
+    });
+    const app = createApp();
+    const start = await request(app)
+      .post("/api/tests/wrong-word/start")
+      .set("Authorization", `Bearer ${monthlyToken}`);
+    expect(start.body.code).toBe(0);
+    expect(start.body.data.totalQuestions).toBe(2);
+    const sessionId = start.body.data.sessionId;
+
+    const item = await prisma.testSessionItem.findFirstOrThrow({
+      where: { sessionId, userOptionIndex: null },
+      orderBy: { seq: "asc" }
+    });
+    const answer = await request(app)
+      .post(`/api/tests/${sessionId}/answer`)
+      .set("Authorization", `Bearer ${monthlyToken}`)
+      .send({ optionIndex: item.correctOptionIndex, answerTimeMs: 1000 });
+    expect(answer.body.code).toBe(0);
+
+    const finish = await request(app)
+      .post(`/api/tests/${sessionId}/finish`)
+      .set("Authorization", `Bearer ${monthlyToken}`);
+    expect(finish.body.code).toBe(0);
+    expect(finish.body.data.finished).toBe(true);
+
+    const report = await request(app)
+      .get(`/api/reports/${sessionId}`)
+      .set("Authorization", `Bearer ${monthlyToken}`);
+    expect(report.body.data.accuracy).toBe(1);
+
+    await prisma.testSession.delete({ where: { id: sessionId } });
+    await prisma.wrongWord.deleteMany({ where: { userId, wordId: secondWord.id } });
+  });
 });

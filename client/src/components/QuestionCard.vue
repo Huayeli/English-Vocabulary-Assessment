@@ -8,7 +8,6 @@
         :key="i"
         class="option"
         :class="optionClass(i)"
-        :disabled="selected !== null"
         @click="$emit('select', i)"
       >
         <span class="index">{{ "ABCDE"[i] }}</span>{{ opt }}

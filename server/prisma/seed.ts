@@ -16,9 +16,17 @@ export function parseMeanings(raw: string, limit = MAX_MEANINGS_PER_WORD): strin
   return raw
     .split(/\\n|\n/)
     .map((line) => line.replace(POS_PREFIX, "").trim())
-    .map((line) => line.replace(/\r$/, "").trim())
+    .map((line) => line.replace(/[\x00-\x1f\x7f]/g, "").trim()) // 去除 \r 等控制字符
     .map((line) => line.replace(/\[[^\]]*\]/g, "").trim()) // 去除 [计] [医] [化] 等学科标签
+    .map((line) => line.replace(/\s+/g, " ").trim())
     .filter((line) => line.length > 0 && line.length <= 50)
+    // 去除词形变化类释义，如 "某某的过去式/复数形式/比较级"
+    .filter(
+      (line) =>
+        !/(的过去式|的过去分词|的现在分词|的复数形式|的第三人称单数|的比较级|的最高级|的所有格|的进行时)/.test(
+          line
+        )
+    )
     .filter((line, i, arr) => arr.indexOf(line) === i)
     .slice(0, limit);
 }

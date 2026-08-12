@@ -11,12 +11,19 @@
     </header>
 
     <div v-if="home" class="profile">
-      <img v-if="home.avatar" :src="home.avatar" class="avatar" alt="头像" />
-      <div v-else class="avatar">{{ (home.username[0] ?? "?").toUpperCase() }}</div>
-      <div class="info">
-        <h3>{{ home.username }}</h3>
-        <span class="pkg">{{ home.package.name }}</span>
-      </div>
+      <router-link class="profile-link" to="/user/settings">
+        <img v-if="home.avatar" :src="home.avatar" class="avatar" alt="头像" />
+        <div v-else class="avatar">{{ (home.username[0] ?? "?").toUpperCase() }}</div>
+        <div class="info">
+          <h3>{{ home.username }}</h3>
+          <span class="tip-text">点击进入账号设置</span>
+        </div>
+      </router-link>
+      <router-link class="pkg" to="/plan">
+        {{ home.package.name }}
+        <span v-if="home.package.expireTime"> · 有效期至 {{ formatDate(home.package.expireTime) }}</span>
+        ›
+      </router-link>
     </div>
 
     <div v-if="home" class="stats">
@@ -70,6 +77,10 @@ function formatTime(value: string | null) {
   return value ? new Date(value).toLocaleString("zh-CN") : "-";
 }
 
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("zh-CN");
+}
+
 function logout() {
   auth.logout();
   router.replace("/login");
@@ -108,8 +119,15 @@ nav a,
 .profile {
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
   margin: 20px 0;
+}
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: inherit;
 }
 .avatar {
   width: 64px;
@@ -126,12 +144,20 @@ nav a,
 .info h3 {
   margin: 0;
 }
+.tip-text {
+  font-size: 12px;
+  color: #9ca3af;
+}
 .pkg {
   font-size: 13px;
   color: #409eff;
   background: #ecf5ff;
-  padding: 2px 10px;
+  padding: 6px 12px;
   border-radius: 10px;
+  text-decoration: none;
+}
+.pkg:hover {
+  background: #d9ecff;
 }
 .stats {
   display: grid;

@@ -7,7 +7,7 @@ export interface UserHome {
   estimatedVocabulary: number | null;
   testCount: number;
   wrongWordCount: number;
-  package: { code: string; name: string };
+  package: { code: string; name: string; expireTime: string | null };
   recentTests: {
     id: number;
     type: string;

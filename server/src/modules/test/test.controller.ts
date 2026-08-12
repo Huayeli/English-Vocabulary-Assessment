@@ -4,7 +4,7 @@ import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 import type { AuthRequest } from "../../middleware/auth.js";
 import * as planService from "../plan/plan.service.js";
-import { answerQuestion, createSession, issueQuestion } from "./test.service.js";
+import { answerQuestion, createSession, finishEarly, issueQuestion } from "./test.service.js";
 import { toClientQuestion } from "../question/question.service.js";
 import { createWrongWordSession } from "../wrong-word/wrong-word.service.js";
 import { firstQuestionOf } from "../wrong-word/wrong-word.controller.js";
@@ -143,4 +143,9 @@ export async function abandonHandler(req: AuthRequest, res: Response) {
   if (session.finishedAt) throw new ApiError(40901, "测试已完成，无法放弃");
   await planService.refundSingleTest(req.user!.userId);
   res.json({ code: 0, message: "ok", data: null });
+}
+
+export async function finishHandler(req: AuthRequest, res: Response) {
+  const data = await finishEarly(Number(req.params.sessionId), req.user!.userId);
+  res.json({ code: 0, message: "ok", data });
 }

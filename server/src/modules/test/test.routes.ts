@@ -11,3 +11,4 @@ testRouter.post("/verification/start", requireAuth, ctrl.startVerificationHandle
 testRouter.post("/wrong-word/start", requireAuth, ctrl.startWrongWordHandler);
 testRouter.post("/:sessionId/answer", requireAuth, ctrl.answerHandler);
 testRouter.post("/:sessionId/abandon", requireAuth, ctrl.abandonHandler);
+testRouter.post("/:sessionId/finish", requireAuth, ctrl.finishHandler);

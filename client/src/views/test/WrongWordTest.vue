@@ -1,5 +1,5 @@
 <template>
-  <TestRunner />
+  <TestRunner mode="wrong" />
 </template>
 
 <script setup lang="ts">

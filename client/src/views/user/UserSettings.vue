@@ -8,7 +8,7 @@
     <div class="card">
       <h3>头像</h3>
       <div class="avatar-row">
-        <img v-if="preview || avatar" :src="preview ?? avatar" class="avatar-img" alt="头像" />
+        <img v-if="preview || avatar" :src="preview || avatar" class="avatar-img" alt="头像" />
         <div v-else class="avatar-img placeholder">?</div>
         <div class="avatar-actions">
           <label class="file-btn">

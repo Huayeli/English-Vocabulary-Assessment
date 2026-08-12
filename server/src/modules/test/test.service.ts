@@ -173,21 +173,47 @@ export async function answerQuestion(
   };
 }
 
-async function finishSession(sessionId: number, correctCount: number, wrongCount: number) {
+export async function finishEarly(sessionId: number, userId: number) {
+  const session = await prisma.testSession.findUnique({
+    where: { id: sessionId },
+    include: { items: { orderBy: { seq: "asc" } } }
+  });
+  if (!session || session.userId !== userId) throw new ApiError(40401, "测试不存在");
+  if (session.finishedAt) throw new ApiError(40901, "测试已完成");
+  if (session.type !== "WRONG_WORD") {
+    throw new ApiError(40001, "当前测试类型不支持提前查看结果");
+  }
+  const answered = session.items.filter((it) => it.userOptionIndex !== null);
+  if (answered.length === 0) throw new ApiError(40901, "请至少作答一题后再查看结果");
+  const correctCount = answered.filter((it) => it.isCorrect).length;
+  return finishSession(session.id, correctCount, answered.length - correctCount, answered.length);
+}
+
+async function finishSession(
+  sessionId: number,
+  correctCount: number,
+  wrongCount: number,
+  answeredTotal?: number
+) {
   const session = await prisma.testSession.findUniqueOrThrow({
     where: { id: sessionId },
     include: { items: { orderBy: { seq: "asc" } } }
   });
-  const accuracy = correctCount / session.totalQuestions;
+  const answeredItems = session.items.filter((it) => it.userOptionIndex !== null);
+  const total = answeredTotal ?? session.totalQuestions;
+  const accuracy = total > 0 ? correctCount / total : 0;
   let finalLevel: Level;
   if (session.type === "VERIFICATION") {
     finalLevel = session.targetLevel!;
   } else if (session.type === "ADAPTIVE") {
     finalLevel = await replayAdaptiveLevels({ type: session.type, items: session.items });
   } else {
-    finalLevel = session.items[session.items.length - 1].testedLevel;
+    finalLevel =
+      answeredItems.length > 0
+        ? answeredItems[answeredItems.length - 1].testedLevel
+        : session.items[session.items.length - 1].testedLevel;
   }
-  const estimatedVocabulary = estimateVocabulary(finalLevel, session.items);
+  const estimatedVocabulary = estimateVocabulary(finalLevel, answeredItems.length > 0 ? answeredItems : session.items);
   await prisma.testSession.update({
     where: { id: sessionId },
     data: {
@@ -199,7 +225,7 @@ async function finishSession(sessionId: number, correctCount: number, wrongCount
       finishedAt: new Date()
     }
   });
-  const last = session.items[session.items.length - 1];
+  const last = answeredItems.length > 0 ? answeredItems[answeredItems.length - 1] : session.items[session.items.length - 1];
   return {
     isCorrect: last.isCorrect,
     correctIndex: last.correctOptionIndex,
