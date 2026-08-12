@@ -130,12 +130,12 @@ describe("adaptive test api", () => {
     expect(re.body.code).toBe(0);
     expect(re.body.data.isCorrect).toBe(false);
 
-    // 第 2 题也答错 → 连错 2 题，第 3 题等级应为 K2
+    // 第 2 题也答错（带 seq 作答当前待答题应被允许）→ 连错 2 题，第 3 题等级应为 K2
     const q2Index = await currentCorrectIndex(sessionId);
     const q2 = await request(app)
       .post(`/api/tests/${sessionId}/answer`)
       .set("Authorization", `Bearer ${monthlyToken}`)
-      .send({ optionIndex: (q2Index + 1) % 5, answerTimeMs: 1000 });
+      .send({ optionIndex: (q2Index + 1) % 5, answerTimeMs: 1000, seq: 2 });
     expect(q2.body.data.nextQuestion.testedLevel).toBe("K2");
 
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });

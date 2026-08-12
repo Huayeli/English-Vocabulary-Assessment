@@ -50,7 +50,9 @@ import { authApi } from "../../api/auth";
 import { userApi } from "../../api/user";
 import SendCodeButton from "../../components/SendCodeButton.vue";
 import { cropToCircle } from "../../utils/avatar";
+import { useUiStore } from "../../stores/ui";
 
+const ui = useUiStore();
 const avatar = ref("");
 const preview = ref("");
 const uploading = ref(false);
@@ -100,8 +102,12 @@ async function bindEmail() {
 }
 
 onMounted(async () => {
-  const home = await userApi.home();
-  avatar.value = home.avatar ?? "";
+  try {
+    const home = await userApi.home();
+    avatar.value = home.avatar ? `${home.avatar}?t=${Date.now()}` : "";
+  } catch (e) {
+    ui.error((e as Error).message ?? "加载头像失败");
+  }
 });
 </script>
 

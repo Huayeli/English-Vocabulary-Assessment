@@ -3,6 +3,7 @@ import { http } from "./http";
 export const adminApi = {
   users: (params: Record<string, unknown>) =>
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/admin/users", { params }),
+  userDetail: (id: number) => http.get<any>(`/admin/users/${id}`),
   setPackage: (id: number, data: Record<string, unknown>) => http.put(`/admin/users/${id}/package`, data),
   questions: (params: Record<string, unknown>) =>
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/admin/questions", { params }),

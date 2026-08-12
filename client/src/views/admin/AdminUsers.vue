@@ -37,7 +37,7 @@
         <h3>调整套餐：{{ editing.username }}</h3>
         <label>
           套餐
-          <select v-model="form.packageId">
+          <select v-model="form.packageId" @change="syncExpire">
             <option v-for="p in plans" :key="p.id" :value="p.id">{{ p.name }}</option>
           </select>
         </label>
@@ -63,6 +63,12 @@ const plans = ref<any[]>([]);
 const editing = ref<any>(null);
 const form = ref({ packageId: 0, expireTime: "", remainingTestCount: 0 });
 
+function expireValue(days: number) {
+  const d = new Date(Date.now() + days * 24 * 3600 * 1000);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 async function load() {
   const res = await adminApi.users({ keyword: keyword.value, page: 1, pageSize: 50 });
   rows.value = res.list;
@@ -75,6 +81,12 @@ async function openPackage(u: any) {
     expireTime: "",
     remainingTestCount: 0
   };
+  syncExpire();
+}
+
+function syncExpire() {
+  const days = form.value.packageId === 3 ? 30 : form.value.packageId === 4 ? 365 : 0;
+  form.value.expireTime = days ? expireValue(days) : "";
 }
 
 async function savePackage() {

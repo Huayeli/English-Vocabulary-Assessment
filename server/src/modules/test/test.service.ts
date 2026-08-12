@@ -103,9 +103,6 @@ export async function answerQuestion(
   if (seq != null) {
     item = session.items.find((it) => it.seq === seq) ?? null;
     if (!item) throw new ApiError(40401, "题目不存在");
-    if (item.userOptionIndex === null) {
-      throw new ApiError(40901, "该题尚未作答，请按顺序作答");
-    }
   }
   if (!item) throw new ApiError(40901, "没有待作答的题目");
 

@@ -22,20 +22,23 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useTestStore } from "../stores/test";
+import { useUiStore } from "../stores/ui";
 import QuestionCard from "./QuestionCard.vue";
 import TestProgress from "./TestProgress.vue";
 
 const router = useRouter();
 const test = useTestStore();
+const ui = useUiStore();
 const submitting = ref(false);
 
 const current = computed(() => test.questions[test.seq - 1]);
+const isReanswer = computed(() => current.value?.selectedIndex !== null);
 
 async function onSelect(optionIndex: number) {
   if (submitting.value || !test.sessionId) return;
   submitting.value = true;
   try {
-    const res = await test.answer(optionIndex, test.seq);
+    const res = await test.answer(optionIndex, isReanswer.value ? test.seq : undefined);
     if (res.finished) {
       setTimeout(() => router.push(`/test/result/${test.sessionId}`), 600);
       return;
@@ -46,7 +49,7 @@ async function onSelect(optionIndex: number) {
       submitting.value = false;
     }, 500);
   } catch (e) {
-    alert((e as Error).message ?? "提交失败，请重试");
+    ui.error((e as Error).message ?? "提交失败，请重试");
     submitting.value = false;
   }
 }

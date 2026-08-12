@@ -18,6 +18,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useTestStore } from "../../stores/test";
+import { useUiStore } from "../../stores/ui";
 import TestRunner from "../../components/TestRunner.vue";
 
 const LEVEL_INFO = [
@@ -38,6 +39,7 @@ const LEVEL_MAP: Record<string, string> = {
 };
 
 const test = useTestStore();
+const ui = useUiStore();
 const started = ref(false);
 
 async function choose(level: string) {
@@ -45,7 +47,7 @@ async function choose(level: string) {
     await test.start("verification", LEVEL_MAP[level]);
     started.value = true;
   } catch (e) {
-    alert((e as Error).message ?? "启动失败");
+    ui.error((e as Error).message ?? "启动失败");
   }
 }
 </script>

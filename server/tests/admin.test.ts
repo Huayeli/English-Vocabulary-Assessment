@@ -96,10 +96,12 @@ describe("admin api", () => {
     const res = await request(createApp())
       .put(`/api/admin/users/${targetUserId}/package`)
       .set("Authorization", `Bearer ${adminToken}`)
-      .send({ packageId: monthly.id, expireTime: "2027-01-01T00:00:00Z", remainingTestCount: 0 });
+      .send({ packageId: monthly.id, remainingTestCount: 0 }); // 不传到期时间，应自动补 30 天
     expect(res.body.code).toBe(0);
     const user = await prisma.user.findUniqueOrThrow({ where: { id: targetUserId } });
     expect(user.packageId).toBe(monthly.id);
+    expect(user.packageExpireTime).not.toBeNull();
+    expect(user.packageExpireTime!.getTime()).toBeGreaterThan(Date.now());
   });
 
   it("creates and manages manual question", async () => {

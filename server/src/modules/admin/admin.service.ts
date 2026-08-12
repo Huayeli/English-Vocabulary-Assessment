@@ -74,12 +74,19 @@ export async function setPackage(
   userId: number,
   data: { packageId: number; expireTime?: string | null; remainingTestCount?: number }
 ) {
-  await prisma.plan.findUniqueOrThrow({ where: { id: data.packageId } });
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: data.packageId } });
+  let expireTime = data.expireTime ? new Date(data.expireTime) : null;
+  if (expireTime && Number.isNaN(expireTime.getTime())) expireTime = null;
+  // 月卡/年卡未填到期时间时自动补一个周期，避免刚开通就被判过期
+  if ((plan.code === "MONTHLY" || plan.code === "YEARLY") && !expireTime) {
+    const days = plan.code === "MONTHLY" ? 30 : 365;
+    expireTime = new Date(Date.now() + days * 24 * 3600 * 1000);
+  }
   return prisma.user.update({
     where: { id: userId },
     data: {
       packageId: data.packageId,
-      packageExpireTime: data.expireTime ? new Date(data.expireTime) : null,
+      packageExpireTime: expireTime,
       remainingTestCount: data.remainingTestCount ?? 0
     }
   });
