@@ -1,17 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/login", component: () => import("../views/auth/Login.vue"), meta: { public: true } },
+    { path: "/register", component: () => import("../views/auth/Register.vue"), meta: { public: true } },
+    { path: "/forgot", component: () => import("../views/auth/ForgotPassword.vue"), meta: { public: true } },
     { path: "/", component: () => import("../views/test/TestCenter.vue"), meta: { auth: true } },
-    { path: "/user", component: () => import("../views/user/UserHome.vue"), meta: { auth: true } }
+    { path: "/user", component: () => import("../views/user/UserHome.vue"), meta: { auth: true } },
+    {
+      path: "/admin/users",
+      component: () => import("../views/admin/AdminUsers.vue"),
+      meta: { auth: true, admin: true }
+    }
   ]
 });
 
-router.beforeEach((to) => {
-  const token = localStorage.getItem("token");
-  if (!to.meta.public && !token) return "/login";
+router.beforeEach(async (to) => {
+  const auth = useAuthStore();
+  if (to.meta.public) return true;
+  if (!auth.isLoggedIn) return "/login";
+  await auth.ensureUser();
+  if (!auth.isLoggedIn) return "/login";
+  if (to.meta.admin && !auth.isAdmin) return "/";
   return true;
 });
 
