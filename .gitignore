@@ -7,3 +7,4 @@ server/prisma/*.db
 client/dist/
 server/dev.db
 server/prisma/src/
+data/ecdict.csv

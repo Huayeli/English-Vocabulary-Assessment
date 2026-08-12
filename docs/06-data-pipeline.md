@@ -26,6 +26,8 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/skywind3000/ECDICT/mas
 | K10 | 10k |
 | K10P | 11k - 25k |
 
+> 注意：4k、6k、7k、8k、9k 词表不属于 6 个系统等级（5K 明确对应 5k 词表，不重新拆分），导入时跳过，不进入出题池。预期导入词数 20,001（1k+2k+3k+5k+10k=5,000，11k-25k=15,001）。
+
 ## 3. 导入流程（server/prisma/seed.ts）
 
 1. 读取 `data/output.json`，遍历 `entries`。
