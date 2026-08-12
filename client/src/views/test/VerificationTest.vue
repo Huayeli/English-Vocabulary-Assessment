@@ -10,16 +10,15 @@
 
     <template v-else>
       <div v-if="test.question && !test.finished">
-        <TestProgress :seq="test.question.seq" :total="test.totalQuestions" :level="test.currentLevel" />
-        <div v-if="feedback" class="feedback" :class="feedback.ok ? 'ok' : 'bad'">
-          {{ feedback.text }}
-        </div>
+        <TestProgress :seq="test.question.seq" :total="test.totalQuestions" />
         <QuestionCard
           :question="test.question"
           :selected="test.lastResult?.selectedIndex ?? null"
-          :correct-index="test.lastResult?.correctIndex ?? null"
           @select="onSelect"
         />
+        <div v-if="answered" class="next-row">
+          <button class="btn" @click="goNext">{{ test.finished ? "查看结果" : "下一题" }}</button>
+        </div>
       </div>
     </template>
   </div>
@@ -46,7 +45,7 @@ const router = useRouter();
 const test = useTestStore();
 const started = ref(false);
 const locked = ref(false);
-const feedback = ref<{ ok: boolean; text: string } | null>(null);
+const answered = ref(false);
 
 async function choose(level: string) {
   try {
@@ -60,18 +59,22 @@ async function choose(level: string) {
 async function onSelect(optionIndex: number) {
   if (locked.value || !test.sessionId) return;
   locked.value = true;
-  const res = await test.answer(optionIndex);
-  feedback.value = res.isCorrect
-    ? { ok: true, text: "回答正确" }
-    : { ok: false, text: `回答错误，正确答案是 ${test.question!.options[res.correctIndex]}` };
-  if (res.finished) {
-    setTimeout(() => router.push(`/test/result/${res.reportId}`), 1500);
+  try {
+    await test.answer(optionIndex);
+    answered.value = true;
+  } catch (e) {
+    alert((e as Error).message ?? "提交失败，请重试");
+    locked.value = false;
+  }
+}
+
+function goNext() {
+  if (test.finished) {
+    router.push(`/test/result/${test.sessionId}`);
     return;
   }
-  setTimeout(() => {
-    feedback.value = null;
-    locked.value = false;
-  }, 1800);
+  answered.value = false;
+  locked.value = false;
 }
 </script>
 
@@ -109,18 +112,17 @@ async function onSelect(optionIndex: number) {
   color: #6b7280;
   font-size: 13px;
 }
-.feedback {
-  padding: 10px 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  font-size: 14px;
+.next-row {
+  margin-top: 16px;
+  text-align: right;
 }
-.feedback.ok {
-  background: #ecfdf5;
-  color: #059669;
-}
-.feedback.bad {
-  background: #fef2f2;
-  color: #dc2626;
+.btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #409eff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
 }
 </style>

@@ -52,7 +52,7 @@ describe("question engine", () => {
     const q = await getOrCreateQuestion(abandonWordId, Level.K3);
     const client = toClientQuestion({ ...q, word: { headword: "abandon" } }, 1, Level.K3);
     expect(client.word).toBe("abandon");
-    expect(client.question).toBe("abandon是什么意思？");
+    expect(client.question).toBe("请选择该单词的正确释义");
     expect(client.options).toHaveLength(5);
     expect(client.testedLevel).toBe(Level.K3);
   });

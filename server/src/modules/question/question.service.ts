@@ -87,7 +87,7 @@ export function toClientQuestion(
   return {
     seq,
     word: headword,
-    question: `${headword}是什么意思？`,
+    question: "请选择该单词的正确释义",
     options,
     testedLevel
   };

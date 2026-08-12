@@ -23,15 +23,13 @@ import type { TestQuestion } from "../api/test";
 const props = defineProps<{
   question: TestQuestion;
   selected: number | null;
-  correctIndex: number | null;
 }>();
 
 defineEmits<{ (e: "select", index: number): void }>();
 
 function optionClass(i: number) {
   if (props.selected === null) return {};
-  if (props.correctIndex === i) return { correct: true };
-  if (props.selected === i) return { wrong: true };
+  if (props.selected === i) return { selected: true };
   return { dim: true };
 }
 </script>
@@ -85,13 +83,9 @@ function optionClass(i: number) {
   font-size: 13px;
   color: #4b5563;
 }
-.option.correct {
-  border-color: #34d399;
-  background: #ecfdf5;
-}
-.option.wrong {
-  border-color: #f87171;
-  background: #fef2f2;
+.option.selected {
+  border-color: #409eff;
+  background: #ecf5ff;
 }
 .option.dim {
   opacity: 0.6;

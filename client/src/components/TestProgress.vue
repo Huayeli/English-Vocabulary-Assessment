@@ -3,14 +3,14 @@
     <div class="bar">
       <div class="fill" :style="{ width: `${pct}%` }"></div>
     </div>
-    <span class="label">第 {{ seq }} / {{ total }} 题 · 当前等级 {{ level }}</span>
+    <span class="label">第 {{ seq }} / {{ total }} 题</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps<{ seq: number; total: number; level: string }>();
+const props = defineProps<{ seq: number; total: number }>();
 const pct = computed(() => Math.min(100, Math.round((props.seq / props.total) * 100)));
 </script>
 

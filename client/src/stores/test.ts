@@ -45,6 +45,7 @@ export const useTestStore = defineStore("test", {
       }
       this.currentLevel = res.currentLevel ?? this.currentLevel;
       this.question = res.nextQuestion!;
+      this.lastResult = null; // 新题目不保留上一题的作答高亮
       return res;
     }
   }
