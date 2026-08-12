@@ -82,7 +82,10 @@ export async function answerQuestion(
     return finishSession(session.id, correctCount, wrongCount);
   }
 
-  const streaks = computeStreaks([...session.items.map((it) => ({ isCorrect: it.isCorrect })), { isCorrect }]);
+  const allItems = session.items.map((it) =>
+    it.id === item.id ? { isCorrect } : { isCorrect: it.isCorrect }
+  );
+  const streaks = computeStreaks(allItems);
   const nextLevel =
     session.type === "ADAPTIVE"
       ? applyLevelRules(item.testedLevel, streaks.streakCorrect, streaks.streakWrong)
