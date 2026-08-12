@@ -1,7 +1,8 @@
 <template>
   <div class="auth-page">
     <div class="card">
-      <h1>词汇量智能评估系统</h1>
+      <h1>词海拾贝</h1>
+      <p class="sub">英语词汇量智能评估</p>
       <div class="tabs">
         <button :class="{ active: mode === 'password' }" @click="mode = 'password'">密码登录</button>
         <button :class="{ active: mode === 'email' }" @click="mode = 'email'">邮箱登录</button>
@@ -106,7 +107,13 @@ async function submitEmail() {
 h1 {
   font-size: 20px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 4px;
+}
+.sub {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  margin: 0 0 20px;
 }
 .tabs {
   display: flex;

@@ -12,19 +12,35 @@ export async function recordWrongWords(sessionId: number) {
     if (item.isCorrect) continue;
     const snapshot: string[] = JSON.parse(item.optionsSnapshot);
     const correctText = snapshot[item.correctOptionIndex];
-    const existing = await prisma.wrongWord.findUnique({
-      where: { userId_wordId: { userId: session.userId, wordId: item.wordId } }
+    await addWrongWord(session.userId, item.wordId, correctText);
+  }
+}
+
+export async function addWrongWord(userId: number, wordId: number, correctMeaningText: string) {
+  const existing = await prisma.wrongWord.findUnique({
+    where: { userId_wordId: { userId, wordId } }
+  });
+  if (existing) {
+    await prisma.wrongWord.update({
+      where: { id: existing.id },
+      data: { errorCount: { increment: 1 }, lastErrorAt: new Date(), correctMeaningText }
     });
-    if (existing) {
-      await prisma.wrongWord.update({
-        where: { id: existing.id },
-        data: { errorCount: { increment: 1 }, lastErrorAt: new Date(), correctMeaningText: correctText }
-      });
-    } else {
-      await prisma.wrongWord.create({
-        data: { userId: session.userId, wordId: item.wordId, correctMeaningText: correctText }
-      });
-    }
+  } else {
+    await prisma.wrongWord.create({
+      data: { userId, wordId, correctMeaningText }
+    });
+  }
+}
+
+export async function subtractWrongWord(userId: number, wordId: number) {
+  const existing = await prisma.wrongWord.findUnique({
+    where: { userId_wordId: { userId, wordId } }
+  });
+  if (!existing) return;
+  if (existing.errorCount <= 1) {
+    await prisma.wrongWord.delete({ where: { id: existing.id } });
+  } else {
+    await prisma.wrongWord.update({ where: { id: existing.id }, data: { errorCount: { decrement: 1 } } });
   }
 }
 

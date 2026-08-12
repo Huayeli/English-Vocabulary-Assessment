@@ -1,25 +1,30 @@
 import { defineStore } from "pinia";
 import { testApi, type AnswerResult, type TestQuestion } from "../api/test";
 
+export interface QuestionState {
+  q: TestQuestion;
+  selectedIndex: number | null;
+}
+
 export const useTestStore = defineStore("test", {
   state: () => ({
     sessionId: null as number | null,
     totalQuestions: 30,
     currentLevel: "",
-    question: null as TestQuestion | null,
     startedAt: 0,
     finished: false,
-    lastResult: null as { isCorrect: boolean; correctIndex: number; selectedIndex: number } | null
+    questions: [] as QuestionState[],
+    seq: 0
   }),
   actions: {
     reset() {
       this.sessionId = null;
       this.totalQuestions = 30;
       this.currentLevel = "";
-      this.question = null;
       this.startedAt = 0;
       this.finished = false;
-      this.lastResult = null;
+      this.questions = [];
+      this.seq = 0;
     },
     async start(kind: "adaptive" | "verification" | "wrong", level?: string) {
       this.reset();
@@ -32,21 +37,30 @@ export const useTestStore = defineStore("test", {
       this.sessionId = res.sessionId;
       this.totalQuestions = res.totalQuestions;
       this.currentLevel = res.currentLevel;
-      this.question = res.question;
+      this.questions = [{ q: res.question, selectedIndex: null }];
+      this.seq = 1;
       this.startedAt = Date.now();
     },
-    async answer(optionIndex: number): Promise<AnswerResult> {
-      const res = await testApi.answer(this.sessionId!, optionIndex, Date.now() - this.startedAt);
-      this.lastResult = { isCorrect: res.isCorrect, correctIndex: res.correctIndex, selectedIndex: optionIndex };
+    async answer(optionIndex: number, seq?: number): Promise<AnswerResult> {
+      const idx = (seq ?? this.seq) - 1;
+      const res = await testApi.answer(this.sessionId!, optionIndex, Date.now() - this.startedAt, seq);
+      if (this.questions[idx]) this.questions[idx].selectedIndex = optionIndex;
       this.startedAt = Date.now();
       if (res.finished) {
         this.finished = true;
         return res;
       }
       this.currentLevel = res.currentLevel ?? this.currentLevel;
-      this.question = res.nextQuestion!;
-      this.lastResult = null; // 新题目不保留上一题的作答高亮
+      if (res.nextQuestion && !this.questions.some((q) => q.q.seq === res.nextQuestion!.seq)) {
+        this.questions.push({ q: res.nextQuestion, selectedIndex: null });
+      }
       return res;
+    },
+    next() {
+      if (this.seq < this.questions.length) this.seq += 1;
+    },
+    prev() {
+      if (this.seq > 1) this.seq -= 1;
     }
   }
 });

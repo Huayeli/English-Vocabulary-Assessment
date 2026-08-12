@@ -21,21 +21,41 @@
         <router-link class="btn ghost" to="/">返回测试中心</router-link>
       </div>
     </div>
+    <div v-else-if="error" class="card error-card">
+      <p class="error">报告加载失败：{{ error }}</p>
+      <div class="actions">
+        <button class="btn" @click="load">重试</button>
+        <router-link class="btn ghost" to="/">返回测试中心</router-link>
+      </div>
+    </div>
     <div v-else class="loading">加载中…</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { reportApi, type Report } from "../../api/report";
+import { useTestStore } from "../../stores/test";
 
 const route = useRoute();
+const test = useTestStore();
 const report = ref<Report | null>(null);
+const error = ref("");
 
-onMounted(async () => {
-  report.value = await reportApi.detail(Number(route.params.sessionId));
-});
+const sessionId = computed(() => Number(route.params.sessionId) || test.sessionId || 0);
+
+async function load() {
+  error.value = "";
+  report.value = null;
+  try {
+    report.value = await reportApi.detail(sessionId.value);
+  } catch (e) {
+    error.value = (e as Error).message ?? "未知错误";
+  }
+}
+
+onMounted(load);
 </script>
 
 <style scoped>
@@ -98,5 +118,8 @@ h1 {
   text-align: center;
   color: #6b7280;
   padding: 60px 0;
+}
+.error {
+  color: #dc2626;
 }
 </style>

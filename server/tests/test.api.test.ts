@@ -6,19 +6,33 @@ import { signToken } from "../src/utils/jwt.js";
 
 let freeToken = "";
 let freeUserId = 0;
+let monthlyToken = "";
+let monthlyUserId = 0;
 
 beforeAll(async () => {
   const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
+  const monthly = await prisma.plan.findUniqueOrThrow({ where: { code: "MONTHLY" } });
   const user = await prisma.user.create({
     data: { username: "testrunner", passwordHash: "unused", packageId: free.id }
   });
+  const mUser = await prisma.user.create({
+    data: {
+      username: "testrunner-monthly",
+      passwordHash: "unused",
+      packageId: monthly.id,
+      packageExpireTime: new Date(Date.now() + 30 * 24 * 3600 * 1000)
+    }
+  });
   freeUserId = user.id;
+  monthlyUserId = mUser.id;
   freeToken = signToken({ userId: user.id, role: "USER" });
+  monthlyToken = signToken({ userId: mUser.id, role: "USER" });
 });
 
 afterAll(async () => {
-  await prisma.testSession.deleteMany({ where: { userId: freeUserId } });
-  await prisma.user.deleteMany({ where: { id: freeUserId } });
+  await prisma.testSession.deleteMany({ where: { userId: { in: [freeUserId, monthlyUserId] } } });
+  await prisma.wrongWord.deleteMany({ where: { userId: monthlyUserId } });
+  await prisma.user.deleteMany({ where: { id: { in: [freeUserId, monthlyUserId] } } });
   await prisma.$disconnect();
 });
 
@@ -93,5 +107,39 @@ describe("adaptive test api", () => {
     const res = await request(createApp()).post("/api/tests/adaptive/start");
     expect(res.status).toBe(401);
     expect(res.body.code).toBe(40101);
+  });
+
+  it("re-answers a previous question and recomputes levels", async () => {
+    const app = createApp();
+    const start = await request(app).post("/api/tests/adaptive/start").set("Authorization", `Bearer ${monthlyToken}`);
+    expect(start.body.code).toBe(0);
+    const sessionId = start.body.data.sessionId;
+
+    // 第 1 题答对
+    const q1Index = await currentCorrectIndex(sessionId);
+    await request(app)
+      .post(`/api/tests/${sessionId}/answer`)
+      .set("Authorization", `Bearer ${monthlyToken}`)
+      .send({ optionIndex: q1Index, answerTimeMs: 1000 });
+
+    // 改答第 1 题（seq=1）为错误
+    const re = await request(app)
+      .post(`/api/tests/${sessionId}/answer`)
+      .set("Authorization", `Bearer ${monthlyToken}`)
+      .send({ optionIndex: (q1Index + 1) % 5, answerTimeMs: 1000, seq: 1 });
+    expect(re.body.code).toBe(0);
+    expect(re.body.data.isCorrect).toBe(false);
+
+    // 第 2 题也答错 → 连错 2 题，第 3 题等级应为 K2
+    const q2Index = await currentCorrectIndex(sessionId);
+    const q2 = await request(app)
+      .post(`/api/tests/${sessionId}/answer`)
+      .set("Authorization", `Bearer ${monthlyToken}`)
+      .send({ optionIndex: (q2Index + 1) % 5, answerTimeMs: 1000 });
+    expect(q2.body.data.nextQuestion.testedLevel).toBe("K2");
+
+    const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });
+    expect(session.correctCount).toBe(0);
+    expect(session.wrongCount).toBe(2);
   });
 });

@@ -76,12 +76,13 @@ export async function startWrongWordHandler(req: AuthRequest, res: Response) {
 }
 
 export async function answerHandler(req: AuthRequest, res: Response) {
-  const { optionIndex, answerTimeMs } = req.body ?? {};
+  const { optionIndex, answerTimeMs, seq } = req.body ?? {};
   const data = await answerQuestion(
     Number(req.params.sessionId),
     req.user!.userId,
     Number(optionIndex),
-    Number(answerTimeMs) || 0
+    Number(answerTimeMs) || 0,
+    seq == null ? undefined : Number(seq)
   );
   res.json({ code: 0, message: "ok", data });
 }

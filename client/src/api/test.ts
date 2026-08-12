@@ -29,8 +29,11 @@ export const testApi = {
   startAdaptive: () => http.post<StartTestResult>("/tests/adaptive/start"),
   startVerification: (level: string) => http.post<StartTestResult>("/tests/verification/start", { level }),
   startWrongWord: () => http.post<StartTestResult>("/tests/wrong-word/start"),
-  answer: (sessionId: number, optionIndex: number, answerTimeMs: number) =>
-    http.post<AnswerResult>(`/tests/${sessionId}/answer`, { optionIndex, answerTimeMs }),
+  answer: (sessionId: number, optionIndex: number, answerTimeMs: number, seq?: number) =>
+    http.post<AnswerResult>(
+      `/tests/${sessionId}/answer`,
+      seq == null ? { optionIndex, answerTimeMs } : { optionIndex, answerTimeMs, seq }
+    ),
   history: (params?: { type?: string; page?: number }) => http.get("/tests", { params }),
   detail: (sessionId: number) => http.get(`/tests/${sessionId}`)
 };

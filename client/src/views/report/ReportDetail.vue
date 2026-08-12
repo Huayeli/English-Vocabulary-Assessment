@@ -44,6 +44,13 @@
         <router-link class="btn" to="/">返回测试中心</router-link>
       </div>
     </div>
+    <div v-else-if="error" class="card">
+      <p class="empty">报告加载失败：{{ error }}</p>
+      <div class="actions">
+        <button class="btn" @click="load">重试</button>
+        <router-link class="btn ghost" to="/">返回测试中心</router-link>
+      </div>
+    </div>
     <div v-else class="loading">加载中…</div>
   </div>
 </template>
@@ -56,6 +63,7 @@ import RateBar from "../../components/RateBar.vue";
 
 const route = useRoute();
 const report = ref<Report | null>(null);
+const error = ref("");
 
 const typeLabel = computed(() => {
   const map: Record<string, string> = {
@@ -70,9 +78,17 @@ function formatTime(value: string) {
   return new Date(value).toLocaleString("zh-CN");
 }
 
-onMounted(async () => {
-  report.value = await reportApi.detail(Number(route.params.sessionId));
-});
+async function load() {
+  error.value = "";
+  report.value = null;
+  try {
+    report.value = await reportApi.detail(Number(route.params.sessionId));
+  } catch (e) {
+    error.value = (e as Error).message ?? "未知错误";
+  }
+}
+
+onMounted(load);
 </script>
 
 <style scoped>
@@ -158,5 +174,12 @@ h2 {
   color: #fff;
   text-decoration: none;
   font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+.btn.ghost {
+  background: #fff;
+  color: #409eff;
+  border: 1px solid #409eff;
 }
 </style>

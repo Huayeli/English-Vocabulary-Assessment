@@ -2,36 +2,32 @@
   <div class="page">
     <div v-if="!started" class="level-picker">
       <h2>选择要验证的等级</h2>
+      <p class="tip">每个等级对应 BNC/COCA 词表的词汇范围，30 题正确率达到 80% 判定达标。</p>
       <div class="levels">
-        <button v-for="lv in LEVELS" :key="lv" class="level" @click="choose(lv)">{{ lv }}</button>
+        <button v-for="lv in LEVEL_INFO" :key="lv.key" class="level" @click="choose(lv.key)">
+          <span class="name">{{ lv.key }}</span>
+          <span class="desc">{{ lv.desc }}</span>
+        </button>
       </div>
       <router-link class="back" to="/">返回测试中心</router-link>
     </div>
-
-    <template v-else>
-      <div v-if="test.question && !test.finished">
-        <TestProgress :seq="test.question.seq" :total="test.totalQuestions" />
-        <QuestionCard
-          :question="test.question"
-          :selected="test.lastResult?.selectedIndex ?? null"
-          @select="onSelect"
-        />
-        <div v-if="answered" class="next-row">
-          <button class="btn" @click="goNext">{{ test.finished ? "查看结果" : "下一题" }}</button>
-        </div>
-      </div>
-    </template>
+    <TestRunner v-else />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useTestStore } from "../../stores/test";
-import QuestionCard from "../../components/QuestionCard.vue";
-import TestProgress from "../../components/TestProgress.vue";
+import TestRunner from "../../components/TestRunner.vue";
 
-const LEVELS = ["1K", "2K", "3K", "5K", "10K", "10K+"];
+const LEVEL_INFO = [
+  { key: "1K", desc: "最核心高频词，日常交流的基础" },
+  { key: "2K", desc: "常见对话与基础阅读词汇" },
+  { key: "3K", desc: "应对大多数日常场景与中等难度文本" },
+  { key: "5K", desc: "可流畅阅读普通新闻、文章与小说" },
+  { key: "10K", desc: "接近母语者常用词汇，可阅读学术材料" },
+  { key: "10K+", desc: "高阶词汇，覆盖专业领域与罕见词" }
+];
 const LEVEL_MAP: Record<string, string> = {
   "1K": "K1",
   "2K": "K2",
@@ -41,11 +37,8 @@ const LEVEL_MAP: Record<string, string> = {
   "10K+": "K10P"
 };
 
-const router = useRouter();
 const test = useTestStore();
 const started = ref(false);
-const locked = ref(false);
-const answered = ref(false);
 
 async function choose(level: string) {
   try {
@@ -54,27 +47,6 @@ async function choose(level: string) {
   } catch (e) {
     alert((e as Error).message ?? "启动失败");
   }
-}
-
-async function onSelect(optionIndex: number) {
-  if (locked.value || !test.sessionId) return;
-  locked.value = true;
-  try {
-    await test.answer(optionIndex);
-    answered.value = true;
-  } catch (e) {
-    alert((e as Error).message ?? "提交失败，请重试");
-    locked.value = false;
-  }
-}
-
-function goNext() {
-  if (test.finished) {
-    router.push(`/test/result/${test.sessionId}`);
-    return;
-  }
-  answered.value = false;
-  locked.value = false;
 }
 </script>
 
@@ -87,42 +59,47 @@ function goNext() {
 .level-picker {
   text-align: center;
 }
+.tip {
+  color: #6b7280;
+  font-size: 14px;
+}
 .levels {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  justify-content: center;
   margin: 24px 0;
 }
 .level {
-  padding: 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
   border: 2px solid #409eff;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
-  color: #409eff;
-  font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
+  text-align: left;
 }
 .level:hover {
   background: #ecf5ff;
+}
+.name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #409eff;
+}
+.desc {
+  font-size: 13px;
+  color: #4b5563;
 }
 .back {
   display: block;
   color: #6b7280;
   font-size: 13px;
 }
-.next-row {
-  margin-top: 16px;
-  text-align: right;
-}
-.btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 6px;
-  background: #409eff;
-  color: #fff;
-  cursor: pointer;
-  font-size: 15px;
+@media (max-width: 640px) {
+  .levels {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

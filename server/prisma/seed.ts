@@ -17,6 +17,7 @@ export function parseMeanings(raw: string, limit = MAX_MEANINGS_PER_WORD): strin
     .split(/\\n|\n/)
     .map((line) => line.replace(POS_PREFIX, "").trim())
     .map((line) => line.replace(/\r$/, "").trim())
+    .map((line) => line.replace(/\[[^\]]*\]/g, "").trim()) // 去除 [计] [医] [化] 等学科标签
     .filter((line) => line.length > 0 && line.length <= 50)
     .filter((line, i, arr) => arr.indexOf(line) === i)
     .slice(0, limit);
