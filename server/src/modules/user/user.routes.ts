@@ -5,4 +5,5 @@ import { requireAuth } from "../../middleware/auth.js";
 export const userRouter = Router();
 userRouter.get("/home", requireAuth, ctrl.homeHandler);
 userRouter.put("/profile", requireAuth, ctrl.profileHandler);
+userRouter.post("/avatar", requireAuth, ctrl.avatarHandler);
 userRouter.get("/plan", requireAuth, ctrl.myPlanHandler);

@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
+import fs from "node:fs";
+import path from "node:path";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
 import { signToken } from "../src/utils/jwt.js";
@@ -18,6 +20,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  const avatarFile = path.resolve(process.cwd(), `uploads/avatars/avatar-${userId}.png`);
+  if (fs.existsSync(avatarFile)) fs.unlinkSync(avatarFile);
   await prisma.testSession.deleteMany({ where: { userId } });
   await prisma.user.deleteMany({ where: { id: userId } });
   await prisma.$disconnect();
@@ -47,6 +51,22 @@ describe("user home", () => {
       .get("/api/auth/me")
       .set("Authorization", `Bearer ${token}`);
     expect(me.body.data.avatar).toBe("https://example.com/avatar.png");
+  });
+
+  it("uploads avatar and persists it", async () => {
+    const png =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+    const res = await request(createApp())
+      .post("/api/user/avatar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ dataUrl: png });
+    expect(res.body.code).toBe(0);
+    expect(res.body.data.avatar).toMatch(/^\/uploads\/avatars\/avatar-\d+\.png$/);
+
+    const me = await request(createApp())
+      .get("/api/auth/me")
+      .set("Authorization", `Bearer ${token}`);
+    expect(me.body.data.avatar).toBe(res.body.data.avatar);
   });
 
   it("lists plans publicly", async () => {

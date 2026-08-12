@@ -18,7 +18,10 @@ instance.interceptors.response.use(
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
-    return Promise.reject(err);
+    const message = err.response?.data?.message ?? err.message ?? "请求失败";
+    const e = new Error(message);
+    (e as Error & { code?: number }).code = err.response?.data?.code;
+    return Promise.reject(e);
   }
 );
 

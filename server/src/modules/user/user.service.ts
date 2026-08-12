@@ -1,5 +1,7 @@
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
+import fs from "node:fs";
+import path from "node:path";
 
 export async function getHome(userId: number) {
   const user = await prisma.user.findUniqueOrThrow({
@@ -55,4 +57,19 @@ export async function updateProfile(userId: number, avatar?: string) {
     packageCode: user.package.code,
     packageName: user.package.name
   };
+}
+
+export async function saveAvatar(userId: number, dataUrl: string) {
+  const match = /^data:image\/(png|jpeg);base64,(.+)$/.exec(dataUrl);
+  if (!match) throw new ApiError(40001, "头像格式不正确，请上传 PNG 或 JPG 图片");
+  const ext = match[1] === "png" ? "png" : "jpg";
+  const buf = Buffer.from(match[2], "base64");
+  if (buf.length > 2 * 1024 * 1024) throw new ApiError(40001, "头像文件过大（最大 2MB）");
+  const dir = path.resolve(process.cwd(), "uploads/avatars");
+  fs.mkdirSync(dir, { recursive: true });
+  const filename = `avatar-${userId}.${ext}`;
+  fs.writeFileSync(path.join(dir, filename), buf);
+  const avatar = `/uploads/avatars/${filename}`;
+  await prisma.user.update({ where: { id: userId }, data: { avatar } });
+  return avatar;
 }

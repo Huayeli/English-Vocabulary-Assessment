@@ -11,7 +11,8 @@
     </header>
 
     <div v-if="home" class="profile">
-      <div class="avatar">{{ (home.username[0] ?? "?").toUpperCase() }}</div>
+      <img v-if="home.avatar" :src="home.avatar" class="avatar" alt="头像" />
+      <div v-else class="avatar">{{ (home.username[0] ?? "?").toUpperCase() }}</div>
       <div class="info">
         <h3>{{ home.username }}</h3>
         <span class="pkg">{{ home.package.name }}</span>
@@ -31,10 +32,10 @@
         <b>{{ home.testCount }}</b>
         <span>测试次数</span>
       </div>
-      <div class="stat">
+      <router-link class="stat link" to="/wrong-words">
         <b>{{ home.wrongWordCount }}</b>
         <span>错词数量</span>
-      </div>
+      </router-link>
     </div>
 
     <h3 class="section">历史测试</h3>
@@ -120,6 +121,7 @@ nav a,
   display: flex;
   align-items: center;
   justify-content: center;
+  object-fit: cover;
 }
 .info h3 {
   margin: 0;
@@ -151,6 +153,15 @@ nav a,
 .stat span {
   font-size: 12px;
   color: #9ca3af;
+}
+.stat.link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.stat.link:hover {
+  border-color: #409eff;
+  cursor: pointer;
 }
 .section {
   margin: 24px 0 12px;

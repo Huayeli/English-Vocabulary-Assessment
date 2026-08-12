@@ -8,3 +8,4 @@ client/dist/
 server/dev.db
 server/prisma/src/
 data/ecdict.csv
+server/uploads/

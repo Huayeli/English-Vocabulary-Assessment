@@ -14,6 +14,12 @@ export async function profileHandler(req: AuthRequest, res: Response) {
   res.json({ code: 0, message: "ok", data });
 }
 
+export async function avatarHandler(req: AuthRequest, res: Response) {
+  const { dataUrl } = req.body ?? {};
+  const avatar = await userService.saveAvatar(req.user!.userId, dataUrl);
+  res.json({ code: 0, message: "ok", data: { avatar } });
+}
+
 export async function myPlanHandler(req: AuthRequest, res: Response) {
   const data = await getQuota(req.user!.userId);
   res.json({ code: 0, message: "ok", data });

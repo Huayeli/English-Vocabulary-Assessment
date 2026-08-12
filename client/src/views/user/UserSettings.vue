@@ -7,9 +7,20 @@
 
     <div class="card">
       <h3>头像</h3>
-      <input v-model="avatar" placeholder="头像图片 URL" />
-      <button class="btn" @click="saveAvatar">保存</button>
-      <p v-if="saved" class="ok">已保存</p>
+      <div class="avatar-row">
+        <img v-if="preview || avatar" :src="preview ?? avatar" class="avatar-img" alt="头像" />
+        <div v-else class="avatar-img placeholder">?</div>
+        <div class="avatar-actions">
+          <label class="file-btn">
+            选择图片
+            <input type="file" accept="image/*" @change="onFile" />
+          </label>
+          <p class="tip">上传后会自动居中裁剪为圆形（PNG）</p>
+          <button class="btn" :disabled="!preview || uploading" @click="upload">保存头像</button>
+          <p v-if="saved" class="ok">已保存</p>
+          <p v-if="error" class="error">{{ error }}</p>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -34,22 +45,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { authApi } from "../../api/auth";
 import { userApi } from "../../api/user";
 import SendCodeButton from "../../components/SendCodeButton.vue";
+import { cropToCircle } from "../../utils/avatar";
 
 const avatar = ref("");
+const preview = ref("");
+const uploading = ref(false);
 const saved = ref(false);
+const error = ref("");
 const email = ref("");
 const code = ref("");
 const bindError = ref("");
 const bound = ref(false);
 
-async function saveAvatar() {
-  await userApi.updateProfile({ avatar: avatar.value || undefined });
-  saved.value = true;
-  setTimeout(() => (saved.value = false), 2000);
+async function onFile(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  error.value = "";
+  try {
+    preview.value = await cropToCircle(file);
+  } catch (err) {
+    error.value = (err as Error).message ?? "图片处理失败";
+  }
+}
+
+async function upload() {
+  if (!preview.value) return;
+  uploading.value = true;
+  error.value = "";
+  try {
+    const res = await userApi.uploadAvatar(preview.value);
+    avatar.value = res.avatar;
+    saved.value = true;
+    setTimeout(() => (saved.value = false), 2000);
+  } catch (err) {
+    error.value = (err as Error).message ?? "上传失败";
+  } finally {
+    uploading.value = false;
+  }
 }
 
 async function bindEmail() {
@@ -61,6 +98,11 @@ async function bindEmail() {
     bindError.value = (e as Error).message ?? "绑定失败";
   }
 }
+
+onMounted(async () => {
+  const home = await userApi.home();
+  avatar.value = home.avatar ?? "";
+});
 </script>
 
 <style scoped>
@@ -89,6 +131,45 @@ async function bindEmail() {
 h3 {
   margin: 0 0 12px;
 }
+.avatar-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.avatar-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+.avatar-img.placeholder {
+  background: #409eff;
+  color: #fff;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-actions {
+  flex: 1;
+}
+.file-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #409eff;
+  border-radius: 6px;
+  color: #409eff;
+  cursor: pointer;
+  font-size: 14px;
+}
+.file-btn input {
+  display: none;
+}
+.tip {
+  color: #9ca3af;
+  font-size: 13px;
+}
 input {
   width: 100%;
   padding: 10px;
@@ -114,6 +195,11 @@ input {
   background: #409eff;
   color: #fff;
   cursor: pointer;
+  margin-top: 6px;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .btn.ghost {
   background: #fff;
@@ -122,14 +208,9 @@ input {
   text-decoration: none;
   display: inline-block;
 }
-.tip {
-  color: #9ca3af;
-  font-size: 13px;
-}
 .error {
   color: #dc2626;
   font-size: 13px;
-  min-height: 18px;
 }
 .ok {
   color: #059669;
