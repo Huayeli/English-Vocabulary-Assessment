@@ -12,6 +12,7 @@ const router = createRouter({
     { path: "/test/verification", component: () => import("../views/test/VerificationTest.vue"), meta: { auth: true } },
     { path: "/test/wrong", component: () => import("../views/test/WrongWordTest.vue"), meta: { auth: true } },
     { path: "/test/result/:sessionId", component: () => import("../views/test/TestResult.vue"), meta: { auth: true } },
+    { path: "/report/:sessionId", component: () => import("../views/report/ReportDetail.vue"), meta: { auth: true } },
     { path: "/user", component: () => import("../views/user/UserHome.vue"), meta: { auth: true } },
     {
       path: "/admin/users",
