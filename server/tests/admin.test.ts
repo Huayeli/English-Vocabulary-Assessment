@@ -9,10 +9,21 @@ let adminToken = "";
 let userToken = "";
 let targetUserId = 0;
 let createdQuestionId: number | null = null;
+let testWordId = 0;
 
 beforeAll(async () => {
   const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
   await prisma.user.deleteMany({ where: { username: { in: ["adminuser", "normaluser", "statuser"] } } });
+  await prisma.word.deleteMany({ where: { headword: "zadminword1" } });
+  const testWord = await prisma.word.create({
+    data: {
+      headword: "zadminword1",
+      level: Level.K3,
+      bncLevel: "3k",
+      meanings: { create: [{ meaning: "管理员测试释义一", sortOrder: 0 }, { meaning: "管理员测试释义二", sortOrder: 1 }] }
+    }
+  });
+  testWordId = testWord.id;
   const admin = await prisma.user.create({
     data: { username: "adminuser", passwordHash: "unused", role: "ADMIN", packageId: free.id }
   });
@@ -28,6 +39,7 @@ afterAll(async () => {
   if (createdQuestionId) {
     await prisma.question.delete({ where: { id: createdQuestionId } }).catch(() => undefined);
   }
+  await prisma.word.delete({ where: { id: testWordId } }).catch(() => undefined);
   await prisma.testSession.deleteMany({ where: { userId: targetUserId } });
   await prisma.user.deleteMany({ where: { username: { in: ["adminuser", "normaluser", "statuser"] } } });
   await prisma.$disconnect();
@@ -91,7 +103,7 @@ describe("admin api", () => {
   });
 
   it("creates and manages manual question", async () => {
-    const word = await prisma.word.findUniqueOrThrow({ where: { headword: "abandon" } });
+    const word = await prisma.word.findUniqueOrThrow({ where: { id: testWordId } });
     const meaning = await prisma.wordMeaning.findFirstOrThrow({ where: { wordId: word.id } });
     const res = await request(createApp())
       .post("/api/admin/questions")
@@ -100,11 +112,11 @@ describe("admin api", () => {
         wordId: word.id,
         correctMeaningId: meaning.id,
         options: [
-          { text: "抛弃、放弃", isCorrect: true },
-          { text: "接受", isCorrect: false },
-          { text: "维持", isCorrect: false },
-          { text: "改进", isCorrect: false },
-          { text: "恢复", isCorrect: false }
+          { text: "管理员测试释义一", isCorrect: true },
+          { text: "干扰一", isCorrect: false },
+          { text: "干扰二", isCorrect: false },
+          { text: "干扰三", isCorrect: false },
+          { text: "干扰四", isCorrect: false }
         ]
       });
     expect(res.body.code).toBe(0);
@@ -114,11 +126,11 @@ describe("admin api", () => {
       .put(`/api/admin/questions/${createdQuestionId}`)
       .set("Authorization", `Bearer ${adminToken}`)
       .send({ options: [
-        { text: "抛弃、放弃", isCorrect: true },
-        { text: "接受", isCorrect: false },
-        { text: "维持", isCorrect: false },
-        { text: "改进", isCorrect: false },
-        { text: "采纳", isCorrect: false }
+        { text: "管理员测试释义一", isCorrect: true },
+        { text: "干扰一", isCorrect: false },
+        { text: "干扰二", isCorrect: false },
+        { text: "干扰三", isCorrect: false },
+        { text: "干扰五", isCorrect: false }
       ] });
     expect(update.body.code).toBe(0);
   });

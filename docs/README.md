@@ -25,5 +25,5 @@
 ## 当前状态
 
 - 设计基线：已确认
-- 代码：未开始
+- 代码：已实现（见 [07-implementation-plan.md](07-implementation-plan.md)）
 - 词库原始数据：`data/output.json`（25,002 词族，1k-25k）
