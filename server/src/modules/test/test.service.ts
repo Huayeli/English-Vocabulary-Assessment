@@ -3,7 +3,7 @@ import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 import { getOrCreateQuestion, toClientQuestion } from "../question/question.service.js";
 import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
-import { LEVEL_RANK } from "../../utils/level.js";
+import { estimateVocabulary } from "../report/report.service.js";
 
 export type SessionType = "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD";
 
@@ -107,17 +107,6 @@ export async function answerQuestion(
     finished: false,
     nextQuestion: toClientQuestion({ ...next.question, word }, answered + 1, nextLevel)
   };
-}
-
-// Task 11 将替换为 report 模块的正式实现
-function estimateVocabulary(finalLevel: Level, items: { testedLevel: Level; isCorrect: boolean }[]): number {
-  if (finalLevel !== "K10P") {
-    return LEVEL_RANK[finalLevel] * 1000;
-  }
-  const k10pItems = items.filter((it) => it.testedLevel === "K10P");
-  if (k10pItems.length === 0) return 10000;
-  const rate = k10pItems.filter((it) => it.isCorrect).length / k10pItems.length;
-  return 10000 + Math.round(rate * 15000);
 }
 
 // Task 13 将替换为 wrong-word 模块的正式实现
