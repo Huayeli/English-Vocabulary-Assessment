@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import type { NextFunction, Request, Response } from "express";
+import { authRouter } from "./modules/auth/auth.routes.js";
 
 export function createApp() {
   const app = express();
@@ -7,6 +9,15 @@ export function createApp() {
   app.use(express.json());
   app.get("/health", (_req, res) => {
     res.json({ code: 0, message: "ok", data: { status: "up" } });
+  });
+  app.use("/api/auth", authRouter);
+  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    const anyErr = err as { code?: number; message?: string };
+    let code = anyErr.code ?? 50000;
+    if (code === "P2002") code = 40901; // Prisma 唯一约束冲突
+    const status = code >= 40000 && code < 50000 ? 400 : 500;
+    if (status === 500) console.error(err);
+    res.status(status).json({ code, message: anyErr.message ?? "服务器内部错误", data: null });
   });
   return app;
 }
