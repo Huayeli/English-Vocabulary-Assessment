@@ -6,6 +6,8 @@ import { meaningRouter, vocabularyRouter } from "./modules/vocabulary/vocabulary
 import { testRouter } from "./modules/test/test.routes.js";
 import { reportRouter } from "./modules/report/report.routes.js";
 import { wrongWordRouter } from "./modules/wrong-word/wrong-word.routes.js";
+import { userRouter } from "./modules/user/user.routes.js";
+import { plansRouter } from "./modules/plan/plan.routes.js";
 
 export function createApp() {
   const app = express();
@@ -20,6 +22,8 @@ export function createApp() {
   app.use("/api/tests", testRouter);
   app.use("/api/reports", reportRouter);
   app.use("/api/wrong-words", wrongWordRouter);
+  app.use("/api/user", userRouter);
+  app.use("/api/plans", plansRouter);
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     const anyErr = err as { code?: number; message?: string };
     let code = anyErr.code ?? 50000;
