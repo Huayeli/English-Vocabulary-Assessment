@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 import { signToken } from "../../utils/jwt.js";
+import { verifyCode } from "./verification.service.js";
 
 export interface PublicUser {
   id: number;
@@ -65,4 +66,42 @@ export async function me(userId: number) {
   const user = await prisma.user.findUnique({ where: { id: userId }, include: { package: true } });
   if (!user) throw new ApiError(40101, "未登录或 token 失效");
   return toPublicUser(user);
+}
+
+export async function loginByEmail(email: string, code: string) {
+  const mail = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email: mail }, include: { package: true } });
+  if (!user) throw new ApiError(40401, "该邮箱未绑定账号");
+  await verifyCode(mail, "LOGIN", code);
+  return { token: signToken({ userId: user.id, role: user.role }), user: toPublicUser(user) };
+}
+
+export async function bindEmail(userId: number, email: string, code: string) {
+  const mail = email.trim().toLowerCase();
+  const taken = await prisma.user.findUnique({ where: { email: mail } });
+  if (taken && taken.id !== userId) throw new ApiError(40902, "邮箱已被绑定");
+  await verifyCode(mail, "BIND", code);
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { email: mail },
+    include: { package: true }
+  });
+  return toPublicUser(user);
+}
+
+export async function resetPassword(email: string, code: string, newPassword: string) {
+  const mail = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email: mail } });
+  if (!user) throw new ApiError(40401, "该邮箱未绑定账号");
+  if (newPassword.length < 6) throw new ApiError(40001, "密码长度至少 6 位");
+  await verifyCode(mail, "RESET", code);
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+}
+
+export async function ensureEmailBound(email: string) {
+  const mail = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email: mail } });
+  if (!user) throw new ApiError(40401, "该邮箱未绑定账号");
+  return user;
 }
