@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import type { NextFunction, Request, Response } from "express";
 import { authRouter } from "./modules/auth/auth.routes.js";
+import { meaningRouter, vocabularyRouter } from "./modules/vocabulary/vocabulary.routes.js";
 
 export function createApp() {
   const app = express();
@@ -11,6 +12,8 @@ export function createApp() {
     res.json({ code: 0, message: "ok", data: { status: "up" } });
   });
   app.use("/api/auth", authRouter);
+  app.use("/api/words", vocabularyRouter);
+  app.use("/api/meanings", meaningRouter);
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     const anyErr = err as { code?: number; message?: string };
     let code = anyErr.code ?? 50000;
