@@ -5,3 +5,5 @@ coverage/
 server/prisma/*.db
 *.db-journal
 client/dist/
+server/dev.db
+server/prisma/src/

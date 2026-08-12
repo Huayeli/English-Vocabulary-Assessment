@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Level {
+  K1
+  K2
+  K3
+  K5
+  K10
+  K10P
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique
+  passwordHash       String    @map("password_hash")
+  email              String?   @unique
+  avatar             String?
+  role               String    @default("USER")
+  packageId          Int       @map("package_id")
+  packageExpireTime  DateTime? @map("package_expire_time")
+  remainingTestCount Int       @default(0) @map("remaining_test_count")
+  status             String    @default("NORMAL")
+  createdAt          DateTime  @default(now()) @map("created_time")
+  updatedAt          DateTime  @updatedAt @map("updated_time")
+
+  package      Plan               @relation(fields: [packageId], references: [id])
+  testSessions TestSession[]
+  wrongWords   WrongWord[]
+
+  @@index([packageId])
+}
+
+model VerificationCode {
+  id         Int      @id @default(autoincrement())
+  email      String
+  purpose    String
+  code       String
+  expireTime DateTime @map("expire_time")
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_time")
+
+  @@index([email, purpose])
+}
+
+model Plan {
+  id                   Int     @id @default(autoincrement())
+  code                 String  @unique
+  name                 String
+  dailyTestLimit       Int?
+  verificationEnabled  Boolean @default(false)
+  wrongBookEnabled     Boolean @default(false)
+  historyEnabled       Boolean @default(false)
+  reportLevel          String  @default("BASIC")
+  priceCents           Int     @default(0)
+  sortOrder            Int
+
+  users User[]
+}
+
+model Word {
+  id           Int      @id @default(autoincrement())
+  headword     String   @unique
+  level        Level
+  bncLevel     String   @map("bnc_level")
+  relatedForms String?  @map("related_forms")
+  status       String   @default("ENABLED")
+  createdAt    DateTime @default(now()) @map("created_time")
+  updatedAt    DateTime @updatedAt @map("updated_time")
+
+  meanings   WordMeaning[]
+  questions  Question[]
+  testItems  TestSessionItem[]
+  wrongWords WrongWord[]
+
+  @@index([level])
+}
+
+model WordMeaning {
+  id        Int    @id @default(autoincrement())
+  wordId    Int    @map("word_id")
+  meaning   String
+  sortOrder Int    @default(0)
+
+  word      Word             @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  questions Question[]
+  options   QuestionOption[]
+
+  @@unique([wordId, meaning])
+  @@index([wordId])
+}
+
+model Question {
+  id               Int      @id @default(autoincrement())
+  wordId           Int      @map("word_id")
+  correctMeaningId Int      @map("correct_meaning_id")
+  level            Level
+  source           String   @default("GENERATED")
+  disabled         Boolean  @default(false)
+  createdAt        DateTime @default(now()) @map("created_time")
+  updatedAt        DateTime @updatedAt @map("updated_time")
+
+  word           Word             @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  correctMeaning WordMeaning      @relation(fields: [correctMeaningId], references: [id], onDelete: Cascade)
+  options        QuestionOption[]
+
+  @@unique([wordId, correctMeaningId])
+  @@index([level])
+}
+
+model QuestionOption {
+  id         Int     @id @default(autoincrement())
+  questionId Int     @map("question_id")
+  meaningId  Int?    @map("meaning_id")
+  text       String
+  isCorrect  Boolean
+  sortOrder  Int
+
+  question Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  meaning  WordMeaning? @relation(fields: [meaningId], references: [id], onDelete: SetNull)
+
+  @@index([questionId])
+}
+
+model TestSession {
+  id                  Int       @id @default(autoincrement())
+  userId              Int       @map("user_id")
+  type                String
+  targetLevel         Level?
+  totalQuestions      Int       @default(30)
+  correctCount        Int       @default(0)
+  wrongCount          Int       @default(0)
+  finalLevel          Level?
+  estimatedVocabulary Int?      @map("estimated_vocabulary")
+  accuracy            Float?
+  startedAt           DateTime  @default(now()) @map("started_time")
+  finishedAt          DateTime? @map("finished_time")
+
+  user  User              @relation(fields: [userId], references: [id])
+  items TestSessionItem[]
+
+  @@index([userId, startedAt])
+  @@index([type])
+}
+
+model TestSessionItem {
+  id                 Int      @id @default(autoincrement())
+  sessionId          Int      @map("session_id")
+  seq                Int
+  wordId             Int      @map("word_id")
+  testedLevel        Level    @map("tested_level")
+  optionsSnapshot    String   @map("options_snapshot")
+  correctOptionIndex Int      @map("correct_option_index")
+  userOptionIndex    Int?     @map("user_option_index")
+  isCorrect          Boolean
+  answerTimeMs       Int      @default(0) @map("answer_time_ms")
+  createdAt          DateTime @default(now()) @map("created_time")
+
+  session TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  word    Word        @relation(fields: [wordId], references: [id])
+
+  @@index([sessionId])
+}
+
+model WrongWord {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @map("user_id")
+  wordId             Int      @map("word_id")
+  correctMeaningText String   @map("correct_meaning_text")
+  errorCount         Int      @default(1)
+  lastErrorAt        DateTime @default(now()) @map("last_error_time")
+  createdAt          DateTime @default(now()) @map("created_time")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId])
+}
