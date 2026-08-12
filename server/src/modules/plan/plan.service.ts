@@ -50,7 +50,7 @@ export async function assertCanStartAdaptive(userId: number) {
 }
 
 export async function refundSingleTest(userId: number) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId }, include: { package: true } });
   if (user.package.code === "SINGLE") {
     await prisma.user.update({ where: { id: userId }, data: { remainingTestCount: { increment: 1 } } });
   }

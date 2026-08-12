@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import type { Level } from "../generated/prisma/enums.js";
+import type { Level } from "../../generated/prisma/enums.js";
 import * as vocabularyService from "./vocabulary.service.js";
 import type { AuthRequest } from "../../middleware/auth.js";
 

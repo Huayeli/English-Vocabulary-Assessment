@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 
 export interface JwtPayload {
   userId: number;
@@ -7,7 +7,7 @@ export interface JwtPayload {
 
 export function signToken(payload: JwtPayload): string {
   return jwt.sign(payload, process.env.JWT_SECRET ?? "dev-secret", {
-    expiresIn: process.env.JWT_EXPIRES_IN ?? "7d"
+    expiresIn: (process.env.JWT_EXPIRES_IN ?? "7d") as SignOptions["expiresIn"]
   });
 }
 

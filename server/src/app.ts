@@ -8,6 +8,7 @@ import { reportRouter } from "./modules/report/report.routes.js";
 import { wrongWordRouter } from "./modules/wrong-word/wrong-word.routes.js";
 import { userRouter } from "./modules/user/user.routes.js";
 import { plansRouter } from "./modules/plan/plan.routes.js";
+import { adminRouter } from "./modules/admin/admin.routes.js";
 
 export function createApp() {
   const app = express();
@@ -24,13 +25,15 @@ export function createApp() {
   app.use("/api/wrong-words", wrongWordRouter);
   app.use("/api/user", userRouter);
   app.use("/api/plans", plansRouter);
+  app.use("/api/admin", adminRouter);
+
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-    const anyErr = err as { code?: number; message?: string };
-    let code = anyErr.code ?? 50000;
-    if (code === "P2002") code = 40901; // Prisma 唯一约束冲突
+    const anyErr = err as { code?: number | string; message?: string };
+    // Prisma unique constraint errors use string codes like P2002
+    const code: number = typeof anyErr.code === "string" ? 40901 : anyErr.code ?? 50000;
     const status = code >= 40000 && code < 50000 ? 400 : 500;
     if (status === 500) console.error(err);
-    res.status(status).json({ code, message: anyErr.message ?? "服务器内部错误", data: null });
+    res.status(status).json({ code, message: anyErr.message ?? "Internal Server Error", data: null });
   });
   return app;
 }

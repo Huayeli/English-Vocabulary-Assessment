@@ -1,4 +1,4 @@
-import type { Level } from "../generated/prisma/enums.js";
+import type { Level } from "../../generated/prisma/enums.js";
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 
