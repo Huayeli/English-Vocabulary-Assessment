@@ -4,6 +4,7 @@ import { ApiError } from "../../utils/errors.js";
 import { getOrCreateQuestion, toClientQuestion } from "../question/question.service.js";
 import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
 import { estimateVocabulary } from "../report/report.service.js";
+import { recordWrongWords } from "../wrong-word/wrong-word.service.js";
 
 export type SessionType = "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD";
 
@@ -107,11 +108,6 @@ export async function answerQuestion(
     finished: false,
     nextQuestion: toClientQuestion({ ...next.question, word }, answered + 1, nextLevel)
   };
-}
-
-// Task 13 将替换为 wrong-word 模块的正式实现
-async function recordWrongWords(_sessionId: number) {
-  // no-op
 }
 
 async function finishSession(sessionId: number, correctCount: number, wrongCount: number) {

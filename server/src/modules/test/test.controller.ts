@@ -6,6 +6,8 @@ import type { AuthRequest } from "../../middleware/auth.js";
 import * as planService from "../plan/plan.service.js";
 import { answerQuestion, createSession, issueQuestion } from "./test.service.js";
 import { toClientQuestion } from "../question/question.service.js";
+import { createWrongWordSession } from "../wrong-word/wrong-word.service.js";
+import { firstQuestionOf } from "../wrong-word/wrong-word.controller.js";
 
 const LEVELS = new Set(["K1", "K2", "K3", "K5", "K10", "K10P"]);
 
@@ -59,8 +61,18 @@ export async function startVerificationHandler(req: AuthRequest, res: Response) 
 export async function startWrongWordHandler(req: AuthRequest, res: Response) {
   const userId = req.user!.userId;
   await planService.assertFeature(userId, "wrongBook");
-  // Task 13 替换为 createWrongWordSession 正式实现
-  throw new ApiError(50001, "错词再测功能尚未开放");
+  const session = await createWrongWordSession(userId);
+  const question = await firstQuestionOf(session.id);
+  res.json({
+    code: 0,
+    message: "ok",
+    data: {
+      sessionId: session.id,
+      totalQuestions: session.totalQuestions,
+      currentLevel: question.testedLevel,
+      question
+    }
+  });
 }
 
 export async function answerHandler(req: AuthRequest, res: Response) {
