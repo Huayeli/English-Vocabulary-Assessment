@@ -17,9 +17,16 @@ const router = createRouter({
     { path: "/user", component: () => import("../views/user/UserHome.vue"), meta: { auth: true } },
     { path: "/user/settings", component: () => import("../views/user/UserSettings.vue"), meta: { auth: true } },
     {
-      path: "/admin/users",
-      component: () => import("../views/admin/AdminUsers.vue"),
-      meta: { auth: true, admin: true }
+      path: "/admin",
+      component: () => import("../layouts/AdminLayout.vue"),
+      meta: { auth: true, admin: true },
+      children: [
+        { path: "", redirect: "users" },
+        { path: "users", component: () => import("../views/admin/AdminUsers.vue") },
+        { path: "words", component: () => import("../views/admin/AdminWords.vue") },
+        { path: "questions", component: () => import("../views/admin/AdminQuestions.vue") },
+        { path: "stats", component: () => import("../views/admin/AdminStats.vue") }
+      ]
     }
   ]
 });
