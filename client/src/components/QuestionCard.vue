@@ -55,7 +55,7 @@ function optionClass(i: number) {
 }
 .options {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 14px;
 }
 .option {
