@@ -41,23 +41,11 @@ async function startSession(
 ) {
   const code = req.code!;
   assertCanTest(code);
-  // 超过 30 分钟的未完成会话视为陈旧，自动标记为已退出
-  const staleCutoff = new Date(Date.now() - 30 * 60 * 1000);
+  // 开始新测试时，自动放弃该激活码之前所有未完成的测试，避免残留会话阻塞
   await prisma.testSession.updateMany({
-    where: { activationCodeId: code.id, finishedAt: null, abandoned: false, startedAt: { lt: staleCutoff } },
+    where: { activationCodeId: code.id, finishedAt: null, abandoned: false },
     data: { abandoned: true }
   });
-  const active = await prisma.testSession.count({
-    where: {
-      activationCodeId: code.id,
-      finishedAt: null,
-      abandoned: false,
-      startedAt: { gte: staleCutoff }
-    }
-  });
-  if (active > 0) {
-    throw new ApiError(40302, "该激活码还有进行中的测试，请先完成或退出");
-  }
   const session = await createSession(code.id, type, targetLevel);
   const level: Level = targetLevel ?? "K3";
   const { item, question } = await issueQuestion(session.id, 1, targetLevel ?? "K3");

@@ -94,19 +94,18 @@ describe("adaptive test api", () => {
     expect(session.reliability).not.toBeNull();
   });
 
-  it("blocks start while another test is in progress", async () => {
+  it("auto-abandons the previous unfinished session on new start", async () => {
     const app = createApp();
     const first = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     expect(first.body.code).toBe(0);
-    const blocked = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
-    expect(blocked.body.code).toBe(40302);
-    await abandon(app, unlimitedCode, first.body.data.sessionId);
-    const again = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
-    expect(again.body.code).toBe(0);
-    await abandon(app, unlimitedCode, again.body.data.sessionId);
+    const second = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(second.body.code).toBe(0);
+    const updated = await prisma.testSession.findUniqueOrThrow({ where: { id: first.body.data.sessionId } });
+    expect(updated.abandoned).toBe(true);
+    await abandon(app, unlimitedCode, second.body.data.sessionId);
   });
 
-  it("auto-abandons stale sessions older than 30 minutes", async () => {
+  it("auto-abandons stale sessions on new start", async () => {
     const app = createApp();
     const stale = await prisma.testSession.create({
       data: {
