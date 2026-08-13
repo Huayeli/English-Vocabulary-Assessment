@@ -1,6 +1,9 @@
 <template>
   <div class="code-header">
-    <router-link class="brand" to="/">词海拾贝</router-link>
+    <router-link class="brand" to="/">
+      <LineIcon name="pearl" :size="22" />
+      <span>词海拾贝</span>
+    </router-link>
     <div class="right">
       <span class="chip">激活码 {{ masked }}</span>
       <span v-if="remaining !== null" class="chip">剩余 {{ remaining }} 次</span>
@@ -13,6 +16,7 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCodeStore } from "../stores/code";
+import LineIcon from "./LineIcon.vue";
 
 const router = useRouter();
 const store = useCodeStore();
@@ -39,6 +43,9 @@ function exit() {
   margin-bottom: 16px;
 }
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 20px;
   font-weight: 800;
   color: var(--primary-dark);

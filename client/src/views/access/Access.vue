@@ -3,7 +3,7 @@
     <DecoCircles />
     <router-link class="admin-entry" to="/admin/key">管理后台</router-link>
     <div class="card login-card">
-      <div class="brand-dot"></div>
+      <div class="brand-dot"><LineIcon name="pearl" :size="28" /></div>
       <h1>词海拾贝</h1>
       <p class="sub">英语词汇量智能评估</p>
       <form @submit.prevent="submit">
@@ -20,6 +20,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCodeStore } from "../../stores/code";
 import DecoCircles from "../../components/DecoCircles.vue";
+import LineIcon from "../../components/LineIcon.vue";
 
 const router = useRouter();
 const store = useCodeStore();
@@ -72,12 +73,16 @@ async function submit() {
   z-index: 1;
 }
 .brand-dot {
-  width: 14px;
-  height: 14px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
   margin: 0 auto 18px;
-  box-shadow: 0 0 0 8px rgba(95, 122, 99, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 10px rgba(95, 122, 99, 0.08);
 }
 h1 {
   margin: 0 0 4px;

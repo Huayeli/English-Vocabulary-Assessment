@@ -6,13 +6,13 @@
       <h1 class="title">选择测试方式</h1>
       <div class="main-cards">
         <router-link class="card main-card" to="/test/adaptive">
-          <div class="icon-dot"><span></span></div>
+          <div class="icon-dot"><LineIcon name="gauge" :size="30" /></div>
           <h3>自适应测试</h3>
           <p>30 题动态调整等级，测出你的真实词汇量</p>
           <button class="btn-green">开始测试</button>
         </router-link>
         <router-link class="card main-card" to="/test/verification">
-          <div class="icon-dot"><span></span></div>
+          <div class="icon-dot"><LineIcon name="target" :size="30" /></div>
           <h3>等级验证</h3>
           <p>选择目标等级，30 题正确率达到 80% 即判定达标</p>
           <button class="btn-green">开始验证</button>
@@ -20,10 +20,10 @@
       </div>
 
       <div class="mini-grid">
-        <div class="mini"><i class="dot"></i><span>30 题自适应测评</span></div>
-        <div class="mini"><i class="dot"></i><span>80% 达标判定</span></div>
-        <div class="mini"><i class="dot"></i><span>详细词汇量报告</span></div>
-        <div class="mini"><i class="dot"></i><span>防作弊可信度检测</span></div>
+        <div class="mini"><LineIcon name="list" :size="18" /><span>30 题自适应测评</span></div>
+        <div class="mini"><LineIcon name="check" :size="18" /><span>80% 达标判定</span></div>
+        <div class="mini"><LineIcon name="report" :size="18" /><span>详细词汇量报告</span></div>
+        <div class="mini"><LineIcon name="shield" :size="18" /><span>防作弊可信度检测</span></div>
       </div>
     </div>
   </div>
@@ -34,6 +34,7 @@ import { onMounted } from "vue";
 import { useCodeStore } from "../../stores/code";
 import CodeHeader from "../../components/CodeHeader.vue";
 import DecoCircles from "../../components/DecoCircles.vue";
+import LineIcon from "../../components/LineIcon.vue";
 
 const store = useCodeStore();
 
@@ -83,16 +84,11 @@ onMounted(() => {
   height: 64px;
   border-radius: 50%;
   border: 1.5px solid rgba(95, 122, 99, 0.35);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 18px;
-}
-.icon-dot span {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary);
 }
 .main-card h3 {
   margin: 0 0 8px;
@@ -123,11 +119,7 @@ onMounted(() => {
   color: var(--muted);
 }
 .mini .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary);
-  opacity: 0.7;
+  color: var(--primary);
 }
 @media (max-width: 760px) {
   .main-cards,
