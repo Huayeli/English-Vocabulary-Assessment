@@ -26,6 +26,9 @@ export interface AnswerResult {
 
 export const testApi = {
   quota: () => http.get<QuotaInfo>("/tests/quota"),
+  active: () =>
+    http.get<{ hasActive: boolean; sessionId: number | null; startedAt: string | null }>("/tests/active"),
+  abandonActive: () => http.post("/tests/abandon-active"),
   startAdaptive: () => http.post<StartTestResult>("/tests/adaptive/start"),
   startVerification: (level: string) => http.post<StartTestResult>("/tests/verification/start", { level }),
   startWrongWord: () => http.post<StartTestResult>("/tests/wrong-word/start"),

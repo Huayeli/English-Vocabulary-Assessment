@@ -12,6 +12,12 @@
       <router-link class="back" to="/">返回测试中心</router-link>
     </div>
     <TestRunner v-else mode="verification" />
+    <ConfirmDialog
+      v-if="pendingConfirm"
+      message="检测到上次测试未完成，是否放弃并重新开始？"
+      @confirm="confirmAbandon"
+      @cancel="cancelAbandon"
+    />
   </div>
 </template>
 
@@ -20,6 +26,7 @@ import { ref } from "vue";
 import { useTestStore } from "../../stores/test";
 import { useUiStore } from "../../stores/ui";
 import TestRunner from "../../components/TestRunner.vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 const LEVEL_INFO = [
   { key: "1K", desc: "最核心高频词，日常交流的基础" },
@@ -41,14 +48,35 @@ const LEVEL_MAP: Record<string, string> = {
 const test = useTestStore();
 const ui = useUiStore();
 const started = ref(false);
+const pendingConfirm = ref(false);
+const pendingLevel = ref("");
 
 async function choose(level: string) {
   try {
-    await test.start("verification", LEVEL_MAP[level]);
+    const r = await test.ensureStart("verification", LEVEL_MAP[level]);
+    if (r.needsConfirm) {
+      pendingLevel.value = level;
+      pendingConfirm.value = true;
+      return;
+    }
     started.value = true;
   } catch (e) {
     ui.error((e as Error).message ?? "启动失败");
   }
+}
+
+async function confirmAbandon() {
+  pendingConfirm.value = false;
+  try {
+    await test.abandonActiveAndStart("verification", LEVEL_MAP[pendingLevel.value]);
+    started.value = true;
+  } catch (e) {
+    ui.error((e as Error).message ?? "启动失败");
+  }
+}
+
+function cancelAbandon() {
+  pendingConfirm.value = false;
 }
 </script>
 

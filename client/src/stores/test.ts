@@ -41,6 +41,16 @@ export const useTestStore = defineStore("test", {
       this.seq = 1;
       this.startedAt = Date.now();
     },
+    async ensureStart(kind: "adaptive" | "verification", level?: string) {
+      const active = await testApi.active();
+      if (active.hasActive) return { needsConfirm: true };
+      await this.start(kind, level);
+      return { needsConfirm: false };
+    },
+    async abandonActiveAndStart(kind: "adaptive" | "verification", level?: string) {
+      await testApi.abandonActive();
+      await this.start(kind, level);
+    },
     async answer(optionIndex: number, seq?: number): Promise<AnswerResult> {
       const idx = (seq ?? this.seq) - 1;
       const res = await testApi.answer(this.sessionId!, optionIndex, Date.now() - this.startedAt, seq);

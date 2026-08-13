@@ -94,10 +94,22 @@ describe("adaptive test api", () => {
     expect(session.reliability).not.toBeNull();
   });
 
-  it("auto-abandons the previous unfinished session on new start", async () => {
+  it("blocks new start while unfinished and abandons via confirm endpoint", async () => {
     const app = createApp();
     const first = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     expect(first.body.code).toBe(0);
+
+    const active = await request(app).get("/api/tests/active").set("x-access-code", unlimitedCode);
+    expect(active.body.data.hasActive).toBe(true);
+
+    const blocked = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(blocked.body.code).toBe(40302);
+
+    const abandonRes = await request(app).post("/api/tests/abandon-active").set("x-access-code", unlimitedCode);
+    expect(abandonRes.body.code).toBe(0);
+    const activeAfter = await request(app).get("/api/tests/active").set("x-access-code", unlimitedCode);
+    expect(activeAfter.body.data.hasActive).toBe(false);
+
     const second = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     expect(second.body.code).toBe(0);
     const updated = await prisma.testSession.findUniqueOrThrow({ where: { id: first.body.data.sessionId } });
@@ -107,6 +119,8 @@ describe("adaptive test api", () => {
 
   it("auto-abandons stale sessions on new start", async () => {
     const app = createApp();
+    // 清掉可能残留的活跃会话，保证本用例独立
+    await request(app).post("/api/tests/abandon-active").set("x-access-code", unlimitedCode);
     const stale = await prisma.testSession.create({
       data: {
         activationCodeId: unlimitedCodeId,

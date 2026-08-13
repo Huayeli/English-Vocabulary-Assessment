@@ -19,6 +19,13 @@ function assertCanTest(code: { maxTests: number | null; usedCount: number }) {
   }
 }
 
+async function findActiveSession(codeId: number) {
+  return prisma.testSession.findFirst({
+    where: { activationCodeId: codeId, finishedAt: null, abandoned: false },
+    orderBy: { startedAt: "desc" }
+  });
+}
+
 export async function quotaHandler(req: CodeRequest, res: Response) {
   const code = req.code!;
   res.json({
@@ -33,6 +40,27 @@ export async function quotaHandler(req: CodeRequest, res: Response) {
   });
 }
 
+export async function activeHandler(req: CodeRequest, res: Response) {
+  const active = await findActiveSession(req.code!.id);
+  res.json({
+    code: 0,
+    message: "ok",
+    data: {
+      hasActive: !!active,
+      sessionId: active?.id ?? null,
+      startedAt: active?.startedAt ?? null
+    }
+  });
+}
+
+export async function abandonActiveHandler(req: CodeRequest, res: Response) {
+  const result = await prisma.testSession.updateMany({
+    where: { activationCodeId: req.code!.id, finishedAt: null, abandoned: false },
+    data: { abandoned: true }
+  });
+  res.json({ code: 0, message: "ok", data: { abandoned: result.count } });
+}
+
 async function startSession(
   req: CodeRequest,
   res: Response,
@@ -41,11 +69,16 @@ async function startSession(
 ) {
   const code = req.code!;
   assertCanTest(code);
-  // 开始新测试时，自动放弃该激活码之前所有未完成的测试，避免残留会话阻塞
+  // 超过 30 分钟的陈旧未完成会话自动放弃，其余需用户确认
+  const staleCutoff = new Date(Date.now() - 30 * 60 * 1000);
   await prisma.testSession.updateMany({
-    where: { activationCodeId: code.id, finishedAt: null, abandoned: false },
+    where: { activationCodeId: code.id, finishedAt: null, abandoned: false, startedAt: { lt: staleCutoff } },
     data: { abandoned: true }
   });
+  const active = await findActiveSession(code.id);
+  if (active) {
+    throw new ApiError(40302, "检测到未完成的测试，请先完成或退出后再开始");
+  }
   const session = await createSession(code.id, type, targetLevel);
   const level: Level = targetLevel ?? "K3";
   const { item, question } = await issueQuestion(session.id, 1, targetLevel ?? "K3");
