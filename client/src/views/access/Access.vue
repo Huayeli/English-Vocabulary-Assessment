@@ -1,5 +1,6 @@
 <template>
   <div class="access-page">
+    <router-link class="admin-link" to="/admin/key">管理后台</router-link>
     <div class="card">
       <h1>词海拾贝</h1>
       <p class="sub">英语词汇量智能评估</p>
@@ -49,6 +50,18 @@ async function submit() {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  position: relative;
+}
+.admin-link {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+}
+.admin-link:hover {
+  text-decoration: underline;
 }
 .card {
   width: 400px;
