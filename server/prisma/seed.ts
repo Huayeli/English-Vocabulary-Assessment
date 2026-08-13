@@ -16,6 +16,7 @@ export function parseMeanings(raw: string, limit = MAX_MEANINGS_PER_WORD): strin
     .split(/\\n|\n/)
     .map((line) => line.replace(POS_PREFIX, "").trim())
     .map((line) => line.replace(/[\x00-\x1f\x7f]/g, "").trim()) // 去除 \r 等控制字符
+    .map((line) => line.replace(/\\r/gi, "").trim()) // 去除字面 "\r"
     .map((line) => line.replace(/\[[^\]]*\]/g, "").trim()) // 去除 [计] [医] [化] 等学科标签
     .map((line) => line.replace(/\s+/g, " ").trim())
     .map((line) => line.replace(/[，,]/g, "；")) // 一个义项内多个意思用全角分号分隔
