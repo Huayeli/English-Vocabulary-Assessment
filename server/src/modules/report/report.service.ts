@@ -52,6 +52,31 @@ export async function buildReport(sessionId: number, codeId: number, isAdmin: bo
     rate: Number((v.correct / v.answered).toFixed(2))
   }));
 
+  const wrongItems = session.items.filter((it) => !it.isCorrect);
+  const wrongWordIds = [...new Set(wrongItems.map((it) => it.wordId))];
+  const meanings = wrongWordIds.length
+    ? await prisma.wordMeaning.findMany({
+        where: { wordId: { in: wrongWordIds } },
+        orderBy: { sortOrder: "asc" }
+      })
+    : [];
+  const meaningsMap = new Map<number, string>();
+  for (const m of meanings) {
+    const prev = meaningsMap.get(m.wordId) ?? "";
+    meaningsMap.set(m.wordId, prev ? `${prev}；${m.meaning}` : m.meaning);
+  }
+  const wrongWords = wrongItems.map((it) => {
+    const snapshot: string[] = JSON.parse(it.optionsSnapshot);
+    return {
+      wordId: it.word.id,
+      headword: it.word.headword,
+      level: it.testedLevel,
+      userAnswer: snapshot[it.userOptionIndex ?? 0] ?? "-",
+      correctAnswer: snapshot[it.correctOptionIndex] ?? "-",
+      explanation: meaningsMap.get(it.word.id) ?? snapshot[it.correctOptionIndex] ?? "-"
+    };
+  });
+
   return {
     sessionId: session.id,
     accessCode: session.code.code,
@@ -65,6 +90,7 @@ export async function buildReport(sessionId: number, codeId: number, isAdmin: bo
     estimatedVocabulary: session.estimatedVocabulary,
     cefr: session.finalLevel ? cefrOf(session.finalLevel) : null,
     passed: session.type === "VERIFICATION" ? (session.accuracy ?? 0) >= 0.8 : null,
-    levelMastery
+    levelMastery,
+    wrongWords
   };
 }

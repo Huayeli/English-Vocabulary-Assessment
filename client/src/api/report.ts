@@ -20,6 +20,14 @@ export interface Report {
   cefr: string | null;
   passed: boolean | null;
   levelMastery: LevelMastery[];
+  wrongWords: {
+    wordId: number;
+    headword: string;
+    level: string;
+    userAnswer: string;
+    correctAnswer: string;
+    explanation: string;
+  }[];
 }
 
 export const reportApi = {

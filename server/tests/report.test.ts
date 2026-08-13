@@ -92,6 +92,13 @@ describe("report", () => {
     expect(report.finalLevel).toBe(Level.K3);
     expect(report.estimatedVocabulary).toBe(3000);
     expect(report.cefr).toBe("B1");
+    expect(report.wrongWords).toHaveLength(1);
+    expect(report.wrongWords[0]).toMatchObject({
+      headword: "abandon",
+      userAnswer: "错误三",
+      correctAnswer: "正确三"
+    });
+    expect(report.wrongWords[0].explanation.length).toBeGreaterThan(0);
   });
 
   it("estimates vocabulary for fixed levels", () => {

@@ -33,6 +33,20 @@
       </div>
       <p v-else class="empty">暂无数据</p>
 
+      <h2>错词与解析</h2>
+      <div v-if="report.wrongWords.length" class="wrong">
+        <div v-for="w in report.wrongWords" :key="w.wordId" class="wrong-item">
+          <div class="wrong-head">
+            <b>{{ w.headword }}</b>
+            <span class="lv">{{ w.level }}</span>
+          </div>
+          <p class="line">你的答案：<span class="bad">{{ w.userAnswer }}</span></p>
+          <p class="line">正确答案：<span class="ok">{{ w.correctAnswer }}</span></p>
+          <p class="line">解析：<span>{{ w.explanation }}</span></p>
+        </div>
+      </div>
+      <p v-else class="empty">全部答对，没有错词 🎉</p>
+
       <div class="actions">
         <router-link class="btn" to="/">返回测试中心</router-link>
       </div>
@@ -144,14 +158,31 @@ h2 {
   font-size: 16px;
 }
 .wrong-item {
-  display: flex;
-  gap: 12px;
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
 }
-.wrong-item span {
-  color: #6b7280;
+.wrong-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lv {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+.line {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #374151;
+}
+.ok {
+  color: #059669;
+}
+.bad {
+  color: #dc2626;
 }
 .empty {
   color: #9ca3af;
