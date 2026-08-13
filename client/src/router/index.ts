@@ -31,8 +31,11 @@ const router = createRouter({
 router.beforeEach((to) => {
   const store = useCodeStore();
   if (to.meta.public) return true;
+  if (to.meta.admin) {
+    if (!store.isAdminAuthed) return "/admin/key";
+    return true;
+  }
   if (!store.hasCode) return "/access";
-  if (to.meta.admin && !store.isAdminAuthed) return "/admin/key";
   return true;
 });
 
