@@ -133,4 +133,21 @@ describe("admin api", () => {
     const detail = await adminGet(app, `/api/admin/tests/${list.body.data.list[0].id}`);
     expect(detail.body.data.items).toHaveLength(1);
   });
+
+  it("marks test invalid and restores", async () => {
+    const app = createApp();
+    const list = await adminGet(app, "/api/admin/tests?keyword=ADMINTEST");
+    const id = list.body.data.list[0].id;
+    const mark = await request(app)
+      .put(`/api/admin/tests/${id}/invalid`)
+      .set("x-admin-key", ADMIN_KEY)
+      .send({ invalid: true });
+    expect(mark.body.code).toBe(0);
+    const after = await adminGet(app, "/api/admin/tests?keyword=ADMINTEST");
+    expect(after.body.data.list[0].invalid).toBe(true);
+    await request(app)
+      .put(`/api/admin/tests/${id}/invalid`)
+      .set("x-admin-key", ADMIN_KEY)
+      .send({ invalid: false });
+  });
 });

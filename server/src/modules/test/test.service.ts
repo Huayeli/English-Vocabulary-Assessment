@@ -4,6 +4,7 @@ import { ApiError } from "../../utils/errors.js";
 import { getOrCreateQuestion, toClientQuestion } from "../question/question.service.js";
 import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
 import { estimateVocabulary } from "../report/report.service.js";
+import { assessSession } from "./reliability.service.js";
 
 export type SessionType = "ADAPTIVE" | "VERIFICATION";
 
@@ -101,6 +102,7 @@ export async function answerQuestion(
     throw new ApiError(40401, "测试不存在");
   }
   if (session.finishedAt) throw new ApiError(40901, "测试已完成");
+  if (session.abandoned) throw new ApiError(40901, "测试已退出");
 
   let item: ItemLike | null = session.items.find((it) => it.userOptionIndex === null) ?? null;
   if (seq != null) {
@@ -202,6 +204,7 @@ async function finishSession(
     where: { id: session.activationCodeId },
     data: { usedCount: { increment: 1 }, lastUsedAt: new Date() }
   });
+  await assessSession(sessionId);
   const last = answeredItems.length > 0 ? answeredItems[answeredItems.length - 1] : session.items[session.items.length - 1];
   return {
     isCorrect: last.isCorrect,

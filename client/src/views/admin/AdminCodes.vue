@@ -125,6 +125,8 @@
               <th>正确率</th>
               <th>等级</th>
               <th>词汇量</th>
+              <th>用时</th>
+              <th>可信度</th>
               <th>完成时间</th>
             </tr>
           </thead>
@@ -135,6 +137,10 @@
               <td>{{ Math.round((t.accuracy ?? 0) * 100) }}%</td>
               <td>{{ t.finalLevel ?? "-" }}</td>
               <td>{{ t.estimatedVocabulary ?? "-" }}</td>
+              <td>{{ durationText(t.durationSec) }}</td>
+              <td :class="t.invalid || (t.reliability !== null && t.reliability < 40) ? 'bad' : ''">
+                {{ t.reliability ?? "-" }}{{ t.invalid ? "（无效）" : "" }}
+              </td>
               <td>{{ formatTime(t.finishedAt) }}</td>
             </tr>
           </tbody>
@@ -179,6 +185,12 @@ function formatTime(v: string | null) {
 function typeLabel(t: string) {
   const map: Record<string, string> = { ADAPTIVE: "自适应", VERIFICATION: "等级验证" };
   return map[t] ?? t;
+}
+
+function durationText(sec: number | null) {
+  if (sec == null) return "-";
+  if (sec < 60) return `${sec}s`;
+  return `${Math.floor(sec / 60)}m${sec % 60}s`;
 }
 
 async function load(p = 1) {
@@ -307,6 +319,9 @@ th {
 }
 .none {
   color: #9ca3af;
+}
+.bad {
+  color: #dc2626;
 }
 .gen {
   padding: 20px;

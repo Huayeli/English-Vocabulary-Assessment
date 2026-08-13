@@ -10,6 +10,16 @@
         </span>
       </div>
 
+      <div v-if="report.invalid || (report.reliability !== null && report.reliability < 40)" class="warn bad">
+        本次结果疑似无效（可信度低），仅供参考。
+      </div>
+      <div v-else-if="report.reliability !== null && report.reliability < 60" class="warn mid">
+        本次结果可信度较低（{{ report.reliability }} 分），仅供参考，未计入后台平均词汇量统计。
+      </div>
+      <div v-if="report.flags" class="warn flags">
+        检测标记：{{ report.flags }}
+      </div>
+
       <div class="meta">
         <div class="meta-item"><span>测试时间</span><b>{{ formatTime(report.testTime) }}</b></div>
         <div class="meta-item"><span>完成时间</span><b>{{ report.finishedTime ? formatTime(report.finishedTime) : "-" }}</b></div>
@@ -18,6 +28,7 @@
         <div class="meta-item"><span>当前等级</span><b>{{ report.finalLevel ?? "-" }}</b></div>
         <div class="meta-item"><span>预计词汇量</span><b>{{ report.estimatedVocabulary ?? "-" }}</b></div>
         <div class="meta-item"><span>CEFR 参考</span><b>{{ report.cefr ?? "-" }}</b></div>
+        <div class="meta-item"><span>结果可信度</span><b>{{ report.reliability ?? "-" }}</b></div>
       </div>
 
       <h2>各等级掌握情况</h2>
@@ -134,6 +145,24 @@ onMounted(load);
 .passed.bad {
   background: #fef2f2;
   color: #dc2626;
+}
+.warn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 14px 0 0;
+}
+.warn.bad {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.warn.mid {
+  background: #fffbeb;
+  color: #b45309;
+}
+.warn.flags {
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 .meta {
   display: grid;

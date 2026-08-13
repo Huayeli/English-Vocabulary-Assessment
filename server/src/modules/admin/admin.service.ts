@@ -28,12 +28,15 @@ export async function dashboard() {
     prisma.activationCode.count(),
     prisma.activationCode.count({ where: { status: "ACTIVE" } }),
     prisma.batch.count(),
-    prisma.testSession.count({ where: { finishedAt: { not: null } } }),
-    prisma.testSession.aggregate({ _avg: { estimatedVocabulary: true }, where: { finishedAt: { not: null } } }),
-    prisma.testSession.count({ where: { finishedAt: { not: null }, startedAt: { gte: today } } })
+    prisma.testSession.count({ where: { finishedAt: { not: null }, invalid: false } }),
+    prisma.testSession.aggregate({
+      _avg: { estimatedVocabulary: true },
+      where: { finishedAt: { not: null }, invalid: false, OR: [{ reliability: null }, { reliability: { gte: 60 } }] }
+    }),
+    prisma.testSession.count({ where: { finishedAt: { not: null }, invalid: false, startedAt: { gte: today } } })
   ]);
   const latestSessions = await prisma.testSession.findMany({
-    where: { finishedAt: { not: null } },
+    where: { finishedAt: { not: null }, invalid: false },
     orderBy: { finishedAt: "desc" },
     distinct: ["activationCodeId"],
     select: { finalLevel: true }
@@ -206,6 +209,13 @@ export async function listTests(params: { type?: string; keyword?: string; page:
       accuracy: t.accuracy,
       finalLevel: t.finalLevel,
       estimatedVocabulary: t.estimatedVocabulary,
+      reliability: t.reliability,
+      suspicious: t.suspicious,
+      invalid: t.invalid,
+      flags: t.flags,
+      durationSec: t.finishedAt
+        ? Math.round((t.finishedAt.getTime() - t.startedAt.getTime()) / 1000)
+        : null,
       startedAt: t.startedAt,
       finishedAt: t.finishedAt
     })),
@@ -213,6 +223,11 @@ export async function listTests(params: { type?: string; keyword?: string; page:
     page: params.page,
     pageSize: params.pageSize
   };
+}
+
+export async function setTestInvalid(id: number, invalid: boolean) {
+  await prisma.testSession.findUniqueOrThrow({ where: { id } });
+  return prisma.testSession.update({ where: { id }, data: { invalid } });
 }
 
 export async function testDetail(id: number) {

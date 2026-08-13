@@ -11,6 +11,7 @@ export const adminApi = {
   tests: (params: Record<string, unknown>) =>
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/admin/tests", { params }),
   testDetail: (id: number) => http.get<any>(`/admin/tests/${id}`),
+  setTestInvalid: (id: number, invalid: boolean) => http.put(`/admin/tests/${id}/invalid`, { invalid }),
   words: (params: Record<string, unknown>) =>
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/words", { params }),
   wordDetail: (id: number) => http.get<any>(`/words/${id}`),

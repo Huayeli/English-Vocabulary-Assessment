@@ -15,6 +15,10 @@ export interface Report {
   totalQuestions: number;
   correctCount: number;
   accuracy: number | null;
+  reliability: number | null;
+  suspicious: boolean;
+  invalid: boolean;
+  flags: string | null;
   finalLevel: string | null;
   estimatedVocabulary: number | null;
   cefr: string | null;

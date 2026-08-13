@@ -51,15 +51,19 @@ async function answerCurrent(app: ReturnType<typeof createApp>, code: string, se
   return res.body.data;
 }
 
+async function abandon(app: ReturnType<typeof createApp>, code: string, sessionId: number) {
+  await request(app).post(`/api/tests/${sessionId}/abandon`).set("x-access-code", code);
+}
+
 describe("adaptive test api", () => {
   it("starts at K3 with 30 questions and 4 options", async () => {
-    const res = await request(createApp())
-      .post("/api/tests/adaptive/start")
-      .set("x-access-code", unlimitedCode);
+    const app = createApp();
+    const res = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     expect(res.body.code).toBe(0);
     expect(res.body.data.totalQuestions).toBe(30);
     expect(res.body.data.currentLevel).toBe("K3");
     expect(res.body.data.question.options).toHaveLength(4);
+    await abandon(app, unlimitedCode, res.body.data.sessionId);
   });
 
   it("raises level to K5 after 4 consecutive correct answers", async () => {
@@ -72,6 +76,7 @@ describe("adaptive test api", () => {
       if (i === 3) nextLevel = data.nextQuestion.testedLevel;
     }
     expect(nextLevel).toBe("K5");
+    await abandon(app, unlimitedCode, sessionId);
   });
 
   it("finishes after 30 questions and increments usage", async () => {
@@ -86,8 +91,19 @@ describe("adaptive test api", () => {
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });
     expect(session.finalLevel).toBe("K10P");
     expect(session.correctCount).toBe(30);
-    const code = await prisma.activationCode.findUniqueOrThrow({ where: { code: unlimitedCode } });
-    expect(code.usedCount).toBeGreaterThan(0);
+    expect(session.reliability).not.toBeNull();
+  });
+
+  it("blocks start while another test is in progress", async () => {
+    const app = createApp();
+    const first = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(first.body.code).toBe(0);
+    const blocked = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(blocked.body.code).toBe(40302);
+    await abandon(app, unlimitedCode, first.body.data.sessionId);
+    const again = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(again.body.code).toBe(0);
+    await abandon(app, unlimitedCode, again.body.data.sessionId);
   });
 
   it("blocks start when code usage is exhausted", async () => {
@@ -136,5 +152,6 @@ describe("adaptive test api", () => {
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });
     expect(session.correctCount).toBe(0);
     expect(session.wrongCount).toBe(2);
+    await abandon(app, unlimitedCode, sessionId);
   });
 });

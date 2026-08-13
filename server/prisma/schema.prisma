@@ -115,6 +115,11 @@ model TestSession {
   finalLevel          Level?
   estimatedVocabulary Int?      @map("estimated_vocabulary")
   accuracy            Float?
+  reliability         Int?
+  suspicious          Boolean   @default(false)
+  invalid             Boolean   @default(false)
+  flags               String?
+  abandoned           Boolean   @default(false)
   startedAt           DateTime  @default(now()) @map("started_time")
   finishedAt          DateTime? @map("finished_time")
 

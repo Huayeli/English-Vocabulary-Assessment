@@ -41,6 +41,12 @@ async function startSession(
 ) {
   const code = req.code!;
   assertCanTest(code);
+  const active = await prisma.testSession.count({
+    where: { activationCodeId: code.id, finishedAt: null, abandoned: false }
+  });
+  if (active > 0) {
+    throw new ApiError(40302, "该激活码还有进行中的测试，请先完成或退出");
+  }
   const session = await createSession(code.id, type, targetLevel);
   const level: Level = targetLevel ?? "K3";
   const { item, question } = await issueQuestion(session.id, 1, targetLevel ?? "K3");
@@ -104,5 +110,7 @@ export async function detailHandler(req: CodeRequest, res: Response) {
 export async function abandonHandler(req: CodeRequest, res: Response) {
   const session = await prisma.testSession.findUnique({ where: { id: Number(req.params.sessionId) } });
   if (!session || session.activationCodeId !== req.code!.id) throw new ApiError(40401, "测试不存在");
+  if (session.finishedAt) throw new ApiError(40901, "测试已完成，无法放弃");
+  await prisma.testSession.update({ where: { id: session.id }, data: { abandoned: true } });
   res.json({ code: 0, message: "ok", data: null });
 }

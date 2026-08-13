@@ -19,6 +19,9 @@
           <th>题数</th>
           <th>正确率</th>
           <th>等级</th>
+          <th>用时</th>
+          <th>可信度</th>
+          <th>标记</th>
           <th>完成时间</th>
           <th>操作</th>
         </tr>
@@ -31,8 +34,18 @@
           <td>{{ t.totalQuestions }}</td>
           <td>{{ Math.round((t.accuracy ?? 0) * 100) }}%</td>
           <td>{{ t.finalLevel ?? "-" }}</td>
+          <td>{{ durationText(t.durationSec) }}</td>
+          <td :class="reliabilityClass(t)">{{ t.reliability ?? "-" }}</td>
+          <td>
+            <span v-if="t.invalid" class="bad">无效</span>
+            <span v-else-if="t.suspicious" class="mid">{{ t.flags }}</span>
+            <span v-else>-</span>
+          </td>
           <td>{{ formatTime(t.finishedAt) }}</td>
-          <td><button class="mini" @click="openDetail(t.id)">详情</button></td>
+          <td>
+            <button class="mini" @click="openDetail(t.id)">详情</button>
+            <button class="mini" @click="toggleInvalid(t)">{{ t.invalid ? "恢复" : "标无效" }}</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -98,6 +111,18 @@ function formatTime(v: string | null) {
   return v ? new Date(v).toLocaleString("zh-CN") : "-";
 }
 
+function durationText(sec: number | null) {
+  if (sec == null) return "-";
+  if (sec < 60) return `${sec}s`;
+  return `${Math.floor(sec / 60)}m${sec % 60}s`;
+}
+
+function reliabilityClass(t: any) {
+  if (t.invalid || (t.reliability !== null && t.reliability < 40)) return "bad";
+  if (t.reliability !== null && t.reliability < 60) return "mid";
+  return "";
+}
+
 function optionText(item: any, index: number) {
   const snapshot: string[] = JSON.parse(item.optionsSnapshot);
   return snapshot[index] ?? "-";
@@ -117,6 +142,11 @@ async function load(p = 1) {
 
 async function openDetail(id: number) {
   detail.value = await adminApi.testDetail(id);
+}
+
+async function toggleInvalid(t: any) {
+  await adminApi.setTestInvalid(t.id, !t.invalid);
+  await load(page.value);
 }
 
 onMounted(load);
@@ -198,5 +228,8 @@ select {
 }
 .bad {
   color: #dc2626;
+}
+.mid {
+  color: #b45309;
 }
 </style>

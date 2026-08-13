@@ -111,3 +111,9 @@ export async function deleteQuestionHandler(req: Request, res: Response) {
   await adminService.deleteQuestion(Number(req.params.id));
   res.json({ code: 0, message: "ok", data: null });
 }
+
+export async function setTestInvalidHandler(req: Request, res: Response) {
+  const { invalid } = req.body ?? {};
+  const data = await adminService.setTestInvalid(Number(req.params.id), Boolean(invalid));
+  res.json({ code: 0, message: "ok", data });
+}

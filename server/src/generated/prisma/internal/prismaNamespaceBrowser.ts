@@ -159,6 +159,11 @@ export const TestSessionScalarFieldEnum = {
   finalLevel: 'finalLevel',
   estimatedVocabulary: 'estimatedVocabulary',
   accuracy: 'accuracy',
+  reliability: 'reliability',
+  suspicious: 'suspicious',
+  invalid: 'invalid',
+  flags: 'flags',
+  abandoned: 'abandoned',
   startedAt: 'startedAt',
   finishedAt: 'finishedAt'
 } as const

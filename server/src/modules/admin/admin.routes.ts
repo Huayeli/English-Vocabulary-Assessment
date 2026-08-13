@@ -12,6 +12,7 @@ adminRouter.put("/codes/:id", ctrl.updateCodeHandler);
 adminRouter.get("/batches", ctrl.listBatchesHandler);
 adminRouter.get("/tests", ctrl.listTestsHandler);
 adminRouter.get("/tests/:id", ctrl.testDetailHandler);
+adminRouter.put("/tests/:id/invalid", ctrl.setTestInvalidHandler);
 adminRouter.get("/questions", ctrl.listQuestionsHandler);
 adminRouter.post("/questions", ctrl.createQuestionHandler);
 adminRouter.put("/questions/:id", ctrl.updateQuestionHandler);

@@ -34,6 +34,7 @@ export type TestSessionAvgAggregateOutputType = {
   wrongCount: number | null
   estimatedVocabulary: number | null
   accuracy: number | null
+  reliability: number | null
 }
 
 export type TestSessionSumAggregateOutputType = {
@@ -44,6 +45,7 @@ export type TestSessionSumAggregateOutputType = {
   wrongCount: number | null
   estimatedVocabulary: number | null
   accuracy: number | null
+  reliability: number | null
 }
 
 export type TestSessionMinAggregateOutputType = {
@@ -57,6 +59,11 @@ export type TestSessionMinAggregateOutputType = {
   finalLevel: $Enums.Level | null
   estimatedVocabulary: number | null
   accuracy: number | null
+  reliability: number | null
+  suspicious: boolean | null
+  invalid: boolean | null
+  flags: string | null
+  abandoned: boolean | null
   startedAt: Date | null
   finishedAt: Date | null
 }
@@ -72,6 +79,11 @@ export type TestSessionMaxAggregateOutputType = {
   finalLevel: $Enums.Level | null
   estimatedVocabulary: number | null
   accuracy: number | null
+  reliability: number | null
+  suspicious: boolean | null
+  invalid: boolean | null
+  flags: string | null
+  abandoned: boolean | null
   startedAt: Date | null
   finishedAt: Date | null
 }
@@ -87,6 +99,11 @@ export type TestSessionCountAggregateOutputType = {
   finalLevel: number
   estimatedVocabulary: number
   accuracy: number
+  reliability: number
+  suspicious: number
+  invalid: number
+  flags: number
+  abandoned: number
   startedAt: number
   finishedAt: number
   _all: number
@@ -101,6 +118,7 @@ export type TestSessionAvgAggregateInputType = {
   wrongCount?: true
   estimatedVocabulary?: true
   accuracy?: true
+  reliability?: true
 }
 
 export type TestSessionSumAggregateInputType = {
@@ -111,6 +129,7 @@ export type TestSessionSumAggregateInputType = {
   wrongCount?: true
   estimatedVocabulary?: true
   accuracy?: true
+  reliability?: true
 }
 
 export type TestSessionMinAggregateInputType = {
@@ -124,6 +143,11 @@ export type TestSessionMinAggregateInputType = {
   finalLevel?: true
   estimatedVocabulary?: true
   accuracy?: true
+  reliability?: true
+  suspicious?: true
+  invalid?: true
+  flags?: true
+  abandoned?: true
   startedAt?: true
   finishedAt?: true
 }
@@ -139,6 +163,11 @@ export type TestSessionMaxAggregateInputType = {
   finalLevel?: true
   estimatedVocabulary?: true
   accuracy?: true
+  reliability?: true
+  suspicious?: true
+  invalid?: true
+  flags?: true
+  abandoned?: true
   startedAt?: true
   finishedAt?: true
 }
@@ -154,6 +183,11 @@ export type TestSessionCountAggregateInputType = {
   finalLevel?: true
   estimatedVocabulary?: true
   accuracy?: true
+  reliability?: true
+  suspicious?: true
+  invalid?: true
+  flags?: true
+  abandoned?: true
   startedAt?: true
   finishedAt?: true
   _all?: true
@@ -256,6 +290,11 @@ export type TestSessionGroupByOutputType = {
   finalLevel: $Enums.Level | null
   estimatedVocabulary: number | null
   accuracy: number | null
+  reliability: number | null
+  suspicious: boolean
+  invalid: boolean
+  flags: string | null
+  abandoned: boolean
   startedAt: Date
   finishedAt: Date | null
   _count: TestSessionCountAggregateOutputType | null
@@ -294,6 +333,11 @@ export type TestSessionWhereInput = {
   finalLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   estimatedVocabulary?: Prisma.IntNullableFilter<"TestSession"> | number | null
   accuracy?: Prisma.FloatNullableFilter<"TestSession"> | number | null
+  reliability?: Prisma.IntNullableFilter<"TestSession"> | number | null
+  suspicious?: Prisma.BoolFilter<"TestSession"> | boolean
+  invalid?: Prisma.BoolFilter<"TestSession"> | boolean
+  flags?: Prisma.StringNullableFilter<"TestSession"> | string | null
+  abandoned?: Prisma.BoolFilter<"TestSession"> | boolean
   startedAt?: Prisma.DateTimeFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableFilter<"TestSession"> | Date | string | null
   code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
@@ -311,6 +355,11 @@ export type TestSessionOrderByWithRelationInput = {
   finalLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrderInput | Prisma.SortOrder
   accuracy?: Prisma.SortOrderInput | Prisma.SortOrder
+  reliability?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspicious?: Prisma.SortOrder
+  invalid?: Prisma.SortOrder
+  flags?: Prisma.SortOrderInput | Prisma.SortOrder
+  abandoned?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   code?: Prisma.ActivationCodeOrderByWithRelationInput
@@ -331,6 +380,11 @@ export type TestSessionWhereUniqueInput = Prisma.AtLeast<{
   finalLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   estimatedVocabulary?: Prisma.IntNullableFilter<"TestSession"> | number | null
   accuracy?: Prisma.FloatNullableFilter<"TestSession"> | number | null
+  reliability?: Prisma.IntNullableFilter<"TestSession"> | number | null
+  suspicious?: Prisma.BoolFilter<"TestSession"> | boolean
+  invalid?: Prisma.BoolFilter<"TestSession"> | boolean
+  flags?: Prisma.StringNullableFilter<"TestSession"> | string | null
+  abandoned?: Prisma.BoolFilter<"TestSession"> | boolean
   startedAt?: Prisma.DateTimeFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableFilter<"TestSession"> | Date | string | null
   code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
@@ -348,6 +402,11 @@ export type TestSessionOrderByWithAggregationInput = {
   finalLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrderInput | Prisma.SortOrder
   accuracy?: Prisma.SortOrderInput | Prisma.SortOrder
+  reliability?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspicious?: Prisma.SortOrder
+  invalid?: Prisma.SortOrder
+  flags?: Prisma.SortOrderInput | Prisma.SortOrder
+  abandoned?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TestSessionCountOrderByAggregateInput
@@ -371,6 +430,11 @@ export type TestSessionScalarWhereWithAggregatesInput = {
   finalLevel?: Prisma.EnumLevelNullableWithAggregatesFilter<"TestSession"> | $Enums.Level | null
   estimatedVocabulary?: Prisma.IntNullableWithAggregatesFilter<"TestSession"> | number | null
   accuracy?: Prisma.FloatNullableWithAggregatesFilter<"TestSession"> | number | null
+  reliability?: Prisma.IntNullableWithAggregatesFilter<"TestSession"> | number | null
+  suspicious?: Prisma.BoolWithAggregatesFilter<"TestSession"> | boolean
+  invalid?: Prisma.BoolWithAggregatesFilter<"TestSession"> | boolean
+  flags?: Prisma.StringNullableWithAggregatesFilter<"TestSession"> | string | null
+  abandoned?: Prisma.BoolWithAggregatesFilter<"TestSession"> | boolean
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"TestSession"> | Date | string | null
 }
@@ -384,6 +448,11 @@ export type TestSessionCreateInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
   code: Prisma.ActivationCodeCreateNestedOneWithoutTestSessionsInput
@@ -401,6 +470,11 @@ export type TestSessionUncheckedCreateInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
   items?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutSessionInput
@@ -415,6 +489,11 @@ export type TestSessionUpdateInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   code?: Prisma.ActivationCodeUpdateOneRequiredWithoutTestSessionsNestedInput
@@ -432,6 +511,11 @@ export type TestSessionUncheckedUpdateInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.TestSessionItemUncheckedUpdateManyWithoutSessionNestedInput
@@ -448,6 +532,11 @@ export type TestSessionCreateManyInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
 }
@@ -461,6 +550,11 @@ export type TestSessionUpdateManyMutationInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -476,6 +570,11 @@ export type TestSessionUncheckedUpdateManyInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -501,6 +600,11 @@ export type TestSessionCountOrderByAggregateInput = {
   finalLevel?: Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrder
   accuracy?: Prisma.SortOrder
+  reliability?: Prisma.SortOrder
+  suspicious?: Prisma.SortOrder
+  invalid?: Prisma.SortOrder
+  flags?: Prisma.SortOrder
+  abandoned?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrder
 }
@@ -513,6 +617,7 @@ export type TestSessionAvgOrderByAggregateInput = {
   wrongCount?: Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrder
   accuracy?: Prisma.SortOrder
+  reliability?: Prisma.SortOrder
 }
 
 export type TestSessionMaxOrderByAggregateInput = {
@@ -526,6 +631,11 @@ export type TestSessionMaxOrderByAggregateInput = {
   finalLevel?: Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrder
   accuracy?: Prisma.SortOrder
+  reliability?: Prisma.SortOrder
+  suspicious?: Prisma.SortOrder
+  invalid?: Prisma.SortOrder
+  flags?: Prisma.SortOrder
+  abandoned?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrder
 }
@@ -541,6 +651,11 @@ export type TestSessionMinOrderByAggregateInput = {
   finalLevel?: Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrder
   accuracy?: Prisma.SortOrder
+  reliability?: Prisma.SortOrder
+  suspicious?: Prisma.SortOrder
+  invalid?: Prisma.SortOrder
+  flags?: Prisma.SortOrder
+  abandoned?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrder
 }
@@ -553,6 +668,7 @@ export type TestSessionSumOrderByAggregateInput = {
   wrongCount?: Prisma.SortOrder
   estimatedVocabulary?: Prisma.SortOrder
   accuracy?: Prisma.SortOrder
+  reliability?: Prisma.SortOrder
 }
 
 export type TestSessionScalarRelationFilter = {
@@ -637,6 +753,11 @@ export type TestSessionCreateWithoutCodeInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
   items?: Prisma.TestSessionItemCreateNestedManyWithoutSessionInput
@@ -652,6 +773,11 @@ export type TestSessionUncheckedCreateWithoutCodeInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
   items?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutSessionInput
@@ -696,6 +822,11 @@ export type TestSessionScalarWhereInput = {
   finalLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   estimatedVocabulary?: Prisma.IntNullableFilter<"TestSession"> | number | null
   accuracy?: Prisma.FloatNullableFilter<"TestSession"> | number | null
+  reliability?: Prisma.IntNullableFilter<"TestSession"> | number | null
+  suspicious?: Prisma.BoolFilter<"TestSession"> | boolean
+  invalid?: Prisma.BoolFilter<"TestSession"> | boolean
+  flags?: Prisma.StringNullableFilter<"TestSession"> | string | null
+  abandoned?: Prisma.BoolFilter<"TestSession"> | boolean
   startedAt?: Prisma.DateTimeFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableFilter<"TestSession"> | Date | string | null
 }
@@ -709,6 +840,11 @@ export type TestSessionCreateWithoutItemsInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
   code: Prisma.ActivationCodeCreateNestedOneWithoutTestSessionsInput
@@ -725,6 +861,11 @@ export type TestSessionUncheckedCreateWithoutItemsInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
 }
@@ -754,6 +895,11 @@ export type TestSessionUpdateWithoutItemsInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   code?: Prisma.ActivationCodeUpdateOneRequiredWithoutTestSessionsNestedInput
@@ -770,6 +916,11 @@ export type TestSessionUncheckedUpdateWithoutItemsInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -784,6 +935,11 @@ export type TestSessionCreateManyCodeInput = {
   finalLevel?: $Enums.Level | null
   estimatedVocabulary?: number | null
   accuracy?: number | null
+  reliability?: number | null
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: string | null
+  abandoned?: boolean
   startedAt?: Date | string
   finishedAt?: Date | string | null
 }
@@ -797,6 +953,11 @@ export type TestSessionUpdateWithoutCodeInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.TestSessionItemUpdateManyWithoutSessionNestedInput
@@ -812,6 +973,11 @@ export type TestSessionUncheckedUpdateWithoutCodeInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.TestSessionItemUncheckedUpdateManyWithoutSessionNestedInput
@@ -827,6 +993,11 @@ export type TestSessionUncheckedUpdateManyWithoutCodeInput = {
   finalLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   estimatedVocabulary?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  reliability?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  suspicious?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  invalid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  flags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abandoned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -873,6 +1044,11 @@ export type TestSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   finalLevel?: boolean
   estimatedVocabulary?: boolean
   accuracy?: boolean
+  reliability?: boolean
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: boolean
+  abandoned?: boolean
   startedAt?: boolean
   finishedAt?: boolean
   code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
@@ -891,6 +1067,11 @@ export type TestSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   finalLevel?: boolean
   estimatedVocabulary?: boolean
   accuracy?: boolean
+  reliability?: boolean
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: boolean
+  abandoned?: boolean
   startedAt?: boolean
   finishedAt?: boolean
   code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
@@ -907,6 +1088,11 @@ export type TestSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   finalLevel?: boolean
   estimatedVocabulary?: boolean
   accuracy?: boolean
+  reliability?: boolean
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: boolean
+  abandoned?: boolean
   startedAt?: boolean
   finishedAt?: boolean
   code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
@@ -923,11 +1109,16 @@ export type TestSessionSelectScalar = {
   finalLevel?: boolean
   estimatedVocabulary?: boolean
   accuracy?: boolean
+  reliability?: boolean
+  suspicious?: boolean
+  invalid?: boolean
+  flags?: boolean
+  abandoned?: boolean
   startedAt?: boolean
   finishedAt?: boolean
 }
 
-export type TestSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "activationCodeId" | "type" | "targetLevel" | "totalQuestions" | "correctCount" | "wrongCount" | "finalLevel" | "estimatedVocabulary" | "accuracy" | "startedAt" | "finishedAt", ExtArgs["result"]["testSession"]>
+export type TestSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "activationCodeId" | "type" | "targetLevel" | "totalQuestions" | "correctCount" | "wrongCount" | "finalLevel" | "estimatedVocabulary" | "accuracy" | "reliability" | "suspicious" | "invalid" | "flags" | "abandoned" | "startedAt" | "finishedAt", ExtArgs["result"]["testSession"]>
 export type TestSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   items?: boolean | Prisma.TestSession$itemsArgs<ExtArgs>
@@ -957,6 +1148,11 @@ export type $TestSessionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     finalLevel: $Enums.Level | null
     estimatedVocabulary: number | null
     accuracy: number | null
+    reliability: number | null
+    suspicious: boolean
+    invalid: boolean
+    flags: string | null
+    abandoned: boolean
     startedAt: Date
     finishedAt: Date | null
   }, ExtArgs["result"]["testSession"]>
@@ -1394,6 +1590,11 @@ export interface TestSessionFieldRefs {
   readonly finalLevel: Prisma.FieldRef<"TestSession", 'Level'>
   readonly estimatedVocabulary: Prisma.FieldRef<"TestSession", 'Int'>
   readonly accuracy: Prisma.FieldRef<"TestSession", 'Float'>
+  readonly reliability: Prisma.FieldRef<"TestSession", 'Int'>
+  readonly suspicious: Prisma.FieldRef<"TestSession", 'Boolean'>
+  readonly invalid: Prisma.FieldRef<"TestSession", 'Boolean'>
+  readonly flags: Prisma.FieldRef<"TestSession", 'String'>
+  readonly abandoned: Prisma.FieldRef<"TestSession", 'Boolean'>
   readonly startedAt: Prisma.FieldRef<"TestSession", 'DateTime'>
   readonly finishedAt: Prisma.FieldRef<"TestSession", 'DateTime'>
 }
