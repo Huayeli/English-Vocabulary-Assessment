@@ -33,15 +33,6 @@
       </div>
       <p v-else class="empty">暂无数据</p>
 
-      <h2>错词摘要</h2>
-      <div v-if="report.wrongWords.length" class="wrong">
-        <div v-for="w in report.wrongWords" :key="w.wordId" class="wrong-item">
-          <b>{{ w.headword }}</b>
-          <span>{{ w.correctMeaning }}</span>
-        </div>
-      </div>
-      <p v-else class="empty">全部答对，没有错词 🎉</p>
-
       <div class="actions">
         <router-link class="btn" to="/">返回测试中心</router-link>
       </div>
@@ -71,8 +62,7 @@ const error = ref("");
 const typeLabel = computed(() => {
   const map: Record<string, string> = {
     ADAPTIVE: "自适应测试",
-    VERIFICATION: "等级验证",
-    WRONG_WORD: "错词再测"
+    VERIFICATION: "等级验证"
   };
   return map[report.value?.type ?? ""] ?? report.value?.type ?? "";
 });

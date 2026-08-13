@@ -92,7 +92,6 @@ describe("report", () => {
     expect(report.finalLevel).toBe(Level.K3);
     expect(report.estimatedVocabulary).toBe(3000);
     expect(report.cefr).toBe("B1");
-    expect(report.wrongWords).toHaveLength(1);
   });
 
   it("estimates vocabulary for fixed levels", () => {

@@ -20,7 +20,6 @@ export interface Report {
   cefr: string | null;
   passed: boolean | null;
   levelMastery: LevelMastery[];
-  wrongWords: { wordId: number; headword: string; correctMeaning: string }[];
 }
 
 export const reportApi = {

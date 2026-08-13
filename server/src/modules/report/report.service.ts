@@ -52,17 +52,6 @@ export async function buildReport(sessionId: number, codeId: number, isAdmin: bo
     rate: Number((v.correct / v.answered).toFixed(2))
   }));
 
-  const wrongWords = session.items
-    .filter((it) => !it.isCorrect)
-    .map((it) => {
-      const snapshot: string[] = JSON.parse(it.optionsSnapshot);
-      return {
-        wordId: it.word.id,
-        headword: it.word.headword,
-        correctMeaning: snapshot[it.correctOptionIndex]
-      };
-    });
-
   return {
     sessionId: session.id,
     accessCode: session.code.code,
@@ -76,7 +65,6 @@ export async function buildReport(sessionId: number, codeId: number, isAdmin: bo
     estimatedVocabulary: session.estimatedVocabulary,
     cefr: session.finalLevel ? cefrOf(session.finalLevel) : null,
     passed: session.type === "VERIFICATION" ? (session.accuracy ?? 0) >= 0.8 : null,
-    levelMastery,
-    wrongWords
+    levelMastery
   };
 }

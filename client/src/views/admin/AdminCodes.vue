@@ -177,7 +177,7 @@ function formatTime(v: string | null) {
 }
 
 function typeLabel(t: string) {
-  const map: Record<string, string> = { ADAPTIVE: "自适应", VERIFICATION: "等级验证", WRONG_WORD: "错词再测" };
+  const map: Record<string, string> = { ADAPTIVE: "自适应", VERIFICATION: "等级验证" };
   return map[t] ?? t;
 }
 

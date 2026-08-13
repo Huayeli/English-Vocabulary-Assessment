@@ -36,7 +36,7 @@ export async function quotaHandler(req: CodeRequest, res: Response) {
 async function startSession(
   req: CodeRequest,
   res: Response,
-  type: "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD",
+  type: "ADAPTIVE" | "VERIFICATION",
   targetLevel?: Level
 ) {
   const code = req.code!;

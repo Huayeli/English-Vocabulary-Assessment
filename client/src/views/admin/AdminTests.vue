@@ -7,7 +7,6 @@
         <option value="">全部类型</option>
         <option value="ADAPTIVE">自适应</option>
         <option value="VERIFICATION">等级验证</option>
-        <option value="WRONG_WORD">错词再测</option>
       </select>
       <button class="btn" @click="load(1)">查询</button>
     </div>
@@ -91,7 +90,7 @@ const total = ref(0);
 const detail = ref<any>(null);
 
 function typeLabel(t: string) {
-  const map: Record<string, string> = { ADAPTIVE: "自适应", VERIFICATION: "等级验证", WRONG_WORD: "错词再测" };
+  const map: Record<string, string> = { ADAPTIVE: "自适应", VERIFICATION: "等级验证" };
   return map[t] ?? t;
 }
 

@@ -5,7 +5,7 @@ import { getOrCreateQuestion, toClientQuestion } from "../question/question.serv
 import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
 import { estimateVocabulary } from "../report/report.service.js";
 
-export type SessionType = "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD";
+export type SessionType = "ADAPTIVE" | "VERIFICATION";
 
 export async function createSession(
   activationCodeId: number,
