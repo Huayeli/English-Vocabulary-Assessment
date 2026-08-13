@@ -31,7 +31,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { onBeforeUnmount } from "vue";
 import { useTestStore } from "../stores/test";
 import { useUiStore } from "../stores/ui";
 import { testApi } from "../api/test";
@@ -94,6 +95,18 @@ async function doExit() {
   confirmExit.value = false;
   router.replace("/");
 }
+
+async function abandonQuietly() {
+  if (!test.sessionId || test.finished) return;
+  try {
+    await testApi.abandon(test.sessionId);
+  } catch {
+    // 静默退出：失败时由后端陈旧会话机制兜底
+  }
+}
+
+onBeforeRouteLeave(abandonQuietly);
+onBeforeUnmount(abandonQuietly);
 </script>
 
 <style scoped>

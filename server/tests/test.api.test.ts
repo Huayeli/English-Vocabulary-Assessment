@@ -106,6 +106,23 @@ describe("adaptive test api", () => {
     await abandon(app, unlimitedCode, again.body.data.sessionId);
   });
 
+  it("auto-abandons stale sessions older than 30 minutes", async () => {
+    const app = createApp();
+    const stale = await prisma.testSession.create({
+      data: {
+        activationCodeId: unlimitedCodeId,
+        type: "ADAPTIVE",
+        totalQuestions: 30,
+        startedAt: new Date(Date.now() - 40 * 60 * 1000)
+      }
+    });
+    const res = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
+    expect(res.body.code).toBe(0);
+    await abandon(app, unlimitedCode, res.body.data.sessionId);
+    const updated = await prisma.testSession.findUniqueOrThrow({ where: { id: stale.id } });
+    expect(updated.abandoned).toBe(true);
+  });
+
   it("blocks start when code usage is exhausted", async () => {
     const app = createApp();
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", limitedCode);
