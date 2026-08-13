@@ -108,6 +108,17 @@ describe("admin api", () => {
       .send({ status: "DISABLED", maxTests: 2 });
     expect(update.body.code).toBe(0);
 
+    // 批量删除 2 个，剩余 3 个
+    const two = list.body.data.list.slice(0, 2).map((c: any) => c.id);
+    const del = await request(app)
+      .post("/api/admin/codes/batch")
+      .set("x-admin-key", ADMIN_KEY)
+      .send({ ids: two, action: "delete" });
+    expect(del.body.code).toBe(0);
+    expect(del.body.data.deleted).toBe(2);
+    const after = await adminGet(app, `/api/admin/codes?batch=${encodeURIComponent(GEN_BATCH)}&page=1&pageSize=20`);
+    expect(after.body.data.total).toBe(3);
+
     const batches = await adminGet(app, "/api/admin/batches");
     expect(batches.body.data.some((b: any) => b.name === GEN_BATCH)).toBe(true);
   });

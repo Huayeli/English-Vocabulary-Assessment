@@ -6,7 +6,6 @@ import { accessRouter } from "./modules/access/access.routes.js";
 import { meaningRouter, vocabularyRouter } from "./modules/vocabulary/vocabulary.routes.js";
 import { testRouter } from "./modules/test/test.routes.js";
 import { reportRouter } from "./modules/report/report.routes.js";
-import { wrongWordRouter } from "./modules/wrong-word/wrong-word.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 
 export function createApp() {
@@ -20,7 +19,6 @@ export function createApp() {
   app.use("/api/access", accessRouter);
   app.use("/api/tests", testRouter);
   app.use("/api/reports", reportRouter);
-  app.use("/api/wrong-words", wrongWordRouter);
   app.use("/api/words", vocabularyRouter);
   app.use("/api/meanings", meaningRouter);
   app.use("/api/admin", adminRouter);

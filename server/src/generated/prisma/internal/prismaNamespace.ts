@@ -404,8 +404,7 @@ export const ModelName = {
   Question: 'Question',
   QuestionOption: 'QuestionOption',
   TestSession: 'TestSession',
-  TestSessionItem: 'TestSessionItem',
-  WrongWord: 'WrongWord'
+  TestSessionItem: 'TestSessionItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "batch" | "activationCode" | "word" | "wordMeaning" | "question" | "questionOption" | "testSession" | "testSessionItem" | "wrongWord"
+    modelProps: "batch" | "activationCode" | "word" | "wordMeaning" | "question" | "questionOption" | "testSession" | "testSessionItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1017,80 +1016,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    WrongWord: {
-      payload: Prisma.$WrongWordPayload<ExtArgs>
-      fields: Prisma.WrongWordFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.WrongWordFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.WrongWordFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        findFirst: {
-          args: Prisma.WrongWordFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.WrongWordFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        findMany: {
-          args: Prisma.WrongWordFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>[]
-        }
-        create: {
-          args: Prisma.WrongWordCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        createMany: {
-          args: Prisma.WrongWordCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.WrongWordCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>[]
-        }
-        delete: {
-          args: Prisma.WrongWordDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        update: {
-          args: Prisma.WrongWordUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        deleteMany: {
-          args: Prisma.WrongWordDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.WrongWordUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.WrongWordUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>[]
-        }
-        upsert: {
-          args: Prisma.WrongWordUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WrongWordPayload>
-        }
-        aggregate: {
-          args: Prisma.WrongWordAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateWrongWord>
-        }
-        groupBy: {
-          args: Prisma.WrongWordGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WrongWordGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.WrongWordCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WrongWordCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -1234,19 +1159,6 @@ export const TestSessionItemScalarFieldEnum = {
 } as const
 
 export type TestSessionItemScalarFieldEnum = (typeof TestSessionItemScalarFieldEnum)[keyof typeof TestSessionItemScalarFieldEnum]
-
-
-export const WrongWordScalarFieldEnum = {
-  id: 'id',
-  activationCodeId: 'activationCodeId',
-  wordId: 'wordId',
-  correctMeaningText: 'correctMeaningText',
-  errorCount: 'errorCount',
-  lastErrorAt: 'lastErrorAt',
-  createdAt: 'createdAt'
-} as const
-
-export type WrongWordScalarFieldEnum = (typeof WrongWordScalarFieldEnum)[keyof typeof WrongWordScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1471,7 +1383,6 @@ export type GlobalOmitConfig = {
   questionOption?: Prisma.QuestionOptionOmit
   testSession?: Prisma.TestSessionOmit
   testSessionItem?: Prisma.TestSessionItemOmit
-  wrongWord?: Prisma.WrongWordOmit
 }
 
 /* Types for Logging */

@@ -45,6 +45,15 @@ export async function updateCodeHandler(req: Request, res: Response) {
   res.json({ code: 0, message: "ok", data });
 }
 
+export async function batchCodesHandler(req: Request, res: Response) {
+  const { ids, action, status, maxTests } = req.body ?? {};
+  const data = await adminService.batchCodes(ids, action, {
+    status,
+    maxTests: maxTests === "" || maxTests == null ? null : Number(maxTests)
+  });
+  res.json({ code: 0, message: "ok", data });
+}
+
 export async function listBatchesHandler(_req: Request, res: Response) {
   res.json({ code: 0, message: "ok", data: await adminService.listBatches() });
 }

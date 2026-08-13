@@ -2,17 +2,18 @@
   <div class="layout">
     <aside class="side">
       <h3>词海拾贝 · 管理台</h3>
-      <router-link to="/admin/dashboard">仪表盘</router-link>
+      <router-link to="/admin/dashboard">全局统计</router-link>
       <router-link to="/admin/bank">题库管理</router-link>
       <router-link to="/admin/tests">测试管理</router-link>
       <router-link to="/admin/codes">激活码管理</router-link>
-      <div class="spacer"></div>
-      <router-link class="exit" to="/">返回前台</router-link>
-      <button class="exit" @click="logout">退出管理</button>
     </aside>
     <main class="content">
       <router-view />
     </main>
+    <div class="bottom-left">
+      <router-link to="/">返回前台</router-link>
+      <button @click="logout">退出管理</button>
+    </div>
   </div>
 </template>
 
@@ -64,15 +65,27 @@ function logout() {
   color: #fff;
   border-left: 3px solid #3b82f6;
 }
-.spacer {
-  flex: 1;
-}
-.side .exit {
-  color: #94a3b8;
-  font-size: 13px;
-}
 .content {
   flex: 1;
   padding: 28px;
+}
+.bottom-left {
+  position: fixed;
+  left: 18px;
+  bottom: 16px;
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+.bottom-left a,
+.bottom-left button {
+  padding: 8px 14px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
 }
 </style>

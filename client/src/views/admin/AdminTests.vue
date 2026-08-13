@@ -2,14 +2,14 @@
   <div>
     <h2>测试管理</h2>
     <div class="toolbar">
-      <input v-model="keyword" placeholder="激活码" @keyup.enter="load" />
+      <input v-model="keyword" placeholder="激活码" @keyup.enter="load(1)" />
       <select v-model="type">
         <option value="">全部类型</option>
         <option value="ADAPTIVE">自适应</option>
         <option value="VERIFICATION">等级验证</option>
         <option value="WRONG_WORD">错词再测</option>
       </select>
-      <button class="btn" @click="load">查询</button>
+      <button class="btn" @click="load(1)">查询</button>
     </div>
     <table>
       <thead>
@@ -37,6 +37,7 @@
         </tr>
       </tbody>
     </table>
+    <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="detail" class="modal">
       <div class="modal-card wide">
@@ -79,10 +80,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { adminApi } from "../../api/admin";
+import Pagination from "../../components/Pagination.vue";
 
 const keyword = ref("");
 const type = ref("");
 const rows = ref<any[]>([]);
+const page = ref(1);
+const pageSize = 20;
+const total = ref(0);
 const detail = ref<any>(null);
 
 function typeLabel(t: string) {
@@ -99,14 +104,16 @@ function optionText(item: any, index: number) {
   return snapshot[index] ?? "-";
 }
 
-async function load() {
+async function load(p = 1) {
+  page.value = p;
   const res = await adminApi.tests({
     keyword: keyword.value || undefined,
     type: type.value || undefined,
-    page: 1,
-    pageSize: 50
+    page: p,
+    pageSize
   });
   rows.value = res.list;
+  total.value = res.total;
 }
 
 async function openDetail(id: number) {

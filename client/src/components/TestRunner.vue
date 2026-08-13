@@ -10,14 +10,6 @@
       <QuestionCard :question="current.q" :selected="current.selectedIndex" @select="onSelect" />
       <div class="nav-row">
         <button class="nav-btn" :disabled="test.seq === 1 || submitting" @click="test.prev()">上一题</button>
-        <button
-          v-if="mode === 'wrong' && answeredCount > 0 && !(isLast && current.selectedIndex !== null)"
-          class="nav-btn result"
-          :disabled="submitting"
-          @click="viewResult"
-        >
-          查看结果
-        </button>
         <button class="nav-btn primary" :disabled="current.selectedIndex === null || submitting" @click="goNext">
           {{ rightLabel }}
         </button>
@@ -45,7 +37,7 @@ import { testApi } from "../api/test";
 import QuestionCard from "./QuestionCard.vue";
 import TestProgress from "./TestProgress.vue";
 
-const props = defineProps<{ mode: "adaptive" | "verification" | "wrong" }>();
+const props = defineProps<{ mode: "adaptive" | "verification" }>();
 
 const router = useRouter();
 const test = useTestStore();
@@ -56,11 +48,8 @@ const confirmExit = ref(false);
 const current = computed(() => test.questions[test.seq - 1]);
 const isLast = computed(() => test.seq === test.questions.length);
 const isReanswer = computed(() => current.value?.selectedIndex !== null);
-const answeredCount = computed(() => test.questions.filter((q) => q.selectedIndex !== null).length);
 const rightLabel = computed(() => {
-  if (current.value?.selectedIndex !== null && isLast.value) {
-    return props.mode === "wrong" ? "查看结果" : "提交完成";
-  }
+  if (current.value?.selectedIndex !== null && isLast.value) return "提交完成";
   return "下一题";
 });
 
@@ -92,18 +81,6 @@ function goNext() {
   test.next();
 }
 
-async function viewResult() {
-  if (!test.sessionId || submitting.value) return;
-  submitting.value = true;
-  try {
-    const res = await testApi.finishEarly(test.sessionId);
-    router.push(`/test/result/${(res as any).reportId ?? test.sessionId}`);
-  } catch (e) {
-    ui.error((e as Error).message ?? "查看结果失败");
-    submitting.value = false;
-  }
-}
-
 async function doExit() {
   if (!test.sessionId) return;
   try {
@@ -113,7 +90,7 @@ async function doExit() {
   }
   test.reset();
   confirmExit.value = false;
-  router.replace(props.mode === "wrong" ? "/wrong-words" : "/");
+  router.replace("/");
 }
 </script>
 
@@ -162,10 +139,6 @@ async function doExit() {
   background: #409eff;
   border-color: #409eff;
   color: #fff;
-}
-.nav-btn.result {
-  border-color: #10b981;
-  color: #059669;
 }
 .nav-btn:disabled {
   opacity: 0.5;

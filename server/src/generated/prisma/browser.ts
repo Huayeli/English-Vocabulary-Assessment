@@ -57,8 +57,3 @@ export type TestSession = Prisma.TestSessionModel
  * 
  */
 export type TestSessionItem = Prisma.TestSessionItemModel
-/**
- * Model WrongWord
- * 
- */
-export type WrongWord = Prisma.WrongWordModel

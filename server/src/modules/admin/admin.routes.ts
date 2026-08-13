@@ -7,6 +7,7 @@ adminRouter.use(requireAdminKey);
 adminRouter.get("/dashboard", ctrl.dashboardHandler);
 adminRouter.get("/codes", ctrl.listCodesHandler);
 adminRouter.post("/codes/generate", ctrl.generateCodesHandler);
+adminRouter.post("/codes/batch", ctrl.batchCodesHandler);
 adminRouter.put("/codes/:id", ctrl.updateCodeHandler);
 adminRouter.get("/batches", ctrl.listBatchesHandler);
 adminRouter.get("/tests", ctrl.listTestsHandler);

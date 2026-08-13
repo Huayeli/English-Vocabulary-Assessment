@@ -37,7 +37,6 @@ model ActivationCode {
 
   batch        Batch             @relation(fields: [batchId], references: [id])
   testSessions TestSession[]
-  wrongWords   WrongWord[]
 
   @@index([batchId])
   @@index([status])
@@ -56,8 +55,6 @@ model Word {
   meanings   WordMeaning[]
   questions  Question[]
   testItems  TestSessionItem[]
-  wrongWords WrongWord[]
-
   @@index([level])
 }
 
@@ -145,20 +142,4 @@ model TestSessionItem {
   word    Word        @relation(fields: [wordId], references: [id])
 
   @@index([sessionId])
-}
-
-model WrongWord {
-  id                 Int      @id @default(autoincrement())
-  activationCodeId   Int      @map("activation_code_id")
-  wordId             Int      @map("word_id")
-  correctMeaningText String   @map("correct_meaning_text")
-  errorCount         Int      @default(1)
-  lastErrorAt        DateTime @default(now()) @map("last_error_time")
-  createdAt          DateTime @default(now()) @map("created_time")
-
-  code ActivationCode @relation(fields: [activationCodeId], references: [id], onDelete: Cascade)
-  word Word           @relation(fields: [wordId], references: [id], onDelete: Cascade)
-
-  @@unique([activationCodeId, wordId])
-  @@index([activationCodeId])
 }

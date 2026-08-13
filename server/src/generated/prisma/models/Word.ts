@@ -243,7 +243,6 @@ export type WordWhereInput = {
   meanings?: Prisma.WordMeaningListRelationFilter
   questions?: Prisma.QuestionListRelationFilter
   testItems?: Prisma.TestSessionItemListRelationFilter
-  wrongWords?: Prisma.WrongWordListRelationFilter
 }
 
 export type WordOrderByWithRelationInput = {
@@ -258,7 +257,6 @@ export type WordOrderByWithRelationInput = {
   meanings?: Prisma.WordMeaningOrderByRelationAggregateInput
   questions?: Prisma.QuestionOrderByRelationAggregateInput
   testItems?: Prisma.TestSessionItemOrderByRelationAggregateInput
-  wrongWords?: Prisma.WrongWordOrderByRelationAggregateInput
 }
 
 export type WordWhereUniqueInput = Prisma.AtLeast<{
@@ -276,7 +274,6 @@ export type WordWhereUniqueInput = Prisma.AtLeast<{
   meanings?: Prisma.WordMeaningListRelationFilter
   questions?: Prisma.QuestionListRelationFilter
   testItems?: Prisma.TestSessionItemListRelationFilter
-  wrongWords?: Prisma.WrongWordListRelationFilter
 }, "id" | "headword">
 
 export type WordOrderByWithAggregationInput = {
@@ -320,7 +317,6 @@ export type WordCreateInput = {
   meanings?: Prisma.WordMeaningCreateNestedManyWithoutWordInput
   questions?: Prisma.QuestionCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutWordInput
 }
 
 export type WordUncheckedCreateInput = {
@@ -335,7 +331,6 @@ export type WordUncheckedCreateInput = {
   meanings?: Prisma.WordMeaningUncheckedCreateNestedManyWithoutWordInput
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutWordInput
 }
 
 export type WordUpdateInput = {
@@ -349,7 +344,6 @@ export type WordUpdateInput = {
   meanings?: Prisma.WordMeaningUpdateManyWithoutWordNestedInput
   questions?: Prisma.QuestionUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutWordNestedInput
 }
 
 export type WordUncheckedUpdateInput = {
@@ -364,7 +358,6 @@ export type WordUncheckedUpdateInput = {
   meanings?: Prisma.WordMeaningUncheckedUpdateManyWithoutWordNestedInput
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUncheckedUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutWordNestedInput
 }
 
 export type WordCreateManyInput = {
@@ -491,20 +484,6 @@ export type WordUpdateOneRequiredWithoutTestItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WordUpdateToOneWithWhereWithoutTestItemsInput, Prisma.WordUpdateWithoutTestItemsInput>, Prisma.WordUncheckedUpdateWithoutTestItemsInput>
 }
 
-export type WordCreateNestedOneWithoutWrongWordsInput = {
-  create?: Prisma.XOR<Prisma.WordCreateWithoutWrongWordsInput, Prisma.WordUncheckedCreateWithoutWrongWordsInput>
-  connectOrCreate?: Prisma.WordCreateOrConnectWithoutWrongWordsInput
-  connect?: Prisma.WordWhereUniqueInput
-}
-
-export type WordUpdateOneRequiredWithoutWrongWordsNestedInput = {
-  create?: Prisma.XOR<Prisma.WordCreateWithoutWrongWordsInput, Prisma.WordUncheckedCreateWithoutWrongWordsInput>
-  connectOrCreate?: Prisma.WordCreateOrConnectWithoutWrongWordsInput
-  upsert?: Prisma.WordUpsertWithoutWrongWordsInput
-  connect?: Prisma.WordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.WordUpdateToOneWithWhereWithoutWrongWordsInput, Prisma.WordUpdateWithoutWrongWordsInput>, Prisma.WordUncheckedUpdateWithoutWrongWordsInput>
-}
-
 export type WordCreateWithoutMeaningsInput = {
   headword: string
   level: $Enums.Level
@@ -515,7 +494,6 @@ export type WordCreateWithoutMeaningsInput = {
   updatedAt?: Date | string
   questions?: Prisma.QuestionCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutWordInput
 }
 
 export type WordUncheckedCreateWithoutMeaningsInput = {
@@ -529,7 +507,6 @@ export type WordUncheckedCreateWithoutMeaningsInput = {
   updatedAt?: Date | string
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutWordInput
 }
 
 export type WordCreateOrConnectWithoutMeaningsInput = {
@@ -558,7 +535,6 @@ export type WordUpdateWithoutMeaningsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutWordNestedInput
 }
 
 export type WordUncheckedUpdateWithoutMeaningsInput = {
@@ -572,7 +548,6 @@ export type WordUncheckedUpdateWithoutMeaningsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUncheckedUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutWordNestedInput
 }
 
 export type WordCreateWithoutQuestionsInput = {
@@ -585,7 +560,6 @@ export type WordCreateWithoutQuestionsInput = {
   updatedAt?: Date | string
   meanings?: Prisma.WordMeaningCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutWordInput
 }
 
 export type WordUncheckedCreateWithoutQuestionsInput = {
@@ -599,7 +573,6 @@ export type WordUncheckedCreateWithoutQuestionsInput = {
   updatedAt?: Date | string
   meanings?: Prisma.WordMeaningUncheckedCreateNestedManyWithoutWordInput
   testItems?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutWordInput
 }
 
 export type WordCreateOrConnectWithoutQuestionsInput = {
@@ -628,7 +601,6 @@ export type WordUpdateWithoutQuestionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meanings?: Prisma.WordMeaningUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutWordNestedInput
 }
 
 export type WordUncheckedUpdateWithoutQuestionsInput = {
@@ -642,7 +614,6 @@ export type WordUncheckedUpdateWithoutQuestionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meanings?: Prisma.WordMeaningUncheckedUpdateManyWithoutWordNestedInput
   testItems?: Prisma.TestSessionItemUncheckedUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutWordNestedInput
 }
 
 export type WordCreateWithoutTestItemsInput = {
@@ -655,7 +626,6 @@ export type WordCreateWithoutTestItemsInput = {
   updatedAt?: Date | string
   meanings?: Prisma.WordMeaningCreateNestedManyWithoutWordInput
   questions?: Prisma.QuestionCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutWordInput
 }
 
 export type WordUncheckedCreateWithoutTestItemsInput = {
@@ -669,7 +639,6 @@ export type WordUncheckedCreateWithoutTestItemsInput = {
   updatedAt?: Date | string
   meanings?: Prisma.WordMeaningUncheckedCreateNestedManyWithoutWordInput
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutWordInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutWordInput
 }
 
 export type WordCreateOrConnectWithoutTestItemsInput = {
@@ -698,7 +667,6 @@ export type WordUpdateWithoutTestItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meanings?: Prisma.WordMeaningUpdateManyWithoutWordNestedInput
   questions?: Prisma.QuestionUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutWordNestedInput
 }
 
 export type WordUncheckedUpdateWithoutTestItemsInput = {
@@ -712,77 +680,6 @@ export type WordUncheckedUpdateWithoutTestItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meanings?: Prisma.WordMeaningUncheckedUpdateManyWithoutWordNestedInput
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutWordNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutWordNestedInput
-}
-
-export type WordCreateWithoutWrongWordsInput = {
-  headword: string
-  level: $Enums.Level
-  bncLevel: string
-  relatedForms?: string | null
-  status?: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  meanings?: Prisma.WordMeaningCreateNestedManyWithoutWordInput
-  questions?: Prisma.QuestionCreateNestedManyWithoutWordInput
-  testItems?: Prisma.TestSessionItemCreateNestedManyWithoutWordInput
-}
-
-export type WordUncheckedCreateWithoutWrongWordsInput = {
-  id?: number
-  headword: string
-  level: $Enums.Level
-  bncLevel: string
-  relatedForms?: string | null
-  status?: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  meanings?: Prisma.WordMeaningUncheckedCreateNestedManyWithoutWordInput
-  questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutWordInput
-  testItems?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutWordInput
-}
-
-export type WordCreateOrConnectWithoutWrongWordsInput = {
-  where: Prisma.WordWhereUniqueInput
-  create: Prisma.XOR<Prisma.WordCreateWithoutWrongWordsInput, Prisma.WordUncheckedCreateWithoutWrongWordsInput>
-}
-
-export type WordUpsertWithoutWrongWordsInput = {
-  update: Prisma.XOR<Prisma.WordUpdateWithoutWrongWordsInput, Prisma.WordUncheckedUpdateWithoutWrongWordsInput>
-  create: Prisma.XOR<Prisma.WordCreateWithoutWrongWordsInput, Prisma.WordUncheckedCreateWithoutWrongWordsInput>
-  where?: Prisma.WordWhereInput
-}
-
-export type WordUpdateToOneWithWhereWithoutWrongWordsInput = {
-  where?: Prisma.WordWhereInput
-  data: Prisma.XOR<Prisma.WordUpdateWithoutWrongWordsInput, Prisma.WordUncheckedUpdateWithoutWrongWordsInput>
-}
-
-export type WordUpdateWithoutWrongWordsInput = {
-  headword?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
-  bncLevel?: Prisma.StringFieldUpdateOperationsInput | string
-  relatedForms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  meanings?: Prisma.WordMeaningUpdateManyWithoutWordNestedInput
-  questions?: Prisma.QuestionUpdateManyWithoutWordNestedInput
-  testItems?: Prisma.TestSessionItemUpdateManyWithoutWordNestedInput
-}
-
-export type WordUncheckedUpdateWithoutWrongWordsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  headword?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
-  bncLevel?: Prisma.StringFieldUpdateOperationsInput | string
-  relatedForms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  meanings?: Prisma.WordMeaningUncheckedUpdateManyWithoutWordNestedInput
-  questions?: Prisma.QuestionUncheckedUpdateManyWithoutWordNestedInput
-  testItems?: Prisma.TestSessionItemUncheckedUpdateManyWithoutWordNestedInput
 }
 
 
@@ -794,14 +691,12 @@ export type WordCountOutputType = {
   meanings: number
   questions: number
   testItems: number
-  wrongWords: number
 }
 
 export type WordCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   meanings?: boolean | WordCountOutputTypeCountMeaningsArgs
   questions?: boolean | WordCountOutputTypeCountQuestionsArgs
   testItems?: boolean | WordCountOutputTypeCountTestItemsArgs
-  wrongWords?: boolean | WordCountOutputTypeCountWrongWordsArgs
 }
 
 /**
@@ -835,13 +730,6 @@ export type WordCountOutputTypeCountTestItemsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.TestSessionItemWhereInput
 }
 
-/**
- * WordCountOutputType without action
- */
-export type WordCountOutputTypeCountWrongWordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WrongWordWhereInput
-}
-
 
 export type WordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -855,7 +743,6 @@ export type WordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   meanings?: boolean | Prisma.Word$meaningsArgs<ExtArgs>
   questions?: boolean | Prisma.Word$questionsArgs<ExtArgs>
   testItems?: boolean | Prisma.Word$testItemsArgs<ExtArgs>
-  wrongWords?: boolean | Prisma.Word$wrongWordsArgs<ExtArgs>
   _count?: boolean | Prisma.WordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["word"]>
 
@@ -897,7 +784,6 @@ export type WordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   meanings?: boolean | Prisma.Word$meaningsArgs<ExtArgs>
   questions?: boolean | Prisma.Word$questionsArgs<ExtArgs>
   testItems?: boolean | Prisma.Word$testItemsArgs<ExtArgs>
-  wrongWords?: boolean | Prisma.Word$wrongWordsArgs<ExtArgs>
   _count?: boolean | Prisma.WordCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -909,7 +795,6 @@ export type $WordPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     meanings: Prisma.$WordMeaningPayload<ExtArgs>[]
     questions: Prisma.$QuestionPayload<ExtArgs>[]
     testItems: Prisma.$TestSessionItemPayload<ExtArgs>[]
-    wrongWords: Prisma.$WrongWordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1317,7 +1202,6 @@ export interface Prisma__WordClient<T, Null = never, ExtArgs extends runtime.Typ
   meanings<T extends Prisma.Word$meaningsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Word$meaningsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WordMeaningPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   questions<T extends Prisma.Word$questionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Word$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   testItems<T extends Prisma.Word$testItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Word$testItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestSessionItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  wrongWords<T extends Prisma.Word$wrongWordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Word$wrongWordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WrongWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1815,30 +1699,6 @@ export type Word$testItemsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.TestSessionItemScalarFieldEnum | Prisma.TestSessionItemScalarFieldEnum[]
-}
-
-/**
- * Word.wrongWords
- */
-export type Word$wrongWordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the WrongWord
-   */
-  select?: Prisma.WrongWordSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the WrongWord
-   */
-  omit?: Prisma.WrongWordOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WrongWordInclude<ExtArgs> | null
-  where?: Prisma.WrongWordWhereInput
-  orderBy?: Prisma.WrongWordOrderByWithRelationInput | Prisma.WrongWordOrderByWithRelationInput[]
-  cursor?: Prisma.WrongWordWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WrongWordScalarFieldEnum | Prisma.WrongWordScalarFieldEnum[]
 }
 
 /**

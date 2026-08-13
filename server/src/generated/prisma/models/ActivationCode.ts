@@ -254,7 +254,6 @@ export type ActivationCodeWhereInput = {
   lastUsedAt?: Prisma.DateTimeNullableFilter<"ActivationCode"> | Date | string | null
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
   testSessions?: Prisma.TestSessionListRelationFilter
-  wrongWords?: Prisma.WrongWordListRelationFilter
 }
 
 export type ActivationCodeOrderByWithRelationInput = {
@@ -268,7 +267,6 @@ export type ActivationCodeOrderByWithRelationInput = {
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   batch?: Prisma.BatchOrderByWithRelationInput
   testSessions?: Prisma.TestSessionOrderByRelationAggregateInput
-  wrongWords?: Prisma.WrongWordOrderByRelationAggregateInput
 }
 
 export type ActivationCodeWhereUniqueInput = Prisma.AtLeast<{
@@ -285,7 +283,6 @@ export type ActivationCodeWhereUniqueInput = Prisma.AtLeast<{
   lastUsedAt?: Prisma.DateTimeNullableFilter<"ActivationCode"> | Date | string | null
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
   testSessions?: Prisma.TestSessionListRelationFilter
-  wrongWords?: Prisma.WrongWordListRelationFilter
 }, "id" | "code">
 
 export type ActivationCodeOrderByWithAggregationInput = {
@@ -327,7 +324,6 @@ export type ActivationCodeCreateInput = {
   lastUsedAt?: Date | string | null
   batch: Prisma.BatchCreateNestedOneWithoutCodesInput
   testSessions?: Prisma.TestSessionCreateNestedManyWithoutCodeInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeUncheckedCreateInput = {
@@ -340,7 +336,6 @@ export type ActivationCodeUncheckedCreateInput = {
   createdAt?: Date | string
   lastUsedAt?: Date | string | null
   testSessions?: Prisma.TestSessionUncheckedCreateNestedManyWithoutCodeInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeUpdateInput = {
@@ -352,7 +347,6 @@ export type ActivationCodeUpdateInput = {
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   batch?: Prisma.BatchUpdateOneRequiredWithoutCodesNestedInput
   testSessions?: Prisma.TestSessionUpdateManyWithoutCodeNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeUncheckedUpdateInput = {
@@ -365,7 +359,6 @@ export type ActivationCodeUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testSessions?: Prisma.TestSessionUncheckedUpdateManyWithoutCodeNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeCreateManyInput = {
@@ -529,20 +522,6 @@ export type ActivationCodeUpdateOneRequiredWithoutTestSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ActivationCodeUpdateToOneWithWhereWithoutTestSessionsInput, Prisma.ActivationCodeUpdateWithoutTestSessionsInput>, Prisma.ActivationCodeUncheckedUpdateWithoutTestSessionsInput>
 }
 
-export type ActivationCodeCreateNestedOneWithoutWrongWordsInput = {
-  create?: Prisma.XOR<Prisma.ActivationCodeCreateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedCreateWithoutWrongWordsInput>
-  connectOrCreate?: Prisma.ActivationCodeCreateOrConnectWithoutWrongWordsInput
-  connect?: Prisma.ActivationCodeWhereUniqueInput
-}
-
-export type ActivationCodeUpdateOneRequiredWithoutWrongWordsNestedInput = {
-  create?: Prisma.XOR<Prisma.ActivationCodeCreateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedCreateWithoutWrongWordsInput>
-  connectOrCreate?: Prisma.ActivationCodeCreateOrConnectWithoutWrongWordsInput
-  upsert?: Prisma.ActivationCodeUpsertWithoutWrongWordsInput
-  connect?: Prisma.ActivationCodeWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ActivationCodeUpdateToOneWithWhereWithoutWrongWordsInput, Prisma.ActivationCodeUpdateWithoutWrongWordsInput>, Prisma.ActivationCodeUncheckedUpdateWithoutWrongWordsInput>
-}
-
 export type ActivationCodeCreateWithoutBatchInput = {
   code: string
   maxTests?: number | null
@@ -551,7 +530,6 @@ export type ActivationCodeCreateWithoutBatchInput = {
   createdAt?: Date | string
   lastUsedAt?: Date | string | null
   testSessions?: Prisma.TestSessionCreateNestedManyWithoutCodeInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeUncheckedCreateWithoutBatchInput = {
@@ -563,7 +541,6 @@ export type ActivationCodeUncheckedCreateWithoutBatchInput = {
   createdAt?: Date | string
   lastUsedAt?: Date | string | null
   testSessions?: Prisma.TestSessionUncheckedCreateNestedManyWithoutCodeInput
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeCreateOrConnectWithoutBatchInput = {
@@ -613,7 +590,6 @@ export type ActivationCodeCreateWithoutTestSessionsInput = {
   createdAt?: Date | string
   lastUsedAt?: Date | string | null
   batch: Prisma.BatchCreateNestedOneWithoutCodesInput
-  wrongWords?: Prisma.WrongWordCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeUncheckedCreateWithoutTestSessionsInput = {
@@ -625,7 +601,6 @@ export type ActivationCodeUncheckedCreateWithoutTestSessionsInput = {
   status?: string
   createdAt?: Date | string
   lastUsedAt?: Date | string | null
-  wrongWords?: Prisma.WrongWordUncheckedCreateNestedManyWithoutCodeInput
 }
 
 export type ActivationCodeCreateOrConnectWithoutTestSessionsInput = {
@@ -652,7 +627,6 @@ export type ActivationCodeUpdateWithoutTestSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   batch?: Prisma.BatchUpdateOneRequiredWithoutCodesNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeUncheckedUpdateWithoutTestSessionsInput = {
@@ -664,69 +638,6 @@ export type ActivationCodeUncheckedUpdateWithoutTestSessionsInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutCodeNestedInput
-}
-
-export type ActivationCodeCreateWithoutWrongWordsInput = {
-  code: string
-  maxTests?: number | null
-  usedCount?: number
-  status?: string
-  createdAt?: Date | string
-  lastUsedAt?: Date | string | null
-  batch: Prisma.BatchCreateNestedOneWithoutCodesInput
-  testSessions?: Prisma.TestSessionCreateNestedManyWithoutCodeInput
-}
-
-export type ActivationCodeUncheckedCreateWithoutWrongWordsInput = {
-  id?: number
-  batchId: number
-  code: string
-  maxTests?: number | null
-  usedCount?: number
-  status?: string
-  createdAt?: Date | string
-  lastUsedAt?: Date | string | null
-  testSessions?: Prisma.TestSessionUncheckedCreateNestedManyWithoutCodeInput
-}
-
-export type ActivationCodeCreateOrConnectWithoutWrongWordsInput = {
-  where: Prisma.ActivationCodeWhereUniqueInput
-  create: Prisma.XOR<Prisma.ActivationCodeCreateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedCreateWithoutWrongWordsInput>
-}
-
-export type ActivationCodeUpsertWithoutWrongWordsInput = {
-  update: Prisma.XOR<Prisma.ActivationCodeUpdateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedUpdateWithoutWrongWordsInput>
-  create: Prisma.XOR<Prisma.ActivationCodeCreateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedCreateWithoutWrongWordsInput>
-  where?: Prisma.ActivationCodeWhereInput
-}
-
-export type ActivationCodeUpdateToOneWithWhereWithoutWrongWordsInput = {
-  where?: Prisma.ActivationCodeWhereInput
-  data: Prisma.XOR<Prisma.ActivationCodeUpdateWithoutWrongWordsInput, Prisma.ActivationCodeUncheckedUpdateWithoutWrongWordsInput>
-}
-
-export type ActivationCodeUpdateWithoutWrongWordsInput = {
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  maxTests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  usedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  batch?: Prisma.BatchUpdateOneRequiredWithoutCodesNestedInput
-  testSessions?: Prisma.TestSessionUpdateManyWithoutCodeNestedInput
-}
-
-export type ActivationCodeUncheckedUpdateWithoutWrongWordsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  batchId?: Prisma.IntFieldUpdateOperationsInput | number
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  maxTests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  usedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  testSessions?: Prisma.TestSessionUncheckedUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeCreateManyBatchInput = {
@@ -747,7 +658,6 @@ export type ActivationCodeUpdateWithoutBatchInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testSessions?: Prisma.TestSessionUpdateManyWithoutCodeNestedInput
-  wrongWords?: Prisma.WrongWordUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeUncheckedUpdateWithoutBatchInput = {
@@ -759,7 +669,6 @@ export type ActivationCodeUncheckedUpdateWithoutBatchInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testSessions?: Prisma.TestSessionUncheckedUpdateManyWithoutCodeNestedInput
-  wrongWords?: Prisma.WrongWordUncheckedUpdateManyWithoutCodeNestedInput
 }
 
 export type ActivationCodeUncheckedUpdateManyWithoutBatchInput = {
@@ -779,12 +688,10 @@ export type ActivationCodeUncheckedUpdateManyWithoutBatchInput = {
 
 export type ActivationCodeCountOutputType = {
   testSessions: number
-  wrongWords: number
 }
 
 export type ActivationCodeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   testSessions?: boolean | ActivationCodeCountOutputTypeCountTestSessionsArgs
-  wrongWords?: boolean | ActivationCodeCountOutputTypeCountWrongWordsArgs
 }
 
 /**
@@ -804,13 +711,6 @@ export type ActivationCodeCountOutputTypeCountTestSessionsArgs<ExtArgs extends r
   where?: Prisma.TestSessionWhereInput
 }
 
-/**
- * ActivationCodeCountOutputType without action
- */
-export type ActivationCodeCountOutputTypeCountWrongWordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WrongWordWhereInput
-}
-
 
 export type ActivationCodeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -823,7 +723,6 @@ export type ActivationCodeSelect<ExtArgs extends runtime.Types.Extensions.Intern
   lastUsedAt?: boolean
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
   testSessions?: boolean | Prisma.ActivationCode$testSessionsArgs<ExtArgs>
-  wrongWords?: boolean | Prisma.ActivationCode$wrongWordsArgs<ExtArgs>
   _count?: boolean | Prisma.ActivationCodeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["activationCode"]>
 
@@ -866,7 +765,6 @@ export type ActivationCodeOmit<ExtArgs extends runtime.Types.Extensions.Internal
 export type ActivationCodeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
   testSessions?: boolean | Prisma.ActivationCode$testSessionsArgs<ExtArgs>
-  wrongWords?: boolean | Prisma.ActivationCode$wrongWordsArgs<ExtArgs>
   _count?: boolean | Prisma.ActivationCodeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ActivationCodeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -881,7 +779,6 @@ export type $ActivationCodePayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     batch: Prisma.$BatchPayload<ExtArgs>
     testSessions: Prisma.$TestSessionPayload<ExtArgs>[]
-    wrongWords: Prisma.$WrongWordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1288,7 +1185,6 @@ export interface Prisma__ActivationCodeClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   batch<T extends Prisma.BatchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BatchDefaultArgs<ExtArgs>>): Prisma.Prisma__BatchClient<runtime.Types.Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   testSessions<T extends Prisma.ActivationCode$testSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivationCode$testSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  wrongWords<T extends Prisma.ActivationCode$wrongWordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivationCode$wrongWordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WrongWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1746,30 +1642,6 @@ export type ActivationCode$testSessionsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.TestSessionScalarFieldEnum | Prisma.TestSessionScalarFieldEnum[]
-}
-
-/**
- * ActivationCode.wrongWords
- */
-export type ActivationCode$wrongWordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the WrongWord
-   */
-  select?: Prisma.WrongWordSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the WrongWord
-   */
-  omit?: Prisma.WrongWordOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WrongWordInclude<ExtArgs> | null
-  where?: Prisma.WrongWordWhereInput
-  orderBy?: Prisma.WrongWordOrderByWithRelationInput | Prisma.WrongWordOrderByWithRelationInput[]
-  cursor?: Prisma.WrongWordWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WrongWordScalarFieldEnum | Prisma.WrongWordScalarFieldEnum[]
 }
 
 /**

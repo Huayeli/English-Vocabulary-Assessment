@@ -4,7 +4,6 @@ import { ApiError } from "../../utils/errors.js";
 import { getOrCreateQuestion, toClientQuestion } from "../question/question.service.js";
 import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
 import { estimateVocabulary } from "../report/report.service.js";
-import { addWrongWord, subtractWrongWord } from "../wrong-word/wrong-word.service.js";
 
 export type SessionType = "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD";
 
@@ -121,19 +120,6 @@ export async function answerQuestion(
   item.userOptionIndex = optionIndex;
   item.isCorrect = newCorrect;
 
-  if (wasAnswered && wasCorrect !== newCorrect) {
-    const snapshot: string[] = JSON.parse(item.optionsSnapshot);
-    const correctText = snapshot[item.correctOptionIndex];
-    if (newCorrect) {
-      await subtractWrongWord(activationCodeId, item.wordId);
-    } else {
-      await addWrongWord(activationCodeId, item.wordId, correctText);
-    }
-  } else if (!wasAnswered && !newCorrect) {
-    const snapshot: string[] = JSON.parse(item.optionsSnapshot);
-    await addWrongWord(activationCodeId, item.wordId, snapshot[item.correctOptionIndex]);
-  }
-
   const answeredItems = session.items.filter((it) => it.userOptionIndex !== null);
   const correctCount = answeredItems.filter((it) => it.isCorrect).length;
   const wrongCount = answeredItems.length - correctCount;
@@ -174,22 +160,6 @@ export async function answerQuestion(
     finished: false,
     nextQuestion
   };
-}
-
-export async function finishEarly(sessionId: number, activationCodeId: number) {
-  const session = await prisma.testSession.findUnique({
-    where: { id: sessionId },
-    include: { items: { orderBy: { seq: "asc" } } }
-  });
-  if (!session || session.activationCodeId !== activationCodeId) throw new ApiError(40401, "测试不存在");
-  if (session.finishedAt) throw new ApiError(40901, "测试已完成");
-  if (session.type !== "WRONG_WORD") {
-    throw new ApiError(40001, "当前测试类型不支持提前查看结果");
-  }
-  const answered = session.items.filter((it) => it.userOptionIndex !== null);
-  if (answered.length === 0) throw new ApiError(40901, "请至少作答一题后再查看结果");
-  const correctCount = answered.filter((it) => it.isCorrect).length;
-  return finishSession(session.id, correctCount, answered.length - correctCount, answered.length);
 }
 
 async function finishSession(

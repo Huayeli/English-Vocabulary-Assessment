@@ -9,7 +9,5 @@ testRouter.get("/", ctrl.listHandler);
 testRouter.get("/:sessionId", ctrl.detailHandler);
 testRouter.post("/adaptive/start", ctrl.startAdaptiveHandler);
 testRouter.post("/verification/start", ctrl.startVerificationHandler);
-testRouter.post("/wrong-word/start", ctrl.startWrongWordHandler);
 testRouter.post("/:sessionId/answer", ctrl.answerHandler);
 testRouter.post("/:sessionId/abandon", ctrl.abandonHandler);
-testRouter.post("/:sessionId/finish", ctrl.finishHandler);

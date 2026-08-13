@@ -74,6 +74,23 @@ export async function listCodes(params: {
       take: params.pageSize
     })
   ]);
+  const ids = list.map((c) => c.id);
+  const [grouped, latest] = await Promise.all([
+    prisma.testSession.groupBy({
+      by: ["activationCodeId"],
+      _count: { _all: true },
+      _avg: { accuracy: true },
+      where: { activationCodeId: { in: ids }, finishedAt: { not: null } }
+    }),
+    prisma.testSession.findMany({
+      where: { activationCodeId: { in: ids }, finishedAt: { not: null } },
+      orderBy: { finishedAt: "desc" },
+      distinct: ["activationCodeId"],
+      select: { activationCodeId: true, finalLevel: true, estimatedVocabulary: true }
+    })
+  ]);
+  const statMap = new Map(grouped.map((g) => [g.activationCodeId, g]));
+  const latestMap = new Map(latest.map((l) => [l.activationCodeId, l]));
   return {
     list: list.map((c) => ({
       id: c.id,
@@ -84,12 +101,39 @@ export async function listCodes(params: {
       remaining: c.maxTests == null ? null : Math.max(0, c.maxTests - c.usedCount),
       status: c.status,
       createdAt: c.createdAt,
-      lastUsedAt: c.lastUsedAt
+      lastUsedAt: c.lastUsedAt,
+      testCount: statMap.get(c.id)?._count._all ?? 0,
+      avgAccuracy: statMap.get(c.id)?._avg.accuracy ?? null,
+      latestLevel: latestMap.get(c.id)?.finalLevel ?? null,
+      latestVocabulary: latestMap.get(c.id)?.estimatedVocabulary ?? null
     })),
     total,
     page: params.page,
     pageSize: params.pageSize
   };
+}
+
+export async function batchCodes(
+  ids: number[],
+  action: "delete" | "update",
+  data?: { status?: string; maxTests?: number | null }
+) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(40001, "请至少选择一个激活码");
+  }
+  if (action === "delete") {
+    await prisma.testSession.deleteMany({ where: { activationCodeId: { in: ids } } });
+    await prisma.activationCode.deleteMany({ where: { id: { in: ids } } });
+    return { deleted: ids.length };
+  }
+  await prisma.activationCode.updateMany({
+    where: { id: { in: ids } },
+    data: {
+      status: data?.status,
+      maxTests: data?.maxTests === undefined ? undefined : data.maxTests == null ? null : Math.max(1, Math.floor(data.maxTests))
+    }
+  });
+  return { updated: ids.length };
 }
 
 export async function generateCodes(data: {

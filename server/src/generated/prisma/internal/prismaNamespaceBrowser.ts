@@ -58,8 +58,7 @@ export const ModelName = {
   Question: 'Question',
   QuestionOption: 'QuestionOption',
   TestSession: 'TestSession',
-  TestSessionItem: 'TestSessionItem',
-  WrongWord: 'WrongWord'
+  TestSessionItem: 'TestSessionItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -182,19 +181,6 @@ export const TestSessionItemScalarFieldEnum = {
 } as const
 
 export type TestSessionItemScalarFieldEnum = (typeof TestSessionItemScalarFieldEnum)[keyof typeof TestSessionItemScalarFieldEnum]
-
-
-export const WrongWordScalarFieldEnum = {
-  id: 'id',
-  activationCodeId: 'activationCodeId',
-  wordId: 'wordId',
-  correctMeaningText: 'correctMeaningText',
-  errorCount: 'errorCount',
-  lastErrorAt: 'lastErrorAt',
-  createdAt: 'createdAt'
-} as const
-
-export type WrongWordScalarFieldEnum = (typeof WrongWordScalarFieldEnum)[keyof typeof WrongWordScalarFieldEnum]
 
 
 export const SortOrder = {

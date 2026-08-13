@@ -20,11 +20,6 @@
         <p>选择等级，30 题正确率 80% 判定达标</p>
         <span class="go">开始 →</span>
       </router-link>
-      <router-link class="card entry" to="/test/wrong">
-        <h3>错词再测</h3>
-        <p>针对错词本重新测试，巩固记忆</p>
-        <span class="go">开始 →</span>
-      </router-link>
     </div>
   </div>
 </template>
@@ -61,7 +56,7 @@ onMounted(() => {
 }
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 .card.entry {

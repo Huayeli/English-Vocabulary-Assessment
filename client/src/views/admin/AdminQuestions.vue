@@ -2,8 +2,8 @@
   <div>
     <h2>题库管理</h2>
     <div class="toolbar">
-      <input v-model="keyword" placeholder="单词关键词" @keyup.enter="load" />
-      <button class="btn" @click="load">查询</button>
+      <input v-model="keyword" placeholder="单词关键词" @keyup.enter="load(1)" />
+      <button class="btn" @click="load(1)">查询</button>
       <button class="btn ghost" @click="openCreate">人工录题</button>
     </div>
     <table>
@@ -31,6 +31,7 @@
         </tr>
       </tbody>
     </table>
+    <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="editing || creating" class="modal">
       <div class="modal-card">
@@ -55,17 +56,23 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { adminApi } from "../../api/admin";
+import Pagination from "../../components/Pagination.vue";
 
 const keyword = ref("");
 const rows = ref<any[]>([]);
+const page = ref(1);
+const pageSize = 20;
+const total = ref(0);
 const editing = ref<any>(null);
 const creating = ref(false);
 const options = ref<{ text: string; isCorrect: boolean }[]>([]);
 const createForm = ref({ wordId: 0, correctMeaningId: 0 });
 
-async function load() {
-  const res = await adminApi.questions({ keyword: keyword.value, page: 1, pageSize: 50 });
+async function load(p = 1) {
+  page.value = p;
+  const res = await adminApi.questions({ keyword: keyword.value, page: p, pageSize });
   rows.value = res.list;
+  total.value = res.total;
 }
 
 function openEdit(q: any) {
@@ -98,7 +105,7 @@ async function save() {
 
 function remove(q: any) {
   if (!confirm(`确定删除题目 ${q.id}？`)) return;
-  adminApi.deleteQuestion(q.id).then(load);
+  adminApi.deleteQuestion(q.id).then(() => load(1));
 }
 
 function close() {

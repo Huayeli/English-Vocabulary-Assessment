@@ -2,7 +2,7 @@
   <div>
     <h2>词库管理</h2>
     <div class="toolbar">
-      <input v-model="keyword" placeholder="关键词" @keyup.enter="load" />
+      <input v-model="keyword" placeholder="关键词" @keyup.enter="load(1)" />
       <select v-model="level">
         <option value="">全部等级</option>
         <option v-for="lv in LEVELS" :key="lv" :value="lv">{{ lv }}</option>
@@ -12,7 +12,7 @@
         <option value="false">无释义</option>
         <option value="true">有释义</option>
       </select>
-      <button class="btn" @click="load">查询</button>
+      <button class="btn" @click="load(1)">查询</button>
     </div>
     <table>
       <thead>
@@ -38,6 +38,7 @@
         </tr>
       </tbody>
     </table>
+    <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="editing" class="modal">
       <div class="modal-card">
@@ -75,24 +76,30 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { adminApi } from "../../api/admin";
+import Pagination from "../../components/Pagination.vue";
 
 const LEVELS = ["K1", "K2", "K3", "K5", "K10", "K10P"];
 const keyword = ref("");
 const level = ref("");
 const hasMeaning = ref("");
 const rows = ref<any[]>([]);
+const page = ref(1);
+const pageSize = 20;
+const total = ref(0);
 const editing = ref<any>(null);
 const detail = ref<any>(null);
 const form = ref({ level: "K1", relatedForms: "", status: "ENABLED" });
 const newMeaning = ref("");
 
-async function load() {
-  const params: Record<string, unknown> = { page: 1, pageSize: 50 };
+async function load(p = 1) {
+  page.value = p;
+  const params: Record<string, unknown> = { page: p, pageSize };
   if (keyword.value) params.keyword = keyword.value;
   if (level.value) params.level = level.value;
   if (hasMeaning.value !== "") params.hasMeaning = hasMeaning.value;
   const res = await adminApi.words(params);
   rows.value = res.list;
+  total.value = res.total;
 }
 
 async function openEdit(w: any) {

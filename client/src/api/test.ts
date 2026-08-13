@@ -34,7 +34,6 @@ export const testApi = {
       `/tests/${sessionId}/answer`,
       seq == null ? { optionIndex, answerTimeMs } : { optionIndex, answerTimeMs, seq }
     ),
-  finishEarly: (sessionId: number) => http.post<AnswerResult>(`/tests/${sessionId}/finish`),
   abandon: (sessionId: number) => http.post(`/tests/${sessionId}/abandon`),
   history: (params?: { type?: string; page?: number }) => http.get("/tests", { params }),
   detail: (sessionId: number) => http.get(`/tests/${sessionId}`)

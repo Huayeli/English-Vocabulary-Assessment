@@ -8,10 +8,8 @@ const router = createRouter({
     { path: "/", component: () => import("../views/test/TestCenter.vue"), meta: { auth: true } },
     { path: "/test/adaptive", component: () => import("../views/test/AdaptiveTest.vue"), meta: { auth: true } },
     { path: "/test/verification", component: () => import("../views/test/VerificationTest.vue"), meta: { auth: true } },
-    { path: "/test/wrong", component: () => import("../views/test/WrongWordTest.vue"), meta: { auth: true } },
     { path: "/test/result/:sessionId", component: () => import("../views/test/TestResult.vue"), meta: { auth: true } },
     { path: "/report/:sessionId", component: () => import("../views/report/ReportDetail.vue"), meta: { auth: true } },
-    { path: "/wrong-words", component: () => import("../views/wrong/WrongWords.vue"), meta: { auth: true } },
     { path: "/admin/key", component: () => import("../views/admin/AdminKey.vue"), meta: { public: true } },
     {
       path: "/admin",

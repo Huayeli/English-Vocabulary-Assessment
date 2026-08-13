@@ -6,6 +6,7 @@ export const adminApi = {
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/admin/codes", { params }),
   generateCodes: (data: Record<string, unknown>) => http.post<any>("/admin/codes/generate", data),
   updateCode: (id: number, data: Record<string, unknown>) => http.put(`/admin/codes/${id}`, data),
+  batchCodes: (data: Record<string, unknown>) => http.post<any>("/admin/codes/batch", data),
   batches: () => http.get<any[]>("/admin/batches"),
   tests: (params: Record<string, unknown>) =>
     http.get<{ list: any[]; total: number; page: number; pageSize: number }>("/admin/tests", { params }),

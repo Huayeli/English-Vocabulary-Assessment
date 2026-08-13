@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>仪表盘</h2>
+    <h2>全局统计</h2>
     <div v-if="stats" class="stats">
       <div class="stat"><b>{{ stats.codeCount }}</b><span>激活码总数</span></div>
       <div class="stat"><b>{{ stats.activeCodeCount }}</b><span>启用中</span></div>

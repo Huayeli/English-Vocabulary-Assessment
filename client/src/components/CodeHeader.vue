@@ -4,8 +4,6 @@
     <div class="right">
       <span class="chip">激活码 {{ masked }}</span>
       <span v-if="remaining !== null" class="chip">剩余 {{ remaining }} 次</span>
-      <router-link class="link" to="/wrong-words">错词本</router-link>
-      <router-link class="link" :to="store.isAdminAuthed ? '/admin' : '/admin/key'">管理后台</router-link>
       <button class="link exit" @click="exit">退出</button>
     </div>
   </div>
