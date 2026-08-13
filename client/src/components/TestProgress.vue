@@ -19,20 +19,21 @@ const pct = computed(() => Math.min(100, Math.round((props.seq / props.total) * 
   margin: 16px 0;
 }
 .bar {
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
+  height: 10px;
+  background: rgba(95, 122, 99, 0.12);
+  border-radius: 6px;
   overflow: hidden;
 }
 .fill {
   height: 100%;
-  background: #409eff;
+  background: var(--primary);
   transition: width 0.3s;
+  border-radius: 6px;
 }
 .label {
   display: block;
   margin-top: 6px;
   font-size: 13px;
-  color: #666;
+  color: var(--muted);
 }
 </style>

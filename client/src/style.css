@@ -1,21 +1,40 @@
+:root {
+  --bg: #f8f4e9;
+  --primary: #5f7a63;
+  --primary-dark: #4a624f;
+  --primary-soft: #e9f0e7;
+  --ink: #333b35;
+  --muted: #8b938b;
+  --card: #ffffff;
+  --line: #e5e1d6;
+  --danger: #c26b5e;
+  --radius-lg: 30px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 10px 34px rgba(74, 98, 79, 0.10);
+  --shadow-sm: 0 4px 16px rgba(74, 98, 79, 0.08);
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 55%, #ecfeff 100%);
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
   min-height: 100vh;
-  color: #333;
 }
 
 #app {
   min-height: 100vh;
+  position: relative;
 }
 
 a {
-  color: #2563eb;
+  color: var(--primary);
+  text-decoration: none;
 }
 
 button {
@@ -23,7 +42,62 @@ button {
 }
 
 .card {
-  background: #fff;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.btn-green {
+  display: inline-block;
+  padding: 13px 30px;
+  border: none;
+  border-radius: 16px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s, transform 0.15s;
+}
+.btn-green:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+.btn-green:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost {
+  display: inline-block;
+  padding: 12px 28px;
+  border: 1.5px solid var(--primary);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-ghost:hover {
+  background: var(--primary-soft);
+}
+
+.field {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--line);
   border-radius: 14px;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+  background: #fff;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(95, 122, 99, 0.12);
 }

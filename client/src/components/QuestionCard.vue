@@ -35,60 +35,65 @@ function optionClass(i: number) {
 
 <style scoped>
 .q-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 36px 34px 30px;
+  box-shadow: var(--shadow);
 }
 .q-word {
-  font-size: 34px;
+  font-size: 38px;
   font-weight: 700;
   text-align: center;
-  color: #1f2937;
+  color: var(--ink);
+  letter-spacing: 2px;
 }
 .q-text {
   text-align: center;
-  color: #6b7280;
-  margin: 8px 0 24px;
+  color: var(--muted);
+  margin: 10px 0 28px;
+  font-size: 15px;
 }
 .options {
   display: grid;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 .option {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  padding: 16px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
   background: #fff;
   font-size: 15px;
   cursor: pointer;
   text-align: left;
+  transition: border-color 0.15s, background 0.15s;
 }
 .option:not(:disabled):hover {
-  border-color: #409eff;
-  background: #ecf5ff;
+  border-color: var(--primary);
+  background: var(--primary-soft);
 }
 .index {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: var(--primary-soft);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: #4b5563;
+  color: var(--primary);
+  font-weight: 700;
 }
 .option.selected {
-  border-color: #409eff;
-  background: #ecf5ff;
+  border-color: var(--primary);
+  background: var(--primary-soft);
   font-weight: 600;
 }
 .option.selected .index {
-  background: #409eff;
+  background: var(--primary);
   color: #fff;
 }
 .option.dim {

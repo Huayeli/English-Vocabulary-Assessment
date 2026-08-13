@@ -41,8 +41,9 @@ function exit() {
 .brand {
   font-size: 20px;
   font-weight: 800;
-  color: #1e3a8a;
+  color: var(--primary-dark);
   text-decoration: none;
+  letter-spacing: 2px;
 }
 .right {
   display: flex;
@@ -52,14 +53,14 @@ function exit() {
   justify-content: flex-end;
 }
 .chip {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
   border-radius: 999px;
   padding: 5px 12px;
   font-size: 13px;
 }
 .link {
-  color: #2563eb;
+  color: var(--primary);
   text-decoration: none;
   font-size: 14px;
 }
@@ -67,6 +68,6 @@ function exit() {
   background: none;
   border: none;
   cursor: pointer;
-  color: #dc2626;
+  color: var(--danger);
 }
 </style>

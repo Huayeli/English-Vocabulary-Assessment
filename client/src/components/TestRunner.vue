@@ -1,5 +1,6 @@
 <template>
   <div class="runner">
+    <DecoCircles />
     <div class="exit-bar">
       <button class="exit-btn" @click="confirmExit = true">退出测试</button>
     </div>
@@ -36,6 +37,7 @@ import { useUiStore } from "../stores/ui";
 import { testApi } from "../api/test";
 import QuestionCard from "./QuestionCard.vue";
 import TestProgress from "./TestProgress.vue";
+import DecoCircles from "./DecoCircles.vue";
 
 const props = defineProps<{ mode: "adaptive" | "verification" }>();
 
@@ -96,21 +98,25 @@ async function doExit() {
 
 <style scoped>
 .runner {
+  position: relative;
   max-width: 720px;
   margin: 0 auto;
   padding: 24px;
+  z-index: 1;
 }
 .exit-bar {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 .exit-btn {
-  padding: 8px 16px;
-  border: 1px solid #f87171;
-  border-radius: 8px;
+  padding: 9px 18px;
+  border: 1.5px solid rgba(194, 107, 94, 0.6);
+  border-radius: 12px;
   background: #fff;
-  color: #dc2626;
+  color: var(--danger);
   cursor: pointer;
   font-size: 14px;
 }
@@ -127,18 +133,22 @@ async function doExit() {
   gap: 12px;
 }
 .nav-btn {
-  padding: 10px 24px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  padding: 12px 30px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
   background: #fff;
-  color: #374151;
+  color: var(--ink);
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
 }
 .nav-btn.primary {
-  background: #409eff;
-  border-color: #409eff;
+  background: var(--primary);
+  border-color: var(--primary);
   color: #fff;
+}
+.nav-btn.primary:hover:not(:disabled) {
+  background: var(--primary-dark);
 }
 .nav-btn:disabled {
   opacity: 0.5;
@@ -174,18 +184,18 @@ async function doExit() {
 .btn {
   padding: 9px 22px;
   border: none;
-  border-radius: 6px;
-  background: #409eff;
+  border-radius: 12px;
+  background: var(--primary);
   color: #fff;
   cursor: pointer;
   font-size: 14px;
 }
 .btn.ghost {
   background: #fff;
-  color: #409eff;
-  border: 1px solid #409eff;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
 }
 .btn.danger {
-  background: #dc2626;
+  background: var(--danger);
 }
 </style>

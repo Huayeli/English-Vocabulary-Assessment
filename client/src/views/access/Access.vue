@@ -1,13 +1,14 @@
 <template>
   <div class="access-page">
-    <router-link class="admin-link" to="/admin/key">管理后台</router-link>
-    <div class="card">
+    <DecoCircles />
+    <router-link class="admin-entry" to="/admin/key">管理后台</router-link>
+    <div class="card login-card">
+      <div class="brand-dot"></div>
       <h1>词海拾贝</h1>
       <p class="sub">英语词汇量智能评估</p>
-      <p class="tip">请输入激活码进入测试系统</p>
       <form @submit.prevent="submit">
-        <input v-model="code" placeholder="激活码" autocomplete="off" maxlength="16" />
-        <button class="btn" :disabled="loading">进入系统</button>
+        <input v-model="code" class="field code-input" placeholder="请输入激活码" autocomplete="off" maxlength="16" />
+        <button class="btn-green enter" :disabled="loading">进入系统</button>
       </form>
       <p class="error">{{ error }}</p>
     </div>
@@ -18,6 +19,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCodeStore } from "../../stores/code";
+import DecoCircles from "../../components/DecoCircles.vue";
 
 const router = useRouter();
 const store = useCodeStore();
@@ -45,76 +47,65 @@ async function submit() {
 
 <style scoped>
 .access-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  position: relative;
+  z-index: 1;
 }
-.admin-link {
+.admin-entry {
   position: absolute;
-  top: 20px;
-  right: 24px;
-  color: #2563eb;
-  text-decoration: none;
+  top: 26px;
+  right: 30px;
+  color: var(--primary);
   font-size: 14px;
+  text-decoration: none;
+  z-index: 2;
 }
-.admin-link:hover {
-  text-decoration: underline;
-}
-.card {
-  width: 400px;
-  padding: 40px 32px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+.login-card {
+  width: 420px;
+  padding: 46px 42px 40px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.brand-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin: 0 auto 18px;
+  box-shadow: 0 0 0 8px rgba(95, 122, 99, 0.12);
 }
 h1 {
   margin: 0 0 4px;
-  font-size: 28px;
-  color: #1e3a8a;
+  font-size: 30px;
+  color: var(--ink);
+  letter-spacing: 6px;
 }
 .sub {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 30px;
+  color: var(--muted);
   font-size: 14px;
 }
-.tip {
-  color: #9ca3af;
-  font-size: 13px;
-  margin-bottom: 16px;
-}
-input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  box-sizing: border-box;
+.code-input {
   text-align: center;
   font-size: 18px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
 }
-.btn {
+.enter {
   width: 100%;
-  margin-top: 14px;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
-}
-.btn:disabled {
-  opacity: 0.6;
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 16px;
 }
 .error {
   min-height: 20px;
-  color: #dc2626;
+  color: var(--danger);
   font-size: 13px;
-  margin-top: 8px;
+  margin: 12px 0 0;
 }
 </style>

@@ -1,11 +1,19 @@
 <template>
   <div class="key-page">
-    <div class="card">
+    <DecoCircles />
+    <div class="card key-card">
+      <div class="lock">
+        <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="11" width="14" height="10" rx="3" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          <circle cx="12" cy="16" r="1.4" />
+        </svg>
+      </div>
       <h1>管理后台</h1>
-      <p class="tip">请输入管理密钥进入后台</p>
+      <p class="tip">请输入管理密钥</p>
       <form @submit.prevent="submit">
-        <input v-model="key" type="password" placeholder="管理密钥" />
-        <button class="btn" :disabled="loading">进入后台</button>
+        <input v-model="key" type="password" class="field" placeholder="管理密钥" autocomplete="off" />
+        <button class="btn-green enter" :disabled="loading">进入后台</button>
       </form>
       <p class="error">{{ error }}</p>
       <router-link class="back" to="/">返回前台</router-link>
@@ -17,6 +25,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCodeStore } from "../../stores/code";
+import DecoCircles from "../../components/DecoCircles.vue";
 
 const router = useRouter();
 const store = useCodeStore();
@@ -32,7 +41,6 @@ async function submit() {
   }
   loading.value = true;
   store.setAdminKey(key.value.trim());
-  // 用一次请求验证密钥是否正确
   try {
     const { adminApi } = await import("../../api/admin");
     await adminApi.dashboard();
@@ -48,55 +56,57 @@ async function submit() {
 
 <style scoped>
 .key-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px;
 }
-.card {
-  width: 380px;
-  padding: 36px;
+.key-card {
+  width: 400px;
+  padding: 44px 40px 38px;
   text-align: center;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+  position: relative;
+  z-index: 1;
+}
+.lock {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 h1 {
   margin: 0 0 4px;
-  color: #1e3a8a;
+  font-size: 26px;
+  color: var(--ink);
+  letter-spacing: 4px;
 }
 .tip {
-  color: #9ca3af;
-  font-size: 13px;
-  margin-bottom: 16px;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 14px;
 }
-input {
+.enter {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  box-sizing: border-box;
-}
-.btn {
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: #fff;
-  cursor: pointer;
+  margin-top: 16px;
+  padding: 14px;
 }
 .error {
-  color: #dc2626;
+  color: var(--danger);
   font-size: 13px;
   min-height: 18px;
-  margin: 8px 0 0;
+  margin: 12px 0 0;
 }
 .back {
   display: block;
-  margin-top: 10px;
-  color: #6b7280;
+  margin-top: 12px;
+  color: var(--muted);
   font-size: 13px;
 }
 </style>

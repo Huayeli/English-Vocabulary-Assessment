@@ -41,8 +41,8 @@ const ui = useUiStore();
 .btn {
   padding: 9px 28px;
   border: none;
-  border-radius: 6px;
-  background: #409eff;
+  border-radius: 12px;
+  background: var(--primary);
   color: #fff;
   cursor: pointer;
   font-size: 14px;
