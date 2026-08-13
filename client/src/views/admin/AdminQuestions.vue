@@ -77,7 +77,7 @@ function openEdit(q: any) {
 function openCreate() {
   creating.value = true;
   editing.value = null;
-  options.value = Array.from({ length: 5 }, () => ({ text: "", isCorrect: false }));
+  options.value = Array.from({ length: 4 }, () => ({ text: "", isCorrect: false }));
   options.value[0].isCorrect = true;
   createForm.value = { wordId: 0, correctMeaningId: 0 };
 }

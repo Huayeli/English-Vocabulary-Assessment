@@ -1,6 +1,6 @@
 <template>
   <div class="runner">
-    <div v-if="showExit" class="exit-bar">
+    <div class="exit-bar">
       <button class="exit-btn" @click="confirmExit = true">退出测试</button>
     </div>
 
@@ -53,7 +53,6 @@ const ui = useUiStore();
 const submitting = ref(false);
 const confirmExit = ref(false);
 
-const showExit = computed(() => props.mode === "wrong");
 const current = computed(() => test.questions[test.seq - 1]);
 const isLast = computed(() => test.seq === test.questions.length);
 const isReanswer = computed(() => current.value?.selectedIndex !== null);
@@ -114,7 +113,7 @@ async function doExit() {
   }
   test.reset();
   confirmExit.value = false;
-  router.replace("/wrong-words");
+  router.replace(props.mode === "wrong" ? "/wrong-words" : "/");
 }
 </script>
 

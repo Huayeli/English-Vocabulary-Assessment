@@ -117,8 +117,7 @@ describe("admin api", () => {
           { text: "管理员测试释义一", isCorrect: true },
           { text: "干扰一", isCorrect: false },
           { text: "干扰二", isCorrect: false },
-          { text: "干扰三", isCorrect: false },
-          { text: "干扰四", isCorrect: false }
+          { text: "干扰三", isCorrect: false }
         ]
       });
     expect(res.body.code).toBe(0);
@@ -131,8 +130,7 @@ describe("admin api", () => {
         { text: "管理员测试释义一", isCorrect: true },
         { text: "干扰一", isCorrect: false },
         { text: "干扰二", isCorrect: false },
-        { text: "干扰三", isCorrect: false },
-        { text: "干扰五", isCorrect: false }
+        { text: "干扰三", isCorrect: false }
       ] });
     expect(update.body.code).toBe(0);
   });

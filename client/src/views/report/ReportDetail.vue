@@ -11,6 +11,7 @@
 
       <div class="meta">
         <div class="meta-item"><span>测试时间</span><b>{{ formatTime(report.testTime) }}</b></div>
+        <div class="meta-item"><span>完成时间</span><b>{{ report.finishedTime ? formatTime(report.finishedTime) : "-" }}</b></div>
         <div class="meta-item"><span>测试题数</span><b>{{ report.totalQuestions }}</b></div>
         <div class="meta-item"><span>正确率</span><b>{{ Math.round((report.accuracy ?? 0) * 100) }}%</b></div>
         <div class="meta-item"><span>当前等级</span><b>{{ report.finalLevel ?? "-" }}</b></div>

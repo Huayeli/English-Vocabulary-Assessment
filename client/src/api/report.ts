@@ -10,6 +10,7 @@ export interface LevelMastery {
 export interface Report {
   sessionId: number;
   testTime: string;
+  finishedTime: string | null;
   type: string;
   totalQuestions: number;
   correctCount: number;

@@ -29,9 +29,9 @@ describe("question engine", () => {
     createdQuestionId = q.id;
 
     const options = q.options;
-    expect(options).toHaveLength(5);
+    expect(options).toHaveLength(4);
     const texts = options.map((o) => o.text);
-    expect(new Set(texts).size).toBe(5); // 无重复文本
+    expect(new Set(texts).size).toBe(4); // 无重复文本
     expect(texts).toContain(word!.meanings[0].meaning); // 包含正确答案
     expect(options.filter((o) => o.isCorrect)).toHaveLength(1);
 
@@ -53,7 +53,7 @@ describe("question engine", () => {
     const client = toClientQuestion({ ...q, word: { headword: "abandon" } }, 1, Level.K3);
     expect(client.word).toBe("abandon");
     expect(client.question).toBe("请选择该单词的正确释义");
-    expect(client.options).toHaveLength(5);
+    expect(client.options).toHaveLength(4);
     expect(client.testedLevel).toBe(Level.K3);
   });
 

@@ -47,7 +47,7 @@ async function currentCorrectIndex(sessionId: number) {
 
 async function answerCurrent(app: ReturnType<typeof createApp>, token: string, sessionId: number, correct: boolean) {
   const correctIndex = await currentCorrectIndex(sessionId);
-  const optionIndex = correct ? correctIndex : (correctIndex + 1) % 5;
+  const optionIndex = correct ? correctIndex : (correctIndex + 1) % 4;
   const res = await request(app)
     .post(`/api/tests/${sessionId}/answer`)
     .set("Authorization", `Bearer ${token}`)
@@ -64,7 +64,7 @@ describe("adaptive test api", () => {
     expect(res.body.data.totalQuestions).toBe(30);
     expect(res.body.data.currentLevel).toBe("K3");
     expect(res.body.data.question.testedLevel).toBe("K3");
-    expect(res.body.data.question.options).toHaveLength(5);
+    expect(res.body.data.question.options).toHaveLength(4);
   });
 
   it("raises level to K5 after 4 consecutive correct answers", async () => {
@@ -126,7 +126,7 @@ describe("adaptive test api", () => {
     const re = await request(app)
       .post(`/api/tests/${sessionId}/answer`)
       .set("Authorization", `Bearer ${monthlyToken}`)
-      .send({ optionIndex: (q1Index + 1) % 5, answerTimeMs: 1000, seq: 1 });
+      .send({ optionIndex: (q1Index + 1) % 4, answerTimeMs: 1000, seq: 1 });
     expect(re.body.code).toBe(0);
     expect(re.body.data.isCorrect).toBe(false);
 
@@ -135,7 +135,7 @@ describe("adaptive test api", () => {
     const q2 = await request(app)
       .post(`/api/tests/${sessionId}/answer`)
       .set("Authorization", `Bearer ${monthlyToken}`)
-      .send({ optionIndex: (q2Index + 1) % 5, answerTimeMs: 1000, seq: 2 });
+      .send({ optionIndex: (q2Index + 1) % 4, answerTimeMs: 1000, seq: 2 });
     expect(q2.body.data.nextQuestion.testedLevel).toBe("K2");
 
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });

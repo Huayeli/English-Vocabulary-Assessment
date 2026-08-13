@@ -213,8 +213,8 @@
 {
   "seq": 1,
   "word": "abandon",
-  "question": "abandon是什么意思？",
-  "options": ["抛弃、放弃", "接受", "维持", "改进", "恢复"],
+  "question": "请选择该单词的正确释义",
+  "options": ["抛弃、放弃", "接受", "维持", "改进"],
   "testedLevel": "K3"
 }
 ```
@@ -461,8 +461,7 @@
           { "text": "抛弃、放弃", "isCorrect": true },
           { "text": "接受", "isCorrect": false },
           { "text": "维持", "isCorrect": false },
-          { "text": "改进", "isCorrect": false },
-          { "text": "恢复", "isCorrect": false }
+          { "text": "改进", "isCorrect": false }
         ],
         "source": "GENERATED",
         "disabled": false

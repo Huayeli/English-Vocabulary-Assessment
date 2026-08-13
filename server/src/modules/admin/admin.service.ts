@@ -131,8 +131,8 @@ export async function createQuestion(data: {
     where: { id: data.correctMeaningId, wordId: data.wordId }
   });
   if (!meaning) throw new ApiError(40001, "正确答案释义不属于该单词");
-  if (data.options.length !== 5 || data.options.filter((o) => o.isCorrect).length !== 1) {
-    throw new ApiError(40001, "题目必须包含 5 个选项且恰好 1 个正确答案");
+  if (data.options.length !== 4 || data.options.filter((o) => o.isCorrect).length !== 1) {
+    throw new ApiError(40001, "题目必须包含 4 个选项且恰好 1 个正确答案");
   }
   return prisma.question.create({
     data: {
@@ -153,8 +153,8 @@ export async function updateQuestion(
   data: { disabled?: boolean; options?: { text: string; isCorrect: boolean }[] }
 ) {
   if (data.options) {
-    if (data.options.length !== 5 || data.options.filter((o) => o.isCorrect).length !== 1) {
-      throw new ApiError(40001, "题目必须包含 5 个选项且恰好 1 个正确答案");
+    if (data.options.length !== 4 || data.options.filter((o) => o.isCorrect).length !== 1) {
+      throw new ApiError(40001, "题目必须包含 4 个选项且恰好 1 个正确答案");
     }
     await prisma.questionOption.deleteMany({ where: { questionId: id } });
     await prisma.questionOption.createMany({

@@ -22,9 +22,11 @@ export async function createSession(userId: number, type: SessionType, targetLev
 }
 
 export async function issueQuestion(sessionId: number, seq: number, level: Level) {
+  const used = await prisma.testSessionItem.findMany({ where: { sessionId }, select: { wordId: true } });
+  const usedIds = used.map((u) => u.wordId);
   for (let attempt = 0; attempt < 5; attempt++) {
     const candidates = await prisma.word.findMany({
-      where: { level, status: "ENABLED" },
+      where: { level, status: "ENABLED", id: { notIn: usedIds } },
       select: { id: true },
       take: 500
     });

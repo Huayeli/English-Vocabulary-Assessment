@@ -47,7 +47,7 @@ async function currentCorrectIndex(sessionId: number) {
 
 async function answer(app: ReturnType<typeof createApp>, token: string, sessionId: number, correct: boolean) {
   const correctIndex = await currentCorrectIndex(sessionId);
-  const optionIndex = correct ? correctIndex : (correctIndex + 1) % 5;
+  const optionIndex = correct ? correctIndex : (correctIndex + 1) % 4;
   return request(app)
     .post(`/api/tests/${sessionId}/answer`)
     .set("Authorization", `Bearer ${token}`)

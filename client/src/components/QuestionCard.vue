@@ -10,7 +10,7 @@
         :class="optionClass(i)"
         @click="$emit('select', i)"
       >
-        <span class="index">{{ "ABCDE"[i] }}</span>{{ opt }}
+        <span class="index">{{ "ABCD"[i] }}</span>{{ opt }}
       </button>
     </div>
   </div>
@@ -85,6 +85,11 @@ function optionClass(i: number) {
 .option.selected {
   border-color: #409eff;
   background: #ecf5ff;
+  font-weight: 600;
+}
+.option.selected .index {
+  background: #409eff;
+  color: #fff;
 }
 .option.dim {
   opacity: 0.6;

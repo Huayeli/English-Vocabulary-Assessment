@@ -66,6 +66,7 @@ export async function buildReport(sessionId: number, requesterId: number, reques
   return {
     sessionId: session.id,
     testTime: session.startedAt,
+    finishedTime: session.finishedAt,
     type: session.type,
     totalQuestions: session.totalQuestions,
     correctCount: session.correctCount,
