@@ -95,7 +95,7 @@
                 <td>{{ t.id }}</td>
                 <td>{{ typeLabel(t.type) }}</td>
                 <td>{{ t.finalLevel ?? "-" }}</td>
-                <td>{{ formatTime(t.finishedTime) }}</td>
+                <td>{{ formatTime(t.finishedAt) }}</td>
               </tr>
             </tbody>
           </table>

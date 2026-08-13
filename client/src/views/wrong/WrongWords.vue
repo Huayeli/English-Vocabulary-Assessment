@@ -1,5 +1,6 @@
 <template>
   <div class="page">
+    <UserHeader />
     <header class="topbar">
       <h2>错词本</h2>
       <div class="nav">
@@ -29,6 +30,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { wrongWordsApi, type WrongWordItem } from "../../api/wrongWords";
+import UserHeader from "../../components/UserHeader.vue";
 
 const items = ref<WrongWordItem[]>([]);
 

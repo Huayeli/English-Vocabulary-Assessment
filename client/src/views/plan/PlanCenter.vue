@@ -1,5 +1,6 @@
 <template>
   <div class="page">
+    <UserHeader />
     <header class="topbar">
       <h2>套餐中心</h2>
       <router-link to="/">返回测试中心</router-link>
@@ -29,6 +30,7 @@ import { onMounted, ref } from "vue";
 import { http } from "../../api/http";
 import { userApi } from "../../api/user";
 import { useUiStore } from "../../stores/ui";
+import UserHeader from "../../components/UserHeader.vue";
 
 const ui = useUiStore();
 const plans = ref<any[]>([]);

@@ -1,9 +1,9 @@
 <template>
   <div class="page">
+    <UserHeader />
     <header class="topbar">
       <h2>测试中心</h2>
       <nav>
-        <router-link to="/user">用户主页</router-link>
         <router-link to="/wrong-words">错词本</router-link>
         <button class="link" @click="logout">退出登录</button>
       </nav>
@@ -46,6 +46,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { testApi, type QuotaInfo } from "../../api/test";
 import { useAuthStore } from "../../stores/auth";
+import UserHeader from "../../components/UserHeader.vue";
 
 const router = useRouter();
 const auth = useAuthStore();

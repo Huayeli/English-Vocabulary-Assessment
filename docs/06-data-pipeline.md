@@ -54,6 +54,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/skywind3000/ECDICT/mas
 - 去词性前缀：去掉行首 `n.`、`v.`、`vt.`、`vi.`、`adj.`、`adv.`、`prep.`、`conj.` 等标记。
 - 去重：相同文本只保留一条。
 - 截断：单条释义长度超过 50 字符截断（防御异常数据）。
+- 分隔：一个义项内的多个意思统一用全角分号 `；` 分隔（替换 `，`/`,`）。
 - 空值过滤：去空后为空则视为未匹配。
 
 ## 5. 人工修正流程

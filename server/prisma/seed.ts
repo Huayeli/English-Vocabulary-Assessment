@@ -19,6 +19,7 @@ export function parseMeanings(raw: string, limit = MAX_MEANINGS_PER_WORD): strin
     .map((line) => line.replace(/[\x00-\x1f\x7f]/g, "").trim()) // 去除 \r 等控制字符
     .map((line) => line.replace(/\[[^\]]*\]/g, "").trim()) // 去除 [计] [医] [化] 等学科标签
     .map((line) => line.replace(/\s+/g, " ").trim())
+    .map((line) => line.replace(/[，,]/g, "；")) // 一个义项内多个意思用全角分号分隔
     .filter((line) => line.length > 0 && line.length <= 50)
     // 去除词形变化类释义，如 "某某的过去式/复数形式/比较级"
     .filter(
@@ -119,7 +120,8 @@ async function importWords() {
   }
   const ecdict = fs.existsSync(ecdictCsv) ? await loadEcdictIndex(ecdictCsv) : new Map<string, string>();
 
-  // seed 是初始化脚本：词义完全由 ECDICT 重建，先清空旧词义保证幂等一致
+  // seed 是初始化脚本：词义与题目缓存完全重建，先清空旧数据保证幂等一致
+  await prisma.question.deleteMany({});
   await prisma.wordMeaning.deleteMany({});
 
   let imported = 0;
