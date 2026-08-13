@@ -41,11 +41,8 @@ export const testApi = {
 };
 
 export interface QuotaInfo {
-  packageCode: string;
-  packageName: string;
-  remainingDailyTests: number | null;
-  remainingTestCount: number;
-  verificationEnabled: boolean;
-  wrongBookEnabled: boolean;
-  historyEnabled: boolean;
+  accessCode: string;
+  usedCount: number;
+  maxTests: number | null;
+  remaining: number | null;
 }

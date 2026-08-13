@@ -28,7 +28,7 @@ export type AggregateTestSession = {
 
 export type TestSessionAvgAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   totalQuestions: number | null
   correctCount: number | null
   wrongCount: number | null
@@ -38,7 +38,7 @@ export type TestSessionAvgAggregateOutputType = {
 
 export type TestSessionSumAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   totalQuestions: number | null
   correctCount: number | null
   wrongCount: number | null
@@ -48,7 +48,7 @@ export type TestSessionSumAggregateOutputType = {
 
 export type TestSessionMinAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   type: string | null
   targetLevel: $Enums.Level | null
   totalQuestions: number | null
@@ -63,7 +63,7 @@ export type TestSessionMinAggregateOutputType = {
 
 export type TestSessionMaxAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   type: string | null
   targetLevel: $Enums.Level | null
   totalQuestions: number | null
@@ -78,7 +78,7 @@ export type TestSessionMaxAggregateOutputType = {
 
 export type TestSessionCountAggregateOutputType = {
   id: number
-  userId: number
+  activationCodeId: number
   type: number
   targetLevel: number
   totalQuestions: number
@@ -95,7 +95,7 @@ export type TestSessionCountAggregateOutputType = {
 
 export type TestSessionAvgAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   totalQuestions?: true
   correctCount?: true
   wrongCount?: true
@@ -105,7 +105,7 @@ export type TestSessionAvgAggregateInputType = {
 
 export type TestSessionSumAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   totalQuestions?: true
   correctCount?: true
   wrongCount?: true
@@ -115,7 +115,7 @@ export type TestSessionSumAggregateInputType = {
 
 export type TestSessionMinAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   type?: true
   targetLevel?: true
   totalQuestions?: true
@@ -130,7 +130,7 @@ export type TestSessionMinAggregateInputType = {
 
 export type TestSessionMaxAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   type?: true
   targetLevel?: true
   totalQuestions?: true
@@ -145,7 +145,7 @@ export type TestSessionMaxAggregateInputType = {
 
 export type TestSessionCountAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   type?: true
   targetLevel?: true
   totalQuestions?: true
@@ -247,7 +247,7 @@ export type TestSessionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type TestSessionGroupByOutputType = {
   id: number
-  userId: number
+  activationCodeId: number
   type: string
   targetLevel: $Enums.Level | null
   totalQuestions: number
@@ -285,7 +285,7 @@ export type TestSessionWhereInput = {
   OR?: Prisma.TestSessionWhereInput[]
   NOT?: Prisma.TestSessionWhereInput | Prisma.TestSessionWhereInput[]
   id?: Prisma.IntFilter<"TestSession"> | number
-  userId?: Prisma.IntFilter<"TestSession"> | number
+  activationCodeId?: Prisma.IntFilter<"TestSession"> | number
   type?: Prisma.StringFilter<"TestSession"> | string
   targetLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   totalQuestions?: Prisma.IntFilter<"TestSession"> | number
@@ -296,13 +296,13 @@ export type TestSessionWhereInput = {
   accuracy?: Prisma.FloatNullableFilter<"TestSession"> | number | null
   startedAt?: Prisma.DateTimeFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableFilter<"TestSession"> | Date | string | null
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
   items?: Prisma.TestSessionItemListRelationFilter
 }
 
 export type TestSessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   targetLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
@@ -313,7 +313,7 @@ export type TestSessionOrderByWithRelationInput = {
   accuracy?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   finishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  code?: Prisma.ActivationCodeOrderByWithRelationInput
   items?: Prisma.TestSessionItemOrderByRelationAggregateInput
 }
 
@@ -322,7 +322,7 @@ export type TestSessionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.TestSessionWhereInput | Prisma.TestSessionWhereInput[]
   OR?: Prisma.TestSessionWhereInput[]
   NOT?: Prisma.TestSessionWhereInput | Prisma.TestSessionWhereInput[]
-  userId?: Prisma.IntFilter<"TestSession"> | number
+  activationCodeId?: Prisma.IntFilter<"TestSession"> | number
   type?: Prisma.StringFilter<"TestSession"> | string
   targetLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   totalQuestions?: Prisma.IntFilter<"TestSession"> | number
@@ -333,13 +333,13 @@ export type TestSessionWhereUniqueInput = Prisma.AtLeast<{
   accuracy?: Prisma.FloatNullableFilter<"TestSession"> | number | null
   startedAt?: Prisma.DateTimeFilter<"TestSession"> | Date | string
   finishedAt?: Prisma.DateTimeNullableFilter<"TestSession"> | Date | string | null
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
   items?: Prisma.TestSessionItemListRelationFilter
 }, "id">
 
 export type TestSessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   targetLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
@@ -362,7 +362,7 @@ export type TestSessionScalarWhereWithAggregatesInput = {
   OR?: Prisma.TestSessionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TestSessionScalarWhereWithAggregatesInput | Prisma.TestSessionScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"TestSession"> | number
-  userId?: Prisma.IntWithAggregatesFilter<"TestSession"> | number
+  activationCodeId?: Prisma.IntWithAggregatesFilter<"TestSession"> | number
   type?: Prisma.StringWithAggregatesFilter<"TestSession"> | string
   targetLevel?: Prisma.EnumLevelNullableWithAggregatesFilter<"TestSession"> | $Enums.Level | null
   totalQuestions?: Prisma.IntWithAggregatesFilter<"TestSession"> | number
@@ -386,13 +386,13 @@ export type TestSessionCreateInput = {
   accuracy?: number | null
   startedAt?: Date | string
   finishedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutTestSessionsInput
+  code: Prisma.ActivationCodeCreateNestedOneWithoutTestSessionsInput
   items?: Prisma.TestSessionItemCreateNestedManyWithoutSessionInput
 }
 
 export type TestSessionUncheckedCreateInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   type: string
   targetLevel?: $Enums.Level | null
   totalQuestions?: number
@@ -417,13 +417,13 @@ export type TestSessionUpdateInput = {
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutTestSessionsNestedInput
+  code?: Prisma.ActivationCodeUpdateOneRequiredWithoutTestSessionsNestedInput
   items?: Prisma.TestSessionItemUpdateManyWithoutSessionNestedInput
 }
 
 export type TestSessionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
@@ -439,7 +439,7 @@ export type TestSessionUncheckedUpdateInput = {
 
 export type TestSessionCreateManyInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   type: string
   targetLevel?: $Enums.Level | null
   totalQuestions?: number
@@ -467,7 +467,7 @@ export type TestSessionUpdateManyMutationInput = {
 
 export type TestSessionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
@@ -492,7 +492,7 @@ export type TestSessionOrderByRelationAggregateInput = {
 
 export type TestSessionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   targetLevel?: Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
@@ -507,7 +507,7 @@ export type TestSessionCountOrderByAggregateInput = {
 
 export type TestSessionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
   correctCount?: Prisma.SortOrder
   wrongCount?: Prisma.SortOrder
@@ -517,7 +517,7 @@ export type TestSessionAvgOrderByAggregateInput = {
 
 export type TestSessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   targetLevel?: Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
@@ -532,7 +532,7 @@ export type TestSessionMaxOrderByAggregateInput = {
 
 export type TestSessionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   targetLevel?: Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
@@ -547,7 +547,7 @@ export type TestSessionMinOrderByAggregateInput = {
 
 export type TestSessionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   totalQuestions?: Prisma.SortOrder
   correctCount?: Prisma.SortOrder
   wrongCount?: Prisma.SortOrder
@@ -560,45 +560,45 @@ export type TestSessionScalarRelationFilter = {
   isNot?: Prisma.TestSessionWhereInput
 }
 
-export type TestSessionCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput> | Prisma.TestSessionCreateWithoutUserInput[] | Prisma.TestSessionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutUserInput | Prisma.TestSessionCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.TestSessionCreateManyUserInputEnvelope
+export type TestSessionCreateNestedManyWithoutCodeInput = {
+  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput> | Prisma.TestSessionCreateWithoutCodeInput[] | Prisma.TestSessionUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutCodeInput | Prisma.TestSessionCreateOrConnectWithoutCodeInput[]
+  createMany?: Prisma.TestSessionCreateManyCodeInputEnvelope
   connect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
 }
 
-export type TestSessionUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput> | Prisma.TestSessionCreateWithoutUserInput[] | Prisma.TestSessionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutUserInput | Prisma.TestSessionCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.TestSessionCreateManyUserInputEnvelope
+export type TestSessionUncheckedCreateNestedManyWithoutCodeInput = {
+  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput> | Prisma.TestSessionCreateWithoutCodeInput[] | Prisma.TestSessionUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutCodeInput | Prisma.TestSessionCreateOrConnectWithoutCodeInput[]
+  createMany?: Prisma.TestSessionCreateManyCodeInputEnvelope
   connect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
 }
 
-export type TestSessionUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput> | Prisma.TestSessionCreateWithoutUserInput[] | Prisma.TestSessionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutUserInput | Prisma.TestSessionCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.TestSessionUpsertWithWhereUniqueWithoutUserInput | Prisma.TestSessionUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.TestSessionCreateManyUserInputEnvelope
+export type TestSessionUpdateManyWithoutCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput> | Prisma.TestSessionCreateWithoutCodeInput[] | Prisma.TestSessionUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutCodeInput | Prisma.TestSessionCreateOrConnectWithoutCodeInput[]
+  upsert?: Prisma.TestSessionUpsertWithWhereUniqueWithoutCodeInput | Prisma.TestSessionUpsertWithWhereUniqueWithoutCodeInput[]
+  createMany?: Prisma.TestSessionCreateManyCodeInputEnvelope
   set?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   disconnect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   delete?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   connect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
-  update?: Prisma.TestSessionUpdateWithWhereUniqueWithoutUserInput | Prisma.TestSessionUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.TestSessionUpdateManyWithWhereWithoutUserInput | Prisma.TestSessionUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.TestSessionUpdateWithWhereUniqueWithoutCodeInput | Prisma.TestSessionUpdateWithWhereUniqueWithoutCodeInput[]
+  updateMany?: Prisma.TestSessionUpdateManyWithWhereWithoutCodeInput | Prisma.TestSessionUpdateManyWithWhereWithoutCodeInput[]
   deleteMany?: Prisma.TestSessionScalarWhereInput | Prisma.TestSessionScalarWhereInput[]
 }
 
-export type TestSessionUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput> | Prisma.TestSessionCreateWithoutUserInput[] | Prisma.TestSessionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutUserInput | Prisma.TestSessionCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.TestSessionUpsertWithWhereUniqueWithoutUserInput | Prisma.TestSessionUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.TestSessionCreateManyUserInputEnvelope
+export type TestSessionUncheckedUpdateManyWithoutCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput> | Prisma.TestSessionCreateWithoutCodeInput[] | Prisma.TestSessionUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.TestSessionCreateOrConnectWithoutCodeInput | Prisma.TestSessionCreateOrConnectWithoutCodeInput[]
+  upsert?: Prisma.TestSessionUpsertWithWhereUniqueWithoutCodeInput | Prisma.TestSessionUpsertWithWhereUniqueWithoutCodeInput[]
+  createMany?: Prisma.TestSessionCreateManyCodeInputEnvelope
   set?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   disconnect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   delete?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
   connect?: Prisma.TestSessionWhereUniqueInput | Prisma.TestSessionWhereUniqueInput[]
-  update?: Prisma.TestSessionUpdateWithWhereUniqueWithoutUserInput | Prisma.TestSessionUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.TestSessionUpdateManyWithWhereWithoutUserInput | Prisma.TestSessionUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.TestSessionUpdateWithWhereUniqueWithoutCodeInput | Prisma.TestSessionUpdateWithWhereUniqueWithoutCodeInput[]
+  updateMany?: Prisma.TestSessionUpdateManyWithWhereWithoutCodeInput | Prisma.TestSessionUpdateManyWithWhereWithoutCodeInput[]
   deleteMany?: Prisma.TestSessionScalarWhereInput | Prisma.TestSessionScalarWhereInput[]
 }
 
@@ -628,7 +628,7 @@ export type TestSessionUpdateOneRequiredWithoutItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TestSessionUpdateToOneWithWhereWithoutItemsInput, Prisma.TestSessionUpdateWithoutItemsInput>, Prisma.TestSessionUncheckedUpdateWithoutItemsInput>
 }
 
-export type TestSessionCreateWithoutUserInput = {
+export type TestSessionCreateWithoutCodeInput = {
   type: string
   targetLevel?: $Enums.Level | null
   totalQuestions?: number
@@ -642,7 +642,7 @@ export type TestSessionCreateWithoutUserInput = {
   items?: Prisma.TestSessionItemCreateNestedManyWithoutSessionInput
 }
 
-export type TestSessionUncheckedCreateWithoutUserInput = {
+export type TestSessionUncheckedCreateWithoutCodeInput = {
   id?: number
   type: string
   targetLevel?: $Enums.Level | null
@@ -657,29 +657,29 @@ export type TestSessionUncheckedCreateWithoutUserInput = {
   items?: Prisma.TestSessionItemUncheckedCreateNestedManyWithoutSessionInput
 }
 
-export type TestSessionCreateOrConnectWithoutUserInput = {
+export type TestSessionCreateOrConnectWithoutCodeInput = {
   where: Prisma.TestSessionWhereUniqueInput
-  create: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput>
 }
 
-export type TestSessionCreateManyUserInputEnvelope = {
-  data: Prisma.TestSessionCreateManyUserInput | Prisma.TestSessionCreateManyUserInput[]
+export type TestSessionCreateManyCodeInputEnvelope = {
+  data: Prisma.TestSessionCreateManyCodeInput | Prisma.TestSessionCreateManyCodeInput[]
 }
 
-export type TestSessionUpsertWithWhereUniqueWithoutUserInput = {
+export type TestSessionUpsertWithWhereUniqueWithoutCodeInput = {
   where: Prisma.TestSessionWhereUniqueInput
-  update: Prisma.XOR<Prisma.TestSessionUpdateWithoutUserInput, Prisma.TestSessionUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.TestSessionCreateWithoutUserInput, Prisma.TestSessionUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.TestSessionUpdateWithoutCodeInput, Prisma.TestSessionUncheckedUpdateWithoutCodeInput>
+  create: Prisma.XOR<Prisma.TestSessionCreateWithoutCodeInput, Prisma.TestSessionUncheckedCreateWithoutCodeInput>
 }
 
-export type TestSessionUpdateWithWhereUniqueWithoutUserInput = {
+export type TestSessionUpdateWithWhereUniqueWithoutCodeInput = {
   where: Prisma.TestSessionWhereUniqueInput
-  data: Prisma.XOR<Prisma.TestSessionUpdateWithoutUserInput, Prisma.TestSessionUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.TestSessionUpdateWithoutCodeInput, Prisma.TestSessionUncheckedUpdateWithoutCodeInput>
 }
 
-export type TestSessionUpdateManyWithWhereWithoutUserInput = {
+export type TestSessionUpdateManyWithWhereWithoutCodeInput = {
   where: Prisma.TestSessionScalarWhereInput
-  data: Prisma.XOR<Prisma.TestSessionUpdateManyMutationInput, Prisma.TestSessionUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.TestSessionUpdateManyMutationInput, Prisma.TestSessionUncheckedUpdateManyWithoutCodeInput>
 }
 
 export type TestSessionScalarWhereInput = {
@@ -687,7 +687,7 @@ export type TestSessionScalarWhereInput = {
   OR?: Prisma.TestSessionScalarWhereInput[]
   NOT?: Prisma.TestSessionScalarWhereInput | Prisma.TestSessionScalarWhereInput[]
   id?: Prisma.IntFilter<"TestSession"> | number
-  userId?: Prisma.IntFilter<"TestSession"> | number
+  activationCodeId?: Prisma.IntFilter<"TestSession"> | number
   type?: Prisma.StringFilter<"TestSession"> | string
   targetLevel?: Prisma.EnumLevelNullableFilter<"TestSession"> | $Enums.Level | null
   totalQuestions?: Prisma.IntFilter<"TestSession"> | number
@@ -711,12 +711,12 @@ export type TestSessionCreateWithoutItemsInput = {
   accuracy?: number | null
   startedAt?: Date | string
   finishedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutTestSessionsInput
+  code: Prisma.ActivationCodeCreateNestedOneWithoutTestSessionsInput
 }
 
 export type TestSessionUncheckedCreateWithoutItemsInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   type: string
   targetLevel?: $Enums.Level | null
   totalQuestions?: number
@@ -756,12 +756,12 @@ export type TestSessionUpdateWithoutItemsInput = {
   accuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutTestSessionsNestedInput
+  code?: Prisma.ActivationCodeUpdateOneRequiredWithoutTestSessionsNestedInput
 }
 
 export type TestSessionUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
@@ -774,7 +774,7 @@ export type TestSessionUncheckedUpdateWithoutItemsInput = {
   finishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type TestSessionCreateManyUserInput = {
+export type TestSessionCreateManyCodeInput = {
   id?: number
   type: string
   targetLevel?: $Enums.Level | null
@@ -788,7 +788,7 @@ export type TestSessionCreateManyUserInput = {
   finishedAt?: Date | string | null
 }
 
-export type TestSessionUpdateWithoutUserInput = {
+export type TestSessionUpdateWithoutCodeInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
@@ -802,7 +802,7 @@ export type TestSessionUpdateWithoutUserInput = {
   items?: Prisma.TestSessionItemUpdateManyWithoutSessionNestedInput
 }
 
-export type TestSessionUncheckedUpdateWithoutUserInput = {
+export type TestSessionUncheckedUpdateWithoutCodeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
@@ -817,7 +817,7 @@ export type TestSessionUncheckedUpdateWithoutUserInput = {
   items?: Prisma.TestSessionItemUncheckedUpdateManyWithoutSessionNestedInput
 }
 
-export type TestSessionUncheckedUpdateManyWithoutUserInput = {
+export type TestSessionUncheckedUpdateManyWithoutCodeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   targetLevel?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
@@ -864,7 +864,7 @@ export type TestSessionCountOutputTypeCountItemsArgs<ExtArgs extends runtime.Typ
 
 export type TestSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   type?: boolean
   targetLevel?: boolean
   totalQuestions?: boolean
@@ -875,14 +875,14 @@ export type TestSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   accuracy?: boolean
   startedAt?: boolean
   finishedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   items?: boolean | Prisma.TestSession$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.TestSessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["testSession"]>
 
 export type TestSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   type?: boolean
   targetLevel?: boolean
   totalQuestions?: boolean
@@ -893,12 +893,12 @@ export type TestSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   accuracy?: boolean
   startedAt?: boolean
   finishedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["testSession"]>
 
 export type TestSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   type?: boolean
   targetLevel?: boolean
   totalQuestions?: boolean
@@ -909,12 +909,12 @@ export type TestSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   accuracy?: boolean
   startedAt?: boolean
   finishedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["testSession"]>
 
 export type TestSessionSelectScalar = {
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   type?: boolean
   targetLevel?: boolean
   totalQuestions?: boolean
@@ -927,28 +927,28 @@ export type TestSessionSelectScalar = {
   finishedAt?: boolean
 }
 
-export type TestSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "targetLevel" | "totalQuestions" | "correctCount" | "wrongCount" | "finalLevel" | "estimatedVocabulary" | "accuracy" | "startedAt" | "finishedAt", ExtArgs["result"]["testSession"]>
+export type TestSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "activationCodeId" | "type" | "targetLevel" | "totalQuestions" | "correctCount" | "wrongCount" | "finalLevel" | "estimatedVocabulary" | "accuracy" | "startedAt" | "finishedAt", ExtArgs["result"]["testSession"]>
 export type TestSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   items?: boolean | Prisma.TestSession$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.TestSessionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TestSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
 }
 export type TestSessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
 }
 
 export type $TestSessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TestSession"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    code: Prisma.$ActivationCodePayload<ExtArgs>
     items: Prisma.$TestSessionItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    userId: number
+    activationCodeId: number
     type: string
     targetLevel: $Enums.Level | null
     totalQuestions: number
@@ -1353,7 +1353,7 @@ readonly fields: TestSessionFieldRefs;
  */
 export interface Prisma__TestSessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  code<T extends Prisma.ActivationCodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivationCodeDefaultArgs<ExtArgs>>): Prisma.Prisma__ActivationCodeClient<runtime.Types.Result.GetResult<Prisma.$ActivationCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.TestSession$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TestSession$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestSessionItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1385,7 +1385,7 @@ export interface Prisma__TestSessionClient<T, Null = never, ExtArgs extends runt
  */
 export interface TestSessionFieldRefs {
   readonly id: Prisma.FieldRef<"TestSession", 'Int'>
-  readonly userId: Prisma.FieldRef<"TestSession", 'Int'>
+  readonly activationCodeId: Prisma.FieldRef<"TestSession", 'Int'>
   readonly type: Prisma.FieldRef<"TestSession", 'String'>
   readonly targetLevel: Prisma.FieldRef<"TestSession", 'Level'>
   readonly totalQuestions: Prisma.FieldRef<"TestSession", 'Int'>

@@ -2,94 +2,185 @@ import { Level } from "../../generated/prisma/enums.js";
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 
-export async function listUsers(params: { keyword?: string; packageCode?: string; page: number; pageSize: number }) {
-  const where: Record<string, unknown> = {};
-  if (params.keyword) {
-    where.OR = [{ username: { contains: params.keyword } }, { email: { contains: params.keyword } }];
+const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+function randomCode(): string {
+  let out = "";
+  for (let i = 0; i < 8; i++) {
+    out += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
   }
-  if (params.packageCode) where.package = { code: params.packageCode };
-  const [total, users] = await Promise.all([
-    prisma.user.count({ where }),
-    prisma.user.findMany({
+  return out;
+}
+
+async function uniqueCode(): Promise<string> {
+  for (let i = 0; i < 20; i++) {
+    const code = randomCode();
+    const exists = await prisma.activationCode.findUnique({ where: { code } });
+    if (!exists) return code;
+  }
+  throw new ApiError(50001, "激活码生成失败，请重试");
+}
+
+export async function dashboard() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const [codeCount, activeCodeCount, batchCount, testCount, avg, todayTests] = await Promise.all([
+    prisma.activationCode.count(),
+    prisma.activationCode.count({ where: { status: "ACTIVE" } }),
+    prisma.batch.count(),
+    prisma.testSession.count({ where: { finishedAt: { not: null } } }),
+    prisma.testSession.aggregate({ _avg: { estimatedVocabulary: true }, where: { finishedAt: { not: null } } }),
+    prisma.testSession.count({ where: { finishedAt: { not: null }, startedAt: { gte: today } } })
+  ]);
+  const latestSessions = await prisma.testSession.findMany({
+    where: { finishedAt: { not: null } },
+    orderBy: { finishedAt: "desc" },
+    distinct: ["activationCodeId"],
+    select: { finalLevel: true }
+  });
+  const levelDistribution = (Object.keys(Level) as Level[]).map((level) => ({
+    level,
+    count: latestSessions.filter((s) => s.finalLevel === level).length
+  }));
+  return {
+    codeCount,
+    activeCodeCount,
+    batchCount,
+    testCount,
+    todayTests,
+    averageVocabulary: Math.round(avg._avg.estimatedVocabulary ?? 0),
+    levelDistribution
+  };
+}
+
+export async function listCodes(params: {
+  batch?: string;
+  status?: string;
+  keyword?: string;
+  page: number;
+  pageSize: number;
+}) {
+  const where: Record<string, unknown> = {};
+  if (params.status) where.status = params.status;
+  if (params.keyword) where.code = { contains: params.keyword.toUpperCase() };
+  if (params.batch) where.batch = { name: params.batch };
+  const [total, list] = await Promise.all([
+    prisma.activationCode.count({ where }),
+    prisma.activationCode.findMany({
       where,
-      include: { package: true },
-      orderBy: { id: "desc" },
+      include: { batch: true },
+      orderBy: { createdAt: "desc" },
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize
     })
   ]);
-  const rows = await Promise.all(
-    users.map(async (u) => {
-      const [testCount, latest] = await Promise.all([
-        prisma.testSession.count({ where: { userId: u.id, finishedAt: { not: null } } }),
-        prisma.testSession.findFirst({
-          where: { userId: u.id, finishedAt: { not: null } },
-          orderBy: { finishedAt: "desc" }
-        })
-      ]);
-      return {
-        id: u.id,
-        username: u.username,
-        email: u.email,
-        packageCode: u.package.code,
-        testCount,
-        currentLevel: latest?.finalLevel ?? null,
-        status: u.status
-      };
-    })
-  );
-  return { list: rows, total, page: params.page, pageSize: params.pageSize };
-}
-
-export async function userDetail(userId: number) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { package: true }
-  });
-  if (!user) throw new ApiError(40401, "用户不存在");
-  const [testCount, recent] = await Promise.all([
-    prisma.testSession.count({ where: { userId, finishedAt: { not: null } } }),
-    prisma.testSession.findMany({
-      where: { userId, finishedAt: { not: null } },
-      orderBy: { finishedAt: "desc" },
-      take: 10
-    })
-  ]);
   return {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    status: user.status,
-    packageCode: user.package.code,
-    packageName: user.package.name,
-    packageExpireTime: user.packageExpireTime,
-    remainingTestCount: user.remainingTestCount,
-    testCount,
-    recentTests: recent
+    list: list.map((c) => ({
+      id: c.id,
+      code: c.code,
+      batchName: c.batch.name,
+      maxTests: c.maxTests,
+      usedCount: c.usedCount,
+      remaining: c.maxTests == null ? null : Math.max(0, c.maxTests - c.usedCount),
+      status: c.status,
+      createdAt: c.createdAt,
+      lastUsedAt: c.lastUsedAt
+    })),
+    total,
+    page: params.page,
+    pageSize: params.pageSize
   };
 }
 
-export async function setPackage(
-  userId: number,
-  data: { packageId: number; expireTime?: string | null; remainingTestCount?: number }
-) {
-  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: data.packageId } });
-  let expireTime = data.expireTime ? new Date(data.expireTime) : null;
-  if (expireTime && Number.isNaN(expireTime.getTime())) expireTime = null;
-  // 月卡/年卡未填到期时间时自动补一个周期，避免刚开通就被判过期
-  if ((plan.code === "MONTHLY" || plan.code === "YEARLY") && !expireTime) {
-    const days = plan.code === "MONTHLY" ? 30 : 365;
-    expireTime = new Date(Date.now() + days * 24 * 3600 * 1000);
+export async function generateCodes(data: {
+  batchName: string;
+  count: number;
+  maxTests?: number | null;
+  note?: string;
+}) {
+  const name = data.batchName.trim();
+  if (!name) throw new ApiError(40001, "批次名称不能为空");
+  const count = Math.floor(data.count);
+  if (count < 1 || count > 100) throw new ApiError(40001, "生成数量需在 1-100 之间");
+  const maxTests = data.maxTests == null ? null : Math.max(1, Math.floor(data.maxTests));
+  const batch = await prisma.batch.create({ data: { name, note: data.note ?? null } });
+  const codes: string[] = [];
+  for (let i = 0; i < count; i++) {
+    codes.push(await uniqueCode());
   }
-  return prisma.user.update({
-    where: { id: userId },
+  await prisma.activationCode.createMany({
+    data: codes.map((code) => ({ batchId: batch.id, code, maxTests }))
+  });
+  return { batchId: batch.id, batchName: name, count, maxTests, codes };
+}
+
+export async function updateCode(id: number, data: { status?: string; maxTests?: number | null }) {
+  return prisma.activationCode.update({
+    where: { id },
     data: {
-      packageId: data.packageId,
-      packageExpireTime: expireTime,
-      remainingTestCount: data.remainingTestCount ?? 0
+      status: data.status,
+      maxTests: data.maxTests === undefined ? undefined : data.maxTests == null ? null : Math.max(1, Math.floor(data.maxTests))
     }
   });
+}
+
+export async function listBatches() {
+  const batches = await prisma.batch.findMany({
+    include: { _count: { select: { codes: true } } },
+    orderBy: { createdAt: "desc" }
+  });
+  return batches.map((b) => ({
+    id: b.id,
+    name: b.name,
+    note: b.note,
+    codeCount: b._count.codes,
+    createdAt: b.createdAt
+  }));
+}
+
+export async function listTests(params: { type?: string; keyword?: string; page: number; pageSize: number }) {
+  const where: Record<string, unknown> = { finishedAt: { not: null } };
+  if (params.type) where.type = params.type;
+  if (params.keyword) where.code = { code: { contains: params.keyword.toUpperCase() } };
+  const [total, list] = await Promise.all([
+    prisma.testSession.count({ where }),
+    prisma.testSession.findMany({
+      where,
+      include: { code: true },
+      orderBy: { finishedAt: "desc" },
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize
+    })
+  ]);
+  return {
+    list: list.map((t) => ({
+      id: t.id,
+      accessCode: t.code.code,
+      type: t.type,
+      totalQuestions: t.totalQuestions,
+      correctCount: t.correctCount,
+      accuracy: t.accuracy,
+      finalLevel: t.finalLevel,
+      estimatedVocabulary: t.estimatedVocabulary,
+      startedAt: t.startedAt,
+      finishedAt: t.finishedAt
+    })),
+    total,
+    page: params.page,
+    pageSize: params.pageSize
+  };
+}
+
+export async function testDetail(id: number) {
+  const session = await prisma.testSession.findUnique({
+    where: { id },
+    include: {
+      code: true,
+      items: { include: { word: true }, orderBy: { seq: "asc" } }
+    }
+  });
+  if (!session) throw new ApiError(40401, "测试不存在");
+  return session;
 }
 
 export async function listQuestions(params: { keyword?: string; level?: Level; page: number; pageSize: number }) {
@@ -166,28 +257,4 @@ export async function updateQuestion(
 
 export async function deleteQuestion(id: number) {
   await prisma.question.delete({ where: { id } });
-}
-
-export async function statsOverview() {
-  const [userCount, testCount, avg] = await Promise.all([
-    prisma.user.count(),
-    prisma.testSession.count({ where: { finishedAt: { not: null } } }),
-    prisma.testSession.aggregate({ _avg: { estimatedVocabulary: true }, where: { finishedAt: { not: null } } })
-  ]);
-  const latestSessions = await prisma.testSession.findMany({
-    where: { finishedAt: { not: null } },
-    orderBy: { finishedAt: "desc" },
-    distinct: ["userId"],
-    select: { finalLevel: true }
-  });
-  const levelDistribution = (Object.keys(Level) as Level[]).map((level) => ({
-    level,
-    count: latestSessions.filter((s) => s.finalLevel === level).length
-  }));
-  return {
-    userCount,
-    testCount,
-    averageVocabulary: Math.round(avg._avg.estimatedVocabulary ?? 0),
-    levelDistribution
-  };
 }

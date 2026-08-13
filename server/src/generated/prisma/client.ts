@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Batches
+ * const batches = await prisma.batch.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,20 +42,15 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model User
+ * Model Batch
  * 
  */
-export type User = Prisma.UserModel
+export type Batch = Prisma.BatchModel
 /**
- * Model VerificationCode
+ * Model ActivationCode
  * 
  */
-export type VerificationCode = Prisma.VerificationCodeModel
-/**
- * Model Plan
- * 
- */
-export type Plan = Prisma.PlanModel
+export type ActivationCode = Prisma.ActivationCodeModel
 /**
  * Model Word
  * 

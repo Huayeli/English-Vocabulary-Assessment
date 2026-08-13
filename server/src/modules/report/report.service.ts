@@ -26,15 +26,15 @@ export function cefrOf(level: Level): string {
   return CEFR[level];
 }
 
-export async function buildReport(sessionId: number, requesterId: number, requesterRole: string) {
+export async function buildReport(sessionId: number, codeId: number, isAdmin: boolean) {
   const session = await prisma.testSession.findUnique({
     where: { id: sessionId },
     include: {
       items: { include: { word: true }, orderBy: { seq: "asc" } },
-      user: true
+      code: true
     }
   });
-  if (!session || (session.userId !== requesterId && requesterRole !== "ADMIN")) {
+  if (!session || (session.activationCodeId !== codeId && !isAdmin)) {
     throw new ApiError(40401, "报告不存在");
   }
 
@@ -65,6 +65,7 @@ export async function buildReport(sessionId: number, requesterId: number, reques
 
   return {
     sessionId: session.id,
+    accessCode: session.code.code,
     testTime: session.startedAt,
     finishedTime: session.finishedAt,
     type: session.type,

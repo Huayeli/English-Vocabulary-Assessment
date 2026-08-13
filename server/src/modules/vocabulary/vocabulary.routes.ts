@@ -1,15 +1,17 @@
 import { Router } from "express";
 import * as ctrl from "./vocabulary.controller.js";
-import { requireAdmin, requireAuth } from "../../middleware/auth.js";
+import { requireAdminKey } from "../../middleware/access.js";
 
 export const vocabularyRouter = Router();
-vocabularyRouter.get("/", requireAuth, ctrl.listHandler);
-vocabularyRouter.get("/:id", requireAuth, ctrl.detailHandler);
-vocabularyRouter.post("/", requireAuth, requireAdmin, ctrl.createHandler);
-vocabularyRouter.put("/:id", requireAuth, requireAdmin, ctrl.updateHandler);
-vocabularyRouter.delete("/:id", requireAuth, requireAdmin, ctrl.deleteHandler);
-vocabularyRouter.post("/:id/meanings", requireAuth, requireAdmin, ctrl.addMeaningHandler);
+vocabularyRouter.use(requireAdminKey);
+vocabularyRouter.get("/", ctrl.listHandler);
+vocabularyRouter.get("/:id", ctrl.detailHandler);
+vocabularyRouter.post("/", ctrl.createHandler);
+vocabularyRouter.put("/:id", ctrl.updateHandler);
+vocabularyRouter.delete("/:id", ctrl.deleteHandler);
+vocabularyRouter.post("/:id/meanings", ctrl.addMeaningHandler);
 
 export const meaningRouter = Router();
-meaningRouter.put("/:id", requireAuth, requireAdmin, ctrl.updateMeaningHandler);
-meaningRouter.delete("/:id", requireAuth, requireAdmin, ctrl.deleteMeaningHandler);
+meaningRouter.use(requireAdminKey);
+meaningRouter.put("/:id", ctrl.updateMeaningHandler);
+meaningRouter.delete("/:id", ctrl.deleteMeaningHandler);

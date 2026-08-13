@@ -1,12 +1,14 @@
 <template>
   <div class="layout">
     <aside class="side">
-      <h3>管理后台</h3>
-      <router-link to="/admin/users">用户管理</router-link>
-      <router-link to="/admin/words">词库管理</router-link>
-      <router-link to="/admin/questions">题库管理</router-link>
-      <router-link to="/admin/stats">数据统计</router-link>
+      <h3>词海拾贝 · 管理台</h3>
+      <router-link to="/admin/dashboard">仪表盘</router-link>
+      <router-link to="/admin/bank">题库管理</router-link>
+      <router-link to="/admin/tests">测试管理</router-link>
+      <router-link to="/admin/codes">激活码管理</router-link>
+      <div class="spacer"></div>
       <router-link class="exit" to="/">返回前台</router-link>
+      <button class="exit" @click="logout">退出管理</button>
     </aside>
     <main class="content">
       <router-view />
@@ -14,14 +16,27 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { useCodeStore } from "../stores/code";
+
+const router = useRouter();
+const store = useCodeStore();
+
+function logout() {
+  store.clearAdminKey();
+  router.replace("/");
+}
+</script>
+
 <style scoped>
 .layout {
   display: flex;
   min-height: 100vh;
 }
 .side {
-  width: 200px;
-  background: #1f2937;
+  width: 210px;
+  background: #1e293b;
   color: #fff;
   padding: 20px 0;
   display: flex;
@@ -31,24 +46,33 @@
 .side h3 {
   padding: 0 20px;
   margin-bottom: 16px;
+  font-size: 15px;
 }
-.side a {
-  color: #d1d5db;
+.side a,
+.side button {
+  color: #cbd5e1;
   text-decoration: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
 .side a.router-link-active {
-  background: #374151;
+  background: #334155;
   color: #fff;
+  border-left: 3px solid #3b82f6;
+}
+.spacer {
+  flex: 1;
 }
 .side .exit {
-  margin-top: 20px;
-  color: #9ca3af;
+  color: #94a3b8;
   font-size: 13px;
 }
 .content {
   flex: 1;
-  padding: 24px;
+  padding: 28px;
 }
 </style>

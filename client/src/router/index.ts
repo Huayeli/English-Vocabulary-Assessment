@@ -1,12 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "../stores/auth";
+import { useCodeStore } from "../stores/code";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/login", component: () => import("../views/auth/Login.vue"), meta: { public: true } },
-    { path: "/register", component: () => import("../views/auth/Register.vue"), meta: { public: true } },
-    { path: "/forgot", component: () => import("../views/auth/ForgotPassword.vue"), meta: { public: true } },
+    { path: "/access", component: () => import("../views/access/Access.vue"), meta: { public: true } },
     { path: "/", component: () => import("../views/test/TestCenter.vue"), meta: { auth: true } },
     { path: "/test/adaptive", component: () => import("../views/test/AdaptiveTest.vue"), meta: { auth: true } },
     { path: "/test/verification", component: () => import("../views/test/VerificationTest.vue"), meta: { auth: true } },
@@ -14,31 +12,27 @@ const router = createRouter({
     { path: "/test/result/:sessionId", component: () => import("../views/test/TestResult.vue"), meta: { auth: true } },
     { path: "/report/:sessionId", component: () => import("../views/report/ReportDetail.vue"), meta: { auth: true } },
     { path: "/wrong-words", component: () => import("../views/wrong/WrongWords.vue"), meta: { auth: true } },
-    { path: "/plan", component: () => import("../views/plan/PlanCenter.vue"), meta: { auth: true } },
-    { path: "/user", component: () => import("../views/user/UserHome.vue"), meta: { auth: true } },
-    { path: "/user/settings", component: () => import("../views/user/UserSettings.vue"), meta: { auth: true } },
+    { path: "/admin/key", component: () => import("../views/admin/AdminKey.vue"), meta: { public: true } },
     {
       path: "/admin",
       component: () => import("../layouts/AdminLayout.vue"),
       meta: { auth: true, admin: true },
       children: [
-        { path: "", redirect: "users" },
-        { path: "users", component: () => import("../views/admin/AdminUsers.vue") },
-        { path: "words", component: () => import("../views/admin/AdminWords.vue") },
-        { path: "questions", component: () => import("../views/admin/AdminQuestions.vue") },
-        { path: "stats", component: () => import("../views/admin/AdminStats.vue") }
+        { path: "", redirect: "dashboard" },
+        { path: "dashboard", component: () => import("../views/admin/AdminDashboard.vue") },
+        { path: "bank", component: () => import("../views/admin/AdminBank.vue") },
+        { path: "tests", component: () => import("../views/admin/AdminTests.vue") },
+        { path: "codes", component: () => import("../views/admin/AdminCodes.vue") }
       ]
     }
   ]
 });
 
-router.beforeEach(async (to) => {
-  const auth = useAuthStore();
+router.beforeEach((to) => {
+  const store = useCodeStore();
   if (to.meta.public) return true;
-  if (!auth.isLoggedIn) return "/login";
-  await auth.ensureUser();
-  if (!auth.isLoggedIn) return "/login";
-  if (to.meta.admin && !auth.isAdmin) return "/";
+  if (!store.hasCode) return "/access";
+  if (to.meta.admin && !store.isAdminAuthed) return "/admin/key";
   return true;
 });
 

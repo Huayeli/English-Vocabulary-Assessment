@@ -1,140 +1,91 @@
 <template>
   <div class="page">
-    <UserHeader />
-    <header class="topbar">
-      <h2>测试中心</h2>
-      <nav>
-        <router-link to="/wrong-words">错词本</router-link>
-        <button class="link" @click="logout">退出登录</button>
-      </nav>
-    </header>
-
-    <div v-if="quota" class="quota">
-      <router-link class="plan-link" to="/plan">
-        当前套餐：<b>{{ quota.packageName }}</b> · 查看套餐详情 ›
-      </router-link>
-      <template v-if="quota.remainingDailyTests !== null">
-        <span class="remain">今日剩余测试：<b>{{ quota.remainingDailyTests }}</b> 次</span>
-      </template>
-      <template v-else><span class="remain">不限次数</span></template>
+    <CodeHeader />
+    <div class="hero">
+      <h1>选择测试方式</h1>
+      <p v-if="store.info">
+        已使用 <b>{{ store.info.usedCount }}</b> 次
+        <template v-if="store.info.remaining !== null">，剩余 <b>{{ store.info.remaining }}</b> 次</template>
+        <template v-else>，不限次数</template>
+      </p>
     </div>
-
     <div class="cards">
-      <div class="card">
+      <router-link class="card entry" to="/test/adaptive">
         <h3>自适应测试</h3>
-        <p>30 题，根据作答动态调整等级，测出你的词汇量。</p>
-        <router-link class="btn" to="/test/adaptive">开始测试</router-link>
-      </div>
-      <div class="card">
+        <p>30 题动态调整等级，测出你的词汇量</p>
+        <span class="go">开始 →</span>
+      </router-link>
+      <router-link class="card entry" to="/test/verification">
         <h3>等级验证</h3>
-        <p>选择等级，30 题正确率达到 80% 判定达标。</p>
-        <router-link v-if="quota?.verificationEnabled" class="btn" to="/test/verification">选择等级验证</router-link>
-        <span v-else class="btn disabled">需开通月卡/年卡</span>
-      </div>
-      <div class="card">
+        <p>选择等级，30 题正确率 80% 判定达标</p>
+        <span class="go">开始 →</span>
+      </router-link>
+      <router-link class="card entry" to="/test/wrong">
         <h3>错词再测</h3>
-        <p>针对错词本中的单词重新测试，巩固记忆。</p>
-        <router-link v-if="quota?.wrongBookEnabled" class="btn" to="/test/wrong">错词再测</router-link>
-        <span v-else class="btn disabled">需开通月卡/年卡</span>
-      </div>
+        <p>针对错词本重新测试，巩固记忆</p>
+        <span class="go">开始 →</span>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { testApi, type QuotaInfo } from "../../api/test";
-import { useAuthStore } from "../../stores/auth";
-import UserHeader from "../../components/UserHeader.vue";
+import { onMounted } from "vue";
+import { useCodeStore } from "../../stores/code";
+import CodeHeader from "../../components/CodeHeader.vue";
 
-const router = useRouter();
-const auth = useAuthStore();
-const quota = ref<QuotaInfo | null>(null);
+const store = useCodeStore();
 
-onMounted(async () => {
-  quota.value = await testApi.quota();
+onMounted(() => {
+  store.refreshInfo();
 });
-
-function logout() {
-  auth.logout();
-  router.replace("/login");
-}
 </script>
 
 <style scoped>
 .page {
-  max-width: 960px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 24px;
 }
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.hero {
+  text-align: center;
+  margin: 30px 0 30px;
 }
-nav {
-  display: flex;
-  gap: 16px;
-  align-items: center;
+.hero h1 {
+  font-size: 30px;
+  color: #1e3a8a;
+  margin: 0 0 8px;
 }
-nav a,
-.link {
-  color: #409eff;
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-}
-.quota {
-  margin: 16px 0;
-  padding: 12px 16px;
-  background: #ecf5ff;
-  border-radius: 8px;
-  color: #31708f;
-}
-.plan-link {
-  color: #31708f;
-  text-decoration: none;
-}
-.plan-link:hover {
-  text-decoration: underline;
-}
-.remain {
-  margin-left: 8px;
+.hero p {
+  color: #6b7280;
 }
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-top: 16px;
 }
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+.card.entry {
+  padding: 26px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.card p {
+.card.entry:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.18);
+}
+.card.entry h3 {
+  margin: 0 0 8px;
+  color: #1e3a8a;
+}
+.card.entry p {
   color: #6b7280;
   font-size: 14px;
   min-height: 42px;
 }
-.btn {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 9px 18px;
-  background: #409eff;
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 14px;
-}
-.btn.disabled {
-  background: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
+.go {
+  color: #2563eb;
+  font-weight: 600;
 }
 @media (max-width: 720px) {
   .cards {

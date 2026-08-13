@@ -8,10 +8,15 @@ import { addWrongWord, subtractWrongWord } from "../wrong-word/wrong-word.servic
 
 export type SessionType = "ADAPTIVE" | "VERIFICATION" | "WRONG_WORD";
 
-export async function createSession(userId: number, type: SessionType, targetLevel?: Level, totalQuestions = 30) {
+export async function createSession(
+  activationCodeId: number,
+  type: SessionType,
+  targetLevel?: Level,
+  totalQuestions = 30
+) {
   return prisma.testSession.create({
     data: {
-      userId,
+      activationCodeId,
       type,
       targetLevel,
       totalQuestions,
@@ -64,10 +69,7 @@ type ItemLike = {
   optionsSnapshot: string;
 };
 
-async function replayAdaptiveLevels(session: {
-  type: string;
-  items: ItemLike[];
-}): Promise<Level> {
+async function replayAdaptiveLevels(session: { items: ItemLike[] }): Promise<Level> {
   const answered = session.items.filter((it) => it.userOptionIndex !== null);
   if (answered.length === 0) return "K3";
   let level: Level = "K3";
@@ -87,7 +89,7 @@ async function replayAdaptiveLevels(session: {
 
 export async function answerQuestion(
   sessionId: number,
-  userId: number,
+  activationCodeId: number,
   optionIndex: number,
   answerTimeMs: number,
   seq?: number
@@ -96,12 +98,12 @@ export async function answerQuestion(
     where: { id: sessionId },
     include: { items: { orderBy: { seq: "asc" } } }
   });
-  if (!session || session.userId !== userId) {
+  if (!session || session.activationCodeId !== activationCodeId) {
     throw new ApiError(40401, "测试不存在");
   }
   if (session.finishedAt) throw new ApiError(40901, "测试已完成");
 
-  let item = session.items.find((it) => it.userOptionIndex === null);
+  let item: ItemLike | null = session.items.find((it) => it.userOptionIndex === null) ?? null;
   if (seq != null) {
     item = session.items.find((it) => it.seq === seq) ?? null;
     if (!item) throw new ApiError(40401, "题目不存在");
@@ -119,18 +121,17 @@ export async function answerQuestion(
   item.userOptionIndex = optionIndex;
   item.isCorrect = newCorrect;
 
-  // 错词同步：改答导致对错变化时调整错词本
   if (wasAnswered && wasCorrect !== newCorrect) {
     const snapshot: string[] = JSON.parse(item.optionsSnapshot);
     const correctText = snapshot[item.correctOptionIndex];
     if (newCorrect) {
-      await subtractWrongWord(session.userId, item.wordId);
+      await subtractWrongWord(activationCodeId, item.wordId);
     } else {
-      await addWrongWord(session.userId, item.wordId, correctText);
+      await addWrongWord(activationCodeId, item.wordId, correctText);
     }
   } else if (!wasAnswered && !newCorrect) {
     const snapshot: string[] = JSON.parse(item.optionsSnapshot);
-    await addWrongWord(session.userId, item.wordId, snapshot[item.correctOptionIndex]);
+    await addWrongWord(activationCodeId, item.wordId, snapshot[item.correctOptionIndex]);
   }
 
   const answeredItems = session.items.filter((it) => it.userOptionIndex !== null);
@@ -143,7 +144,7 @@ export async function answerQuestion(
 
   let nextLevel: Level;
   if (session.type === "ADAPTIVE") {
-    const finalLevel = await replayAdaptiveLevels({ type: session.type, items: session.items });
+    const finalLevel = await replayAdaptiveLevels({ items: session.items });
     const streaks = computeStreaks(answeredItems.map((x) => ({ isCorrect: x.isCorrect })));
     nextLevel = applyLevelRules(finalLevel, streaks.streakCorrect, streaks.streakWrong);
   } else if (session.type === "VERIFICATION") {
@@ -175,12 +176,12 @@ export async function answerQuestion(
   };
 }
 
-export async function finishEarly(sessionId: number, userId: number) {
+export async function finishEarly(sessionId: number, activationCodeId: number) {
   const session = await prisma.testSession.findUnique({
     where: { id: sessionId },
     include: { items: { orderBy: { seq: "asc" } } }
   });
-  if (!session || session.userId !== userId) throw new ApiError(40401, "测试不存在");
+  if (!session || session.activationCodeId !== activationCodeId) throw new ApiError(40401, "测试不存在");
   if (session.finishedAt) throw new ApiError(40901, "测试已完成");
   if (session.type !== "WRONG_WORD") {
     throw new ApiError(40001, "当前测试类型不支持提前查看结果");
@@ -208,7 +209,7 @@ async function finishSession(
   if (session.type === "VERIFICATION") {
     finalLevel = session.targetLevel!;
   } else if (session.type === "ADAPTIVE") {
-    finalLevel = await replayAdaptiveLevels({ type: session.type, items: session.items });
+    finalLevel = await replayAdaptiveLevels({ items: session.items });
   } else {
     finalLevel =
       answeredItems.length > 0
@@ -226,6 +227,10 @@ async function finishSession(
       accuracy,
       finishedAt: new Date()
     }
+  });
+  await prisma.activationCode.update({
+    where: { id: session.activationCodeId },
+    data: { usedCount: { increment: 1 }, lastUsedAt: new Date() }
   });
   const last = answeredItems.length > 0 ? answeredItems[answeredItems.length - 1] : session.items[session.items.length - 1];
   return {

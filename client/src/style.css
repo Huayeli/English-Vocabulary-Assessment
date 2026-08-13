@@ -5,10 +5,25 @@
 body {
   margin: 0;
   font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-  background: #f5f6fa;
+  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 55%, #ecfeff 100%);
+  min-height: 100vh;
   color: #333;
 }
 
 #app {
   min-height: 100vh;
+}
+
+a {
+  color: #2563eb;
+}
+
+button {
+  font-family: inherit;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
 }

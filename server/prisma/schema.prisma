@@ -16,52 +16,31 @@ enum Level {
   K10P
 }
 
-model User {
-  id                 Int       @id @default(autoincrement())
-  username           String    @unique
-  passwordHash       String    @map("password_hash")
-  email              String?   @unique
-  avatar             String?
-  role               String    @default("USER")
-  packageId          Int       @map("package_id")
-  packageExpireTime  DateTime? @map("package_expire_time")
-  remainingTestCount Int       @default(0) @map("remaining_test_count")
-  status             String    @default("NORMAL")
-  createdAt          DateTime  @default(now()) @map("created_time")
-  updatedAt          DateTime  @updatedAt @map("updated_time")
+model Batch {
+  id        Int      @id @default(autoincrement())
+  name      String
+  note      String?
+  createdAt DateTime @default(now()) @map("created_time")
 
-  package      Plan               @relation(fields: [packageId], references: [id])
+  codes ActivationCode[]
+}
+
+model ActivationCode {
+  id          Int       @id @default(autoincrement())
+  batchId     Int       @map("batch_id")
+  code        String    @unique
+  maxTests    Int?      @map("max_tests") // null = 不限次数
+  usedCount   Int       @default(0) @map("used_count")
+  status      String    @default("ACTIVE") // ACTIVE | DISABLED
+  createdAt   DateTime  @default(now()) @map("created_time")
+  lastUsedAt  DateTime? @map("last_used_time")
+
+  batch        Batch             @relation(fields: [batchId], references: [id])
   testSessions TestSession[]
   wrongWords   WrongWord[]
 
-  @@index([packageId])
-}
-
-model VerificationCode {
-  id         Int      @id @default(autoincrement())
-  email      String
-  purpose    String
-  code       String
-  expireTime DateTime @map("expire_time")
-  used       Boolean  @default(false)
-  createdAt  DateTime @default(now()) @map("created_time")
-
-  @@index([email, purpose])
-}
-
-model Plan {
-  id                   Int     @id @default(autoincrement())
-  code                 String  @unique
-  name                 String
-  dailyTestLimit       Int?
-  verificationEnabled  Boolean @default(false)
-  wrongBookEnabled     Boolean @default(false)
-  historyEnabled       Boolean @default(false)
-  reportLevel          String  @default("BASIC")
-  priceCents           Int     @default(0)
-  sortOrder            Int
-
-  users User[]
+  @@index([batchId])
+  @@index([status])
 }
 
 model Word {
@@ -130,7 +109,7 @@ model QuestionOption {
 
 model TestSession {
   id                  Int       @id @default(autoincrement())
-  userId              Int       @map("user_id")
+  activationCodeId    Int       @map("activation_code_id")
   type                String
   targetLevel         Level?
   totalQuestions      Int       @default(30)
@@ -142,10 +121,10 @@ model TestSession {
   startedAt           DateTime  @default(now()) @map("started_time")
   finishedAt          DateTime? @map("finished_time")
 
-  user  User              @relation(fields: [userId], references: [id])
+  code  ActivationCode    @relation(fields: [activationCodeId], references: [id])
   items TestSessionItem[]
 
-  @@index([userId, startedAt])
+  @@index([activationCodeId, startedAt])
   @@index([type])
 }
 
@@ -170,16 +149,16 @@ model TestSessionItem {
 
 model WrongWord {
   id                 Int      @id @default(autoincrement())
-  userId             Int      @map("user_id")
+  activationCodeId   Int      @map("activation_code_id")
   wordId             Int      @map("word_id")
   correctMeaningText String   @map("correct_meaning_text")
   errorCount         Int      @default(1)
   lastErrorAt        DateTime @default(now()) @map("last_error_time")
   createdAt          DateTime @default(now()) @map("created_time")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  code ActivationCode @relation(fields: [activationCodeId], references: [id], onDelete: Cascade)
+  word Word           @relation(fields: [wordId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, wordId])
-  @@index([userId])
+  @@unique([activationCodeId, wordId])
+  @@index([activationCodeId])
 }

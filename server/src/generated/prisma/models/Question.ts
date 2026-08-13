@@ -540,6 +540,10 @@ export type QuestionUncheckedUpdateManyWithoutCorrectMeaningNestedInput = {
   deleteMany?: Prisma.QuestionScalarWhereInput | Prisma.QuestionScalarWhereInput[]
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type QuestionCreateNestedOneWithoutOptionsInput = {
   create?: Prisma.XOR<Prisma.QuestionCreateWithoutOptionsInput, Prisma.QuestionUncheckedCreateWithoutOptionsInput>
   connectOrCreate?: Prisma.QuestionCreateOrConnectWithoutOptionsInput

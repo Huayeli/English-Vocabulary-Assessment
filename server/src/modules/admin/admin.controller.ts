@@ -1,7 +1,68 @@
-import type { Response } from "express";
-import type { Level } from "../../generated/prisma/enums.js";
-import type { AuthRequest } from "../../middleware/auth.js";
+import type { Request, Response } from "express";
 import * as adminService from "./admin.service.js";
+import type { Level } from "../../generated/prisma/enums.js";
+
+function pageParams(req: Request) {
+  return {
+    page: Math.max(1, Number(req.query.page) || 1),
+    pageSize: Math.min(100, Math.max(1, Number(req.query.pageSize) || 20))
+  };
+}
+
+export async function dashboardHandler(_req: Request, res: Response) {
+  res.json({ code: 0, message: "ok", data: await adminService.dashboard() });
+}
+
+export async function listCodesHandler(req: Request, res: Response) {
+  const { page, pageSize } = pageParams(req);
+  const data = await adminService.listCodes({
+    batch: typeof req.query.batch === "string" ? req.query.batch : undefined,
+    status: typeof req.query.status === "string" ? req.query.status : undefined,
+    keyword: typeof req.query.keyword === "string" ? req.query.keyword : undefined,
+    page,
+    pageSize
+  });
+  res.json({ code: 0, message: "ok", data });
+}
+
+export async function generateCodesHandler(req: Request, res: Response) {
+  const { batchName, count, maxTests, note } = req.body ?? {};
+  const data = await adminService.generateCodes({
+    batchName,
+    count: Number(count),
+    maxTests: maxTests === "" || maxTests == null ? null : Number(maxTests),
+    note
+  });
+  res.json({ code: 0, message: "ok", data });
+}
+
+export async function updateCodeHandler(req: Request, res: Response) {
+  const { status, maxTests } = req.body ?? {};
+  const data = await adminService.updateCode(Number(req.params.id), {
+    status,
+    maxTests: maxTests === "" || maxTests == null ? null : Number(maxTests)
+  });
+  res.json({ code: 0, message: "ok", data });
+}
+
+export async function listBatchesHandler(_req: Request, res: Response) {
+  res.json({ code: 0, message: "ok", data: await adminService.listBatches() });
+}
+
+export async function listTestsHandler(req: Request, res: Response) {
+  const { page, pageSize } = pageParams(req);
+  const data = await adminService.listTests({
+    type: typeof req.query.type === "string" ? req.query.type : undefined,
+    keyword: typeof req.query.keyword === "string" ? req.query.keyword : undefined,
+    page,
+    pageSize
+  });
+  res.json({ code: 0, message: "ok", data });
+}
+
+export async function testDetailHandler(req: Request, res: Response) {
+  res.json({ code: 0, message: "ok", data: await adminService.testDetail(Number(req.params.id)) });
+}
 
 const LEVELS = new Set(["K1", "K2", "K3", "K5", "K10", "K10P"]);
 
@@ -10,36 +71,8 @@ function parseLevel(value: unknown): Level | undefined {
   return undefined;
 }
 
-export async function listUsersHandler(req: AuthRequest, res: Response) {
-  const page = Math.max(1, Number(req.query.page) || 1);
-  const pageSize = Math.min(100, Math.max(1, Number(req.query.pageSize) || 20));
-  const data = await adminService.listUsers({
-    keyword: typeof req.query.keyword === "string" ? req.query.keyword : undefined,
-    packageCode: typeof req.query.package === "string" ? req.query.package : undefined,
-    page,
-    pageSize
-  });
-  res.json({ code: 0, message: "ok", data });
-}
-
-export async function userDetailHandler(req: AuthRequest, res: Response) {
-  const data = await adminService.userDetail(Number(req.params.id));
-  res.json({ code: 0, message: "ok", data });
-}
-
-export async function setPackageHandler(req: AuthRequest, res: Response) {
-  const { packageId, expireTime, remainingTestCount } = req.body ?? {};
-  const data = await adminService.setPackage(Number(req.params.id), {
-    packageId: Number(packageId),
-    expireTime: typeof expireTime === "string" ? expireTime : null,
-    remainingTestCount: remainingTestCount === undefined ? undefined : Number(remainingTestCount)
-  });
-  res.json({ code: 0, message: "ok", data });
-}
-
-export async function listQuestionsHandler(req: AuthRequest, res: Response) {
-  const page = Math.max(1, Number(req.query.page) || 1);
-  const pageSize = Math.min(100, Math.max(1, Number(req.query.pageSize) || 20));
+export async function listQuestionsHandler(req: Request, res: Response) {
+  const { page, pageSize } = pageParams(req);
   const data = await adminService.listQuestions({
     keyword: typeof req.query.keyword === "string" ? req.query.keyword : undefined,
     level: parseLevel(req.query.level),
@@ -49,7 +82,7 @@ export async function listQuestionsHandler(req: AuthRequest, res: Response) {
   res.json({ code: 0, message: "ok", data });
 }
 
-export async function createQuestionHandler(req: AuthRequest, res: Response) {
+export async function createQuestionHandler(req: Request, res: Response) {
   const { wordId, correctMeaningId, options } = req.body ?? {};
   const data = await adminService.createQuestion({
     wordId: Number(wordId),
@@ -59,18 +92,13 @@ export async function createQuestionHandler(req: AuthRequest, res: Response) {
   res.json({ code: 0, message: "ok", data });
 }
 
-export async function updateQuestionHandler(req: AuthRequest, res: Response) {
+export async function updateQuestionHandler(req: Request, res: Response) {
   const { disabled, options } = req.body ?? {};
   const data = await adminService.updateQuestion(Number(req.params.id), { disabled, options });
   res.json({ code: 0, message: "ok", data });
 }
 
-export async function deleteQuestionHandler(req: AuthRequest, res: Response) {
+export async function deleteQuestionHandler(req: Request, res: Response) {
   await adminService.deleteQuestion(Number(req.params.id));
   res.json({ code: 0, message: "ok", data: null });
-}
-
-export async function statsHandler(req: AuthRequest, res: Response) {
-  const data = await adminService.statsOverview();
-  res.json({ code: 0, message: "ok", data });
 }

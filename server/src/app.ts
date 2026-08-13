@@ -2,13 +2,11 @@ import express from "express";
 import cors from "cors";
 import path from "node:path";
 import type { NextFunction, Request, Response } from "express";
-import { authRouter } from "./modules/auth/auth.routes.js";
+import { accessRouter } from "./modules/access/access.routes.js";
 import { meaningRouter, vocabularyRouter } from "./modules/vocabulary/vocabulary.routes.js";
 import { testRouter } from "./modules/test/test.routes.js";
 import { reportRouter } from "./modules/report/report.routes.js";
 import { wrongWordRouter } from "./modules/wrong-word/wrong-word.routes.js";
-import { userRouter } from "./modules/user/user.routes.js";
-import { plansRouter } from "./modules/plan/plan.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 
 export function createApp() {
@@ -19,19 +17,16 @@ export function createApp() {
   app.get("/health", (_req, res) => {
     res.json({ code: 0, message: "ok", data: { status: "up" } });
   });
-  app.use("/api/auth", authRouter);
-  app.use("/api/words", vocabularyRouter);
-  app.use("/api/meanings", meaningRouter);
+  app.use("/api/access", accessRouter);
   app.use("/api/tests", testRouter);
   app.use("/api/reports", reportRouter);
   app.use("/api/wrong-words", wrongWordRouter);
-  app.use("/api/user", userRouter);
-  app.use("/api/plans", plansRouter);
+  app.use("/api/words", vocabularyRouter);
+  app.use("/api/meanings", meaningRouter);
   app.use("/api/admin", adminRouter);
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     const anyErr = err as { code?: number | string; message?: string };
-    // Prisma unique constraint errors use string codes like P2002
     const code: number = typeof anyErr.code === "string" ? 40901 : anyErr.code ?? 50000;
     let status: number;
     if (code >= 40000 && code < 40100) status = 400;

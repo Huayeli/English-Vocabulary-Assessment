@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse";
-import bcrypt from "bcryptjs";
 import { prisma } from "../src/utils/prisma.js";
 import { bncToLevel } from "../src/utils/level.js";
 
@@ -41,75 +40,6 @@ async function loadEcdictIndex(csvPath: string): Promise<Map<string, string>> {
     if (word && translation) index.set(word, translation);
   }
   return index;
-}
-
-async function seedPlans() {
-  const plans = [
-    {
-      code: "FREE",
-      name: "免费体验",
-      dailyTestLimit: 1,
-      verificationEnabled: false,
-      wrongBookEnabled: false,
-      historyEnabled: false,
-      reportLevel: "BASIC",
-      priceCents: 0,
-      sortOrder: 1
-    },
-    {
-      code: "SINGLE",
-      name: "单次测试",
-      dailyTestLimit: null,
-      verificationEnabled: false,
-      wrongBookEnabled: false,
-      historyEnabled: false,
-      reportLevel: "FULL",
-      priceCents: 100,
-      sortOrder: 2
-    },
-    {
-      code: "MONTHLY",
-      name: "月卡",
-      dailyTestLimit: null,
-      verificationEnabled: true,
-      wrongBookEnabled: true,
-      historyEnabled: true,
-      reportLevel: "FULL",
-      priceCents: 3000,
-      sortOrder: 3
-    },
-    {
-      code: "YEARLY",
-      name: "年卡",
-      dailyTestLimit: null,
-      verificationEnabled: true,
-      wrongBookEnabled: true,
-      historyEnabled: true,
-      reportLevel: "FULL",
-      priceCents: 30000,
-      sortOrder: 4
-    }
-  ];
-  for (const p of plans) {
-    await prisma.plan.upsert({ where: { code: p.code }, update: p, create: p });
-  }
-}
-
-async function seedAdmin() {
-  const username = process.env.ADMIN_USERNAME ?? "admin";
-  const password = process.env.ADMIN_PASSWORD ?? "REDACTED";
-  const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
-  const exists = await prisma.user.findUnique({ where: { username } });
-  if (!exists) {
-    await prisma.user.create({
-      data: {
-        username,
-        passwordHash: await bcrypt.hash(password, 10),
-        role: "ADMIN",
-        packageId: free.id
-      }
-    });
-  }
 }
 
 async function importWords() {
@@ -181,8 +111,6 @@ async function importWords() {
 }
 
 async function main() {
-  await seedPlans();
-  await seedAdmin();
   await importWords();
 }
 

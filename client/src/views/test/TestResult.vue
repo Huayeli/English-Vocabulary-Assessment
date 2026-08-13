@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <UserHeader />
+    <CodeHeader />
     <div v-if="report" class="card">
       <h1>{{ report.passed === true ? "验证通过" : "测试完成" }}</h1>
       <div class="big">
@@ -38,7 +38,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { reportApi, type Report } from "../../api/report";
 import { useTestStore } from "../../stores/test";
-import UserHeader from "../../components/UserHeader.vue";
+import CodeHeader from "../../components/CodeHeader.vue";
 
 const route = useRoute();
 const test = useTestStore();

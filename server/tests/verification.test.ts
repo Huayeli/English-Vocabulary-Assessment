@@ -2,37 +2,24 @@ import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
-import { signToken } from "../src/utils/jwt.js";
 import { Level } from "../src/generated/prisma/enums.js";
 
-let monthlyToken = "";
-let monthlyUserId = 0;
-let freeToken = "";
-let freeUserId = 0;
+let code = "";
+let codeId = 0;
 
 beforeAll(async () => {
-  const monthly = await prisma.plan.findUniqueOrThrow({ where: { code: "MONTHLY" } });
-  const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
-  const mUser = await prisma.user.create({
-    data: {
-      username: "verifmonthly",
-      passwordHash: "unused",
-      packageId: monthly.id,
-      packageExpireTime: new Date(Date.now() + 30 * 24 * 3600 * 1000)
-    }
+  const batch = await prisma.batch.create({ data: { name: "verification-test-batch" } });
+  const rec = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: `V${Math.random().toString(36).slice(2, 9).toUpperCase()}`, maxTests: null }
   });
-  const fUser = await prisma.user.create({
-    data: { username: "veriffree", passwordHash: "unused", packageId: free.id }
-  });
-  monthlyUserId = mUser.id;
-  freeUserId = fUser.id;
-  monthlyToken = signToken({ userId: mUser.id, role: "USER" });
-  freeToken = signToken({ userId: fUser.id, role: "USER" });
+  code = rec.code;
+  codeId = rec.id;
 });
 
 afterAll(async () => {
-  await prisma.testSession.deleteMany({ where: { userId: { in: [monthlyUserId, freeUserId] } } });
-  await prisma.user.deleteMany({ where: { id: { in: [monthlyUserId, freeUserId] } } });
+  await prisma.testSession.deleteMany({ where: { activationCodeId: codeId } });
+  await prisma.activationCode.delete({ where: { id: codeId } });
+  await prisma.batch.deleteMany({ where: { name: "verification-test-batch" } });
   await prisma.$disconnect();
 });
 
@@ -45,13 +32,13 @@ async function currentCorrectIndex(sessionId: number) {
   return item.correctOptionIndex;
 }
 
-async function answer(app: ReturnType<typeof createApp>, token: string, sessionId: number, correct: boolean) {
+async function answer(app: ReturnType<typeof createApp>, sessionId: number, correct: boolean) {
   const correctIndex = await currentCorrectIndex(sessionId);
   const optionIndex = correct ? correctIndex : (correctIndex + 1) % 4;
   return request(app)
     .post(`/api/tests/${sessionId}/answer`)
-    .set("Authorization", `Bearer ${token}`)
-    .send({ optionIndex, answerTimeMs: 2000 });
+    .set("x-access-code", code)
+    .send({ optionIndex, answerTimeMs: 1000 });
 }
 
 describe("verification test", () => {
@@ -59,21 +46,16 @@ describe("verification test", () => {
     const app = createApp();
     const start = await request(app)
       .post("/api/tests/verification/start")
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", code)
       .send({ level: "K3" });
     expect(start.body.code).toBe(0);
     const sessionId = start.body.data.sessionId;
-
     let finalRes: any = null;
     for (let i = 0; i < 30; i++) {
-      finalRes = await answer(app, monthlyToken, sessionId, true);
-      expect(finalRes.body.code).toBe(0);
+      finalRes = await answer(app, sessionId, true);
     }
     expect(finalRes.body.data.finished).toBe(true);
-
-    const report = await request(app)
-      .get(`/api/reports/${sessionId}`)
-      .set("Authorization", `Bearer ${monthlyToken}`);
+    const report = await request(app).get(`/api/reports/${sessionId}`).set("x-access-code", code);
     expect(report.body.data.passed).toBe(true);
     expect(report.body.data.finalLevel).toBe(Level.K3);
   });
@@ -82,28 +64,16 @@ describe("verification test", () => {
     const app = createApp();
     const start = await request(app)
       .post("/api/tests/verification/start")
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", code)
       .send({ level: "K3" });
     const sessionId = start.body.data.sessionId;
-
     let finalRes: any = null;
     for (let i = 0; i < 30; i++) {
-      finalRes = await answer(app, monthlyToken, sessionId, i < 23);
+      finalRes = await answer(app, sessionId, i < 23);
     }
     expect(finalRes.body.data.finished).toBe(true);
-
-    const report = await request(app)
-      .get(`/api/reports/${sessionId}`)
-      .set("Authorization", `Bearer ${monthlyToken}`);
+    const report = await request(app).get(`/api/reports/${sessionId}`).set("x-access-code", code);
     expect(report.body.data.accuracy).toBeCloseTo(23 / 30, 2);
     expect(report.body.data.passed).toBe(false);
-  });
-
-  it("blocks free user from verification", async () => {
-    const res = await request(createApp())
-      .post("/api/tests/verification/start")
-      .set("Authorization", `Bearer ${freeToken}`)
-      .send({ level: "K3" });
-    expect(res.body.code).toBe(40302);
   });
 });

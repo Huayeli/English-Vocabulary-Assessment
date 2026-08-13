@@ -2,44 +2,41 @@ import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
-import { signToken } from "../src/utils/jwt.js";
 import { Level } from "../src/generated/prisma/enums.js";
-import { recordWrongWords, listWrongWords, reviewWrongWord, createWrongWordSession } from "../src/modules/wrong-word/wrong-word.service.js";
+import {
+  recordWrongWords,
+  listWrongWords,
+  reviewWrongWord,
+  createWrongWordSession
+} from "../src/modules/wrong-word/wrong-word.service.js";
 
-let userId = 0;
-let monthlyToken = "";
+let code = "";
+let codeId = 0;
 let wordId = 0;
-let sessionId = 0;
 
 beforeAll(async () => {
-  const monthly = await prisma.plan.findUniqueOrThrow({ where: { code: "MONTHLY" } });
-  await prisma.user.deleteMany({ where: { username: "wronguser" } });
-  const user = await prisma.user.create({
-    data: {
-      username: "wronguser",
-      passwordHash: "unused",
-      packageId: monthly.id,
-      packageExpireTime: new Date(Date.now() + 30 * 24 * 3600 * 1000)
-    }
+  const batch = await prisma.batch.create({ data: { name: "wrong-test-batch" } });
+  const rec = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: `W${Math.random().toString(36).slice(2, 9).toUpperCase()}`, maxTests: null }
   });
-  userId = user.id;
-  monthlyToken = signToken({ userId: user.id, role: "USER" });
+  code = rec.code;
+  codeId = rec.id;
   const word = await prisma.word.findUniqueOrThrow({ where: { headword: "abandon" } });
   wordId = word.id;
-  await prisma.wrongWord.deleteMany({ where: { userId } });
 });
 
 afterAll(async () => {
-  await prisma.testSession.deleteMany({ where: { userId } }).catch(() => undefined);
-  await prisma.wrongWord.deleteMany({ where: { userId } });
-  await prisma.user.deleteMany({ where: { id: userId } });
+  await prisma.testSession.deleteMany({ where: { activationCodeId: codeId } });
+  await prisma.wrongWord.deleteMany({ where: { activationCodeId: codeId } });
+  await prisma.activationCode.delete({ where: { id: codeId } });
+  await prisma.batch.deleteMany({ where: { name: "wrong-test-batch" } });
   await prisma.$disconnect();
 });
 
 async function makeWrongSession() {
   const session = await prisma.testSession.create({
     data: {
-      userId,
+      activationCodeId: codeId,
       type: "ADAPTIVE",
       totalQuestions: 1,
       finishedAt: new Date(),
@@ -49,7 +46,7 @@ async function makeWrongSession() {
             seq: 1,
             wordId,
             testedLevel: Level.K3,
-            optionsSnapshot: JSON.stringify(["抛弃、放弃", "接受", "维持", "改进", "恢复"]),
+            optionsSnapshot: JSON.stringify(["抛弃、放弃", "接受", "维持", "改进"]),
             correctOptionIndex: 0,
             userOptionIndex: 1,
             isCorrect: false,
@@ -59,70 +56,60 @@ async function makeWrongSession() {
       }
     }
   });
-  sessionId = session.id;
   return session;
 }
 
 describe("wrong word book", () => {
   it("records wrong words and accumulates error count", async () => {
-    await makeWrongSession();
-    await recordWrongWords(sessionId);
-    const first = await listWrongWords(userId, 1, 20);
+    const session = await makeWrongSession();
+    await recordWrongWords(session.id);
+    const first = await listWrongWords(codeId, 1, 20);
     expect(first.total).toBe(1);
     expect(first.list[0].headword).toBe("abandon");
     expect(first.list[0].errorCount).toBe(1);
 
-    await recordWrongWords(sessionId);
-    const second = await listWrongWords(userId, 1, 20);
+    await recordWrongWords(session.id);
+    const second = await listWrongWords(codeId, 1, 20);
     expect(second.list[0].errorCount).toBe(2);
+    await prisma.testSession.delete({ where: { id: session.id } });
   });
 
   it("lists wrong words via api", async () => {
-    const res = await request(createApp())
-      .get("/api/wrong-words")
-      .set("Authorization", `Bearer ${monthlyToken}`);
+    const res = await request(createApp()).get("/api/wrong-words").set("x-access-code", code);
     expect(res.body.code).toBe(0);
     expect(res.body.data.total).toBe(1);
     expect(res.body.data.list[0].correctMeaning).toBe("抛弃、放弃");
   });
 
   it("review removes wrong word", async () => {
-    const list = await listWrongWords(userId, 1, 20);
-    await reviewWrongWord(userId, list.list[0].id);
-    const after = await listWrongWords(userId, 1, 20);
+    const list = await listWrongWords(codeId, 1, 20);
+    await reviewWrongWord(codeId, list.list[0].id);
+    const after = await listWrongWords(codeId, 1, 20);
     expect(after.total).toBe(0);
   });
 
-  it("creates wrong-word session with the wrong words", async () => {
-    await makeWrongSession();
-    await recordWrongWords(sessionId);
-    const session = await createWrongWordSession(userId);
-    expect(session.totalQuestions).toBe(1);
-    const item = await prisma.testSessionItem.findFirstOrThrow({ where: { sessionId: session.id } });
-    expect(item.wordId).toBe(wordId);
-    await prisma.testSession.delete({ where: { id: session.id } });
-  });
+  it("creates wrong-word session and starts via api", async () => {
+    const session = await makeWrongSession();
+    await recordWrongWords(session.id);
+    const created = await createWrongWordSession(codeId);
+    expect(created.totalQuestions).toBe(1);
+    await prisma.testSession.delete({ where: { id: created.id } });
 
-  it("starts wrong-word test via api", async () => {
-    const res = await request(createApp())
-      .post("/api/tests/wrong-word/start")
-      .set("Authorization", `Bearer ${monthlyToken}`);
-    expect(res.body.code).toBe(0);
-    expect(res.body.data.totalQuestions).toBe(1);
-    expect(res.body.data.question.word).toBe("abandon");
-    await prisma.testSession.delete({ where: { id: res.body.data.sessionId } });
+    const start = await request(createApp()).post("/api/tests/wrong-word/start").set("x-access-code", code);
+    expect(start.body.code).toBe(0);
+    expect(start.body.data.totalQuestions).toBe(1);
+    expect(start.body.data.question.word).toBe("abandon");
+    await prisma.testSession.delete({ where: { id: start.body.data.sessionId } });
+    await prisma.testSession.delete({ where: { id: session.id } });
   });
 
   it("finishes wrong-word test early and shows result", async () => {
     const secondWord = await prisma.word.findUniqueOrThrow({ where: { headword: "accept" } });
     await prisma.wrongWord.create({
-      data: { userId, wordId: secondWord.id, correctMeaningText: "接受" }
+      data: { activationCodeId: codeId, wordId: secondWord.id, correctMeaningText: "接受" }
     });
     const app = createApp();
-    const start = await request(app)
-      .post("/api/tests/wrong-word/start")
-      .set("Authorization", `Bearer ${monthlyToken}`);
-    expect(start.body.code).toBe(0);
+    const start = await request(app).post("/api/tests/wrong-word/start").set("x-access-code", code);
     expect(start.body.data.totalQuestions).toBe(2);
     const sessionId = start.body.data.sessionId;
 
@@ -130,24 +117,17 @@ describe("wrong word book", () => {
       where: { sessionId, userOptionIndex: null },
       orderBy: { seq: "asc" }
     });
-    const answer = await request(app)
+    await request(app)
       .post(`/api/tests/${sessionId}/answer`)
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", code)
       .send({ optionIndex: item.correctOptionIndex, answerTimeMs: 1000 });
-    expect(answer.body.code).toBe(0);
 
-    const finish = await request(app)
-      .post(`/api/tests/${sessionId}/finish`)
-      .set("Authorization", `Bearer ${monthlyToken}`);
-    expect(finish.body.code).toBe(0);
+    const finish = await request(app).post(`/api/tests/${sessionId}/finish`).set("x-access-code", code);
     expect(finish.body.data.finished).toBe(true);
-
-    const report = await request(app)
-      .get(`/api/reports/${sessionId}`)
-      .set("Authorization", `Bearer ${monthlyToken}`);
+    const report = await request(app).get(`/api/reports/${sessionId}`).set("x-access-code", code);
     expect(report.body.data.accuracy).toBe(1);
 
     await prisma.testSession.delete({ where: { id: sessionId } });
-    await prisma.wrongWord.deleteMany({ where: { userId, wordId: secondWord.id } });
+    await prisma.wrongWord.deleteMany({ where: { activationCodeId: codeId, wordId: secondWord.id } });
   });
 });

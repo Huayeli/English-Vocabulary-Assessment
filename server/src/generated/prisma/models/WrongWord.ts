@@ -28,21 +28,21 @@ export type AggregateWrongWord = {
 
 export type WrongWordAvgAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   wordId: number | null
   errorCount: number | null
 }
 
 export type WrongWordSumAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   wordId: number | null
   errorCount: number | null
 }
 
 export type WrongWordMinAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   wordId: number | null
   correctMeaningText: string | null
   errorCount: number | null
@@ -52,7 +52,7 @@ export type WrongWordMinAggregateOutputType = {
 
 export type WrongWordMaxAggregateOutputType = {
   id: number | null
-  userId: number | null
+  activationCodeId: number | null
   wordId: number | null
   correctMeaningText: string | null
   errorCount: number | null
@@ -62,7 +62,7 @@ export type WrongWordMaxAggregateOutputType = {
 
 export type WrongWordCountAggregateOutputType = {
   id: number
-  userId: number
+  activationCodeId: number
   wordId: number
   correctMeaningText: number
   errorCount: number
@@ -74,21 +74,21 @@ export type WrongWordCountAggregateOutputType = {
 
 export type WrongWordAvgAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   wordId?: true
   errorCount?: true
 }
 
 export type WrongWordSumAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   wordId?: true
   errorCount?: true
 }
 
 export type WrongWordMinAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   wordId?: true
   correctMeaningText?: true
   errorCount?: true
@@ -98,7 +98,7 @@ export type WrongWordMinAggregateInputType = {
 
 export type WrongWordMaxAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   wordId?: true
   correctMeaningText?: true
   errorCount?: true
@@ -108,7 +108,7 @@ export type WrongWordMaxAggregateInputType = {
 
 export type WrongWordCountAggregateInputType = {
   id?: true
-  userId?: true
+  activationCodeId?: true
   wordId?: true
   correctMeaningText?: true
   errorCount?: true
@@ -205,7 +205,7 @@ export type WrongWordGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type WrongWordGroupByOutputType = {
   id: number
-  userId: number
+  activationCodeId: number
   wordId: number
   correctMeaningText: string
   errorCount: number
@@ -238,47 +238,47 @@ export type WrongWordWhereInput = {
   OR?: Prisma.WrongWordWhereInput[]
   NOT?: Prisma.WrongWordWhereInput | Prisma.WrongWordWhereInput[]
   id?: Prisma.IntFilter<"WrongWord"> | number
-  userId?: Prisma.IntFilter<"WrongWord"> | number
+  activationCodeId?: Prisma.IntFilter<"WrongWord"> | number
   wordId?: Prisma.IntFilter<"WrongWord"> | number
   correctMeaningText?: Prisma.StringFilter<"WrongWord"> | string
   errorCount?: Prisma.IntFilter<"WrongWord"> | number
   lastErrorAt?: Prisma.DateTimeFilter<"WrongWord"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"WrongWord"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
   word?: Prisma.XOR<Prisma.WordScalarRelationFilter, Prisma.WordWhereInput>
 }
 
 export type WrongWordOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   correctMeaningText?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
   lastErrorAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  code?: Prisma.ActivationCodeOrderByWithRelationInput
   word?: Prisma.WordOrderByWithRelationInput
 }
 
 export type WrongWordWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  userId_wordId?: Prisma.WrongWordUserIdWordIdCompoundUniqueInput
+  activationCodeId_wordId?: Prisma.WrongWordActivationCodeIdWordIdCompoundUniqueInput
   AND?: Prisma.WrongWordWhereInput | Prisma.WrongWordWhereInput[]
   OR?: Prisma.WrongWordWhereInput[]
   NOT?: Prisma.WrongWordWhereInput | Prisma.WrongWordWhereInput[]
-  userId?: Prisma.IntFilter<"WrongWord"> | number
+  activationCodeId?: Prisma.IntFilter<"WrongWord"> | number
   wordId?: Prisma.IntFilter<"WrongWord"> | number
   correctMeaningText?: Prisma.StringFilter<"WrongWord"> | string
   errorCount?: Prisma.IntFilter<"WrongWord"> | number
   lastErrorAt?: Prisma.DateTimeFilter<"WrongWord"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"WrongWord"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  code?: Prisma.XOR<Prisma.ActivationCodeScalarRelationFilter, Prisma.ActivationCodeWhereInput>
   word?: Prisma.XOR<Prisma.WordScalarRelationFilter, Prisma.WordWhereInput>
-}, "id" | "userId_wordId">
+}, "id" | "activationCodeId_wordId">
 
 export type WrongWordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   correctMeaningText?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
@@ -296,7 +296,7 @@ export type WrongWordScalarWhereWithAggregatesInput = {
   OR?: Prisma.WrongWordScalarWhereWithAggregatesInput[]
   NOT?: Prisma.WrongWordScalarWhereWithAggregatesInput | Prisma.WrongWordScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"WrongWord"> | number
-  userId?: Prisma.IntWithAggregatesFilter<"WrongWord"> | number
+  activationCodeId?: Prisma.IntWithAggregatesFilter<"WrongWord"> | number
   wordId?: Prisma.IntWithAggregatesFilter<"WrongWord"> | number
   correctMeaningText?: Prisma.StringWithAggregatesFilter<"WrongWord"> | string
   errorCount?: Prisma.IntWithAggregatesFilter<"WrongWord"> | number
@@ -309,13 +309,13 @@ export type WrongWordCreateInput = {
   errorCount?: number
   lastErrorAt?: Date | string
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutWrongWordsInput
+  code: Prisma.ActivationCodeCreateNestedOneWithoutWrongWordsInput
   word: Prisma.WordCreateNestedOneWithoutWrongWordsInput
 }
 
 export type WrongWordUncheckedCreateInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   wordId: number
   correctMeaningText: string
   errorCount?: number
@@ -328,13 +328,13 @@ export type WrongWordUpdateInput = {
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutWrongWordsNestedInput
+  code?: Prisma.ActivationCodeUpdateOneRequiredWithoutWrongWordsNestedInput
   word?: Prisma.WordUpdateOneRequiredWithoutWrongWordsNestedInput
 }
 
 export type WrongWordUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   wordId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -344,7 +344,7 @@ export type WrongWordUncheckedUpdateInput = {
 
 export type WrongWordCreateManyInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   wordId: number
   correctMeaningText: string
   errorCount?: number
@@ -361,7 +361,7 @@ export type WrongWordUpdateManyMutationInput = {
 
 export type WrongWordUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   wordId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -379,14 +379,14 @@ export type WrongWordOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type WrongWordUserIdWordIdCompoundUniqueInput = {
-  userId: number
+export type WrongWordActivationCodeIdWordIdCompoundUniqueInput = {
+  activationCodeId: number
   wordId: number
 }
 
 export type WrongWordCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   correctMeaningText?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
@@ -396,14 +396,14 @@ export type WrongWordCountOrderByAggregateInput = {
 
 export type WrongWordAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
 }
 
 export type WrongWordMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   correctMeaningText?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
@@ -413,7 +413,7 @@ export type WrongWordMaxOrderByAggregateInput = {
 
 export type WrongWordMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   correctMeaningText?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
@@ -423,50 +423,50 @@ export type WrongWordMinOrderByAggregateInput = {
 
 export type WrongWordSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  activationCodeId?: Prisma.SortOrder
   wordId?: Prisma.SortOrder
   errorCount?: Prisma.SortOrder
 }
 
-export type WrongWordCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput> | Prisma.WrongWordCreateWithoutUserInput[] | Prisma.WrongWordUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutUserInput | Prisma.WrongWordCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.WrongWordCreateManyUserInputEnvelope
+export type WrongWordCreateNestedManyWithoutCodeInput = {
+  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput> | Prisma.WrongWordCreateWithoutCodeInput[] | Prisma.WrongWordUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutCodeInput | Prisma.WrongWordCreateOrConnectWithoutCodeInput[]
+  createMany?: Prisma.WrongWordCreateManyCodeInputEnvelope
   connect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
 }
 
-export type WrongWordUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput> | Prisma.WrongWordCreateWithoutUserInput[] | Prisma.WrongWordUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutUserInput | Prisma.WrongWordCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.WrongWordCreateManyUserInputEnvelope
+export type WrongWordUncheckedCreateNestedManyWithoutCodeInput = {
+  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput> | Prisma.WrongWordCreateWithoutCodeInput[] | Prisma.WrongWordUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutCodeInput | Prisma.WrongWordCreateOrConnectWithoutCodeInput[]
+  createMany?: Prisma.WrongWordCreateManyCodeInputEnvelope
   connect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
 }
 
-export type WrongWordUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput> | Prisma.WrongWordCreateWithoutUserInput[] | Prisma.WrongWordUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutUserInput | Prisma.WrongWordCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.WrongWordUpsertWithWhereUniqueWithoutUserInput | Prisma.WrongWordUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.WrongWordCreateManyUserInputEnvelope
+export type WrongWordUpdateManyWithoutCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput> | Prisma.WrongWordCreateWithoutCodeInput[] | Prisma.WrongWordUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutCodeInput | Prisma.WrongWordCreateOrConnectWithoutCodeInput[]
+  upsert?: Prisma.WrongWordUpsertWithWhereUniqueWithoutCodeInput | Prisma.WrongWordUpsertWithWhereUniqueWithoutCodeInput[]
+  createMany?: Prisma.WrongWordCreateManyCodeInputEnvelope
   set?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   disconnect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   delete?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   connect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
-  update?: Prisma.WrongWordUpdateWithWhereUniqueWithoutUserInput | Prisma.WrongWordUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.WrongWordUpdateManyWithWhereWithoutUserInput | Prisma.WrongWordUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.WrongWordUpdateWithWhereUniqueWithoutCodeInput | Prisma.WrongWordUpdateWithWhereUniqueWithoutCodeInput[]
+  updateMany?: Prisma.WrongWordUpdateManyWithWhereWithoutCodeInput | Prisma.WrongWordUpdateManyWithWhereWithoutCodeInput[]
   deleteMany?: Prisma.WrongWordScalarWhereInput | Prisma.WrongWordScalarWhereInput[]
 }
 
-export type WrongWordUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput> | Prisma.WrongWordCreateWithoutUserInput[] | Prisma.WrongWordUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutUserInput | Prisma.WrongWordCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.WrongWordUpsertWithWhereUniqueWithoutUserInput | Prisma.WrongWordUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.WrongWordCreateManyUserInputEnvelope
+export type WrongWordUncheckedUpdateManyWithoutCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput> | Prisma.WrongWordCreateWithoutCodeInput[] | Prisma.WrongWordUncheckedCreateWithoutCodeInput[]
+  connectOrCreate?: Prisma.WrongWordCreateOrConnectWithoutCodeInput | Prisma.WrongWordCreateOrConnectWithoutCodeInput[]
+  upsert?: Prisma.WrongWordUpsertWithWhereUniqueWithoutCodeInput | Prisma.WrongWordUpsertWithWhereUniqueWithoutCodeInput[]
+  createMany?: Prisma.WrongWordCreateManyCodeInputEnvelope
   set?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   disconnect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   delete?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
   connect?: Prisma.WrongWordWhereUniqueInput | Prisma.WrongWordWhereUniqueInput[]
-  update?: Prisma.WrongWordUpdateWithWhereUniqueWithoutUserInput | Prisma.WrongWordUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.WrongWordUpdateManyWithWhereWithoutUserInput | Prisma.WrongWordUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.WrongWordUpdateWithWhereUniqueWithoutCodeInput | Prisma.WrongWordUpdateWithWhereUniqueWithoutCodeInput[]
+  updateMany?: Prisma.WrongWordUpdateManyWithWhereWithoutCodeInput | Prisma.WrongWordUpdateManyWithWhereWithoutCodeInput[]
   deleteMany?: Prisma.WrongWordScalarWhereInput | Prisma.WrongWordScalarWhereInput[]
 }
 
@@ -512,7 +512,7 @@ export type WrongWordUncheckedUpdateManyWithoutWordNestedInput = {
   deleteMany?: Prisma.WrongWordScalarWhereInput | Prisma.WrongWordScalarWhereInput[]
 }
 
-export type WrongWordCreateWithoutUserInput = {
+export type WrongWordCreateWithoutCodeInput = {
   correctMeaningText: string
   errorCount?: number
   lastErrorAt?: Date | string
@@ -520,7 +520,7 @@ export type WrongWordCreateWithoutUserInput = {
   word: Prisma.WordCreateNestedOneWithoutWrongWordsInput
 }
 
-export type WrongWordUncheckedCreateWithoutUserInput = {
+export type WrongWordUncheckedCreateWithoutCodeInput = {
   id?: number
   wordId: number
   correctMeaningText: string
@@ -529,29 +529,29 @@ export type WrongWordUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
 }
 
-export type WrongWordCreateOrConnectWithoutUserInput = {
+export type WrongWordCreateOrConnectWithoutCodeInput = {
   where: Prisma.WrongWordWhereUniqueInput
-  create: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput>
 }
 
-export type WrongWordCreateManyUserInputEnvelope = {
-  data: Prisma.WrongWordCreateManyUserInput | Prisma.WrongWordCreateManyUserInput[]
+export type WrongWordCreateManyCodeInputEnvelope = {
+  data: Prisma.WrongWordCreateManyCodeInput | Prisma.WrongWordCreateManyCodeInput[]
 }
 
-export type WrongWordUpsertWithWhereUniqueWithoutUserInput = {
+export type WrongWordUpsertWithWhereUniqueWithoutCodeInput = {
   where: Prisma.WrongWordWhereUniqueInput
-  update: Prisma.XOR<Prisma.WrongWordUpdateWithoutUserInput, Prisma.WrongWordUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.WrongWordCreateWithoutUserInput, Prisma.WrongWordUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.WrongWordUpdateWithoutCodeInput, Prisma.WrongWordUncheckedUpdateWithoutCodeInput>
+  create: Prisma.XOR<Prisma.WrongWordCreateWithoutCodeInput, Prisma.WrongWordUncheckedCreateWithoutCodeInput>
 }
 
-export type WrongWordUpdateWithWhereUniqueWithoutUserInput = {
+export type WrongWordUpdateWithWhereUniqueWithoutCodeInput = {
   where: Prisma.WrongWordWhereUniqueInput
-  data: Prisma.XOR<Prisma.WrongWordUpdateWithoutUserInput, Prisma.WrongWordUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.WrongWordUpdateWithoutCodeInput, Prisma.WrongWordUncheckedUpdateWithoutCodeInput>
 }
 
-export type WrongWordUpdateManyWithWhereWithoutUserInput = {
+export type WrongWordUpdateManyWithWhereWithoutCodeInput = {
   where: Prisma.WrongWordScalarWhereInput
-  data: Prisma.XOR<Prisma.WrongWordUpdateManyMutationInput, Prisma.WrongWordUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.WrongWordUpdateManyMutationInput, Prisma.WrongWordUncheckedUpdateManyWithoutCodeInput>
 }
 
 export type WrongWordScalarWhereInput = {
@@ -559,7 +559,7 @@ export type WrongWordScalarWhereInput = {
   OR?: Prisma.WrongWordScalarWhereInput[]
   NOT?: Prisma.WrongWordScalarWhereInput | Prisma.WrongWordScalarWhereInput[]
   id?: Prisma.IntFilter<"WrongWord"> | number
-  userId?: Prisma.IntFilter<"WrongWord"> | number
+  activationCodeId?: Prisma.IntFilter<"WrongWord"> | number
   wordId?: Prisma.IntFilter<"WrongWord"> | number
   correctMeaningText?: Prisma.StringFilter<"WrongWord"> | string
   errorCount?: Prisma.IntFilter<"WrongWord"> | number
@@ -572,12 +572,12 @@ export type WrongWordCreateWithoutWordInput = {
   errorCount?: number
   lastErrorAt?: Date | string
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutWrongWordsInput
+  code: Prisma.ActivationCodeCreateNestedOneWithoutWrongWordsInput
 }
 
 export type WrongWordUncheckedCreateWithoutWordInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   correctMeaningText: string
   errorCount?: number
   lastErrorAt?: Date | string
@@ -609,7 +609,7 @@ export type WrongWordUpdateManyWithWhereWithoutWordInput = {
   data: Prisma.XOR<Prisma.WrongWordUpdateManyMutationInput, Prisma.WrongWordUncheckedUpdateManyWithoutWordInput>
 }
 
-export type WrongWordCreateManyUserInput = {
+export type WrongWordCreateManyCodeInput = {
   id?: number
   wordId: number
   correctMeaningText: string
@@ -618,7 +618,7 @@ export type WrongWordCreateManyUserInput = {
   createdAt?: Date | string
 }
 
-export type WrongWordUpdateWithoutUserInput = {
+export type WrongWordUpdateWithoutCodeInput = {
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -626,7 +626,7 @@ export type WrongWordUpdateWithoutUserInput = {
   word?: Prisma.WordUpdateOneRequiredWithoutWrongWordsNestedInput
 }
 
-export type WrongWordUncheckedUpdateWithoutUserInput = {
+export type WrongWordUncheckedUpdateWithoutCodeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   wordId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -635,7 +635,7 @@ export type WrongWordUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type WrongWordUncheckedUpdateManyWithoutUserInput = {
+export type WrongWordUncheckedUpdateManyWithoutCodeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   wordId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -646,7 +646,7 @@ export type WrongWordUncheckedUpdateManyWithoutUserInput = {
 
 export type WrongWordCreateManyWordInput = {
   id?: number
-  userId: number
+  activationCodeId: number
   correctMeaningText: string
   errorCount?: number
   lastErrorAt?: Date | string
@@ -658,12 +658,12 @@ export type WrongWordUpdateWithoutWordInput = {
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutWrongWordsNestedInput
+  code?: Prisma.ActivationCodeUpdateOneRequiredWithoutWrongWordsNestedInput
 }
 
 export type WrongWordUncheckedUpdateWithoutWordInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -672,7 +672,7 @@ export type WrongWordUncheckedUpdateWithoutWordInput = {
 
 export type WrongWordUncheckedUpdateManyWithoutWordInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  activationCodeId?: Prisma.IntFieldUpdateOperationsInput | number
   correctMeaningText?: Prisma.StringFieldUpdateOperationsInput | string
   errorCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -683,43 +683,43 @@ export type WrongWordUncheckedUpdateManyWithoutWordInput = {
 
 export type WrongWordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   wordId?: boolean
   correctMeaningText?: boolean
   errorCount?: boolean
   lastErrorAt?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wrongWord"]>
 
 export type WrongWordSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   wordId?: boolean
   correctMeaningText?: boolean
   errorCount?: boolean
   lastErrorAt?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wrongWord"]>
 
 export type WrongWordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   wordId?: boolean
   correctMeaningText?: boolean
   errorCount?: boolean
   lastErrorAt?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wrongWord"]>
 
 export type WrongWordSelectScalar = {
   id?: boolean
-  userId?: boolean
+  activationCodeId?: boolean
   wordId?: boolean
   correctMeaningText?: boolean
   errorCount?: boolean
@@ -727,29 +727,29 @@ export type WrongWordSelectScalar = {
   createdAt?: boolean
 }
 
-export type WrongWordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "wordId" | "correctMeaningText" | "errorCount" | "lastErrorAt" | "createdAt", ExtArgs["result"]["wrongWord"]>
+export type WrongWordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "activationCodeId" | "wordId" | "correctMeaningText" | "errorCount" | "lastErrorAt" | "createdAt", ExtArgs["result"]["wrongWord"]>
 export type WrongWordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }
 export type WrongWordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }
 export type WrongWordIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  code?: boolean | Prisma.ActivationCodeDefaultArgs<ExtArgs>
   word?: boolean | Prisma.WordDefaultArgs<ExtArgs>
 }
 
 export type $WrongWordPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "WrongWord"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    code: Prisma.$ActivationCodePayload<ExtArgs>
     word: Prisma.$WordPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    userId: number
+    activationCodeId: number
     wordId: number
     correctMeaningText: string
     errorCount: number
@@ -1149,7 +1149,7 @@ readonly fields: WrongWordFieldRefs;
  */
 export interface Prisma__WrongWordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  code<T extends Prisma.ActivationCodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivationCodeDefaultArgs<ExtArgs>>): Prisma.Prisma__ActivationCodeClient<runtime.Types.Result.GetResult<Prisma.$ActivationCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   word<T extends Prisma.WordDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WordDefaultArgs<ExtArgs>>): Prisma.Prisma__WordClient<runtime.Types.Result.GetResult<Prisma.$WordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1181,7 +1181,7 @@ export interface Prisma__WrongWordClient<T, Null = never, ExtArgs extends runtim
  */
 export interface WrongWordFieldRefs {
   readonly id: Prisma.FieldRef<"WrongWord", 'Int'>
-  readonly userId: Prisma.FieldRef<"WrongWord", 'Int'>
+  readonly activationCodeId: Prisma.FieldRef<"WrongWord", 'Int'>
   readonly wordId: Prisma.FieldRef<"WrongWord", 'Int'>
   readonly correctMeaningText: Prisma.FieldRef<"WrongWord", 'String'>
   readonly errorCount: Prisma.FieldRef<"WrongWord", 'Int'>

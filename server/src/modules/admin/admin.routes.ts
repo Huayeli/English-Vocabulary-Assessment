@@ -1,14 +1,17 @@
 import { Router } from "express";
 import * as ctrl from "./admin.controller.js";
-import { requireAdmin, requireAuth } from "../../middleware/auth.js";
+import { requireAdminKey } from "../../middleware/access.js";
 
 export const adminRouter = Router();
-adminRouter.use(requireAuth, requireAdmin);
-adminRouter.get("/users", ctrl.listUsersHandler);
-adminRouter.get("/users/:id", ctrl.userDetailHandler);
-adminRouter.put("/users/:id/package", ctrl.setPackageHandler);
+adminRouter.use(requireAdminKey);
+adminRouter.get("/dashboard", ctrl.dashboardHandler);
+adminRouter.get("/codes", ctrl.listCodesHandler);
+adminRouter.post("/codes/generate", ctrl.generateCodesHandler);
+adminRouter.put("/codes/:id", ctrl.updateCodeHandler);
+adminRouter.get("/batches", ctrl.listBatchesHandler);
+adminRouter.get("/tests", ctrl.listTestsHandler);
+adminRouter.get("/tests/:id", ctrl.testDetailHandler);
 adminRouter.get("/questions", ctrl.listQuestionsHandler);
 adminRouter.post("/questions", ctrl.createQuestionHandler);
 adminRouter.put("/questions/:id", ctrl.updateQuestionHandler);
 adminRouter.delete("/questions/:id", ctrl.deleteQuestionHandler);
-adminRouter.get("/stats/overview", ctrl.statsHandler);

@@ -2,146 +2,124 @@ import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
-import { signToken } from "../src/utils/jwt.js";
 import { Level } from "../src/generated/prisma/enums.js";
 
-let adminToken = "";
-let userToken = "";
-let targetUserId = 0;
-let createdQuestionId: number | null = null;
-let testWordId = 0;
+const ADMIN_KEY = "REDACTED";
+
+function adminGet(app: ReturnType<typeof createApp>, url: string) {
+  return request(app).get(url).set("x-admin-key", ADMIN_KEY);
+}
+
+let codeId = 0;
+const GEN_BATCH = `生成批次-${Date.now()}`;
 
 beforeAll(async () => {
-  const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
-  await prisma.user.deleteMany({ where: { username: { in: ["adminuser", "normaluser", "statuser"] } } });
-  await prisma.word.deleteMany({ where: { headword: "zadminword1" } });
-  const testWord = await prisma.word.create({
+  const existing = await prisma.activationCode.findUnique({ where: { code: "ADMINTEST" } });
+  if (existing) {
+    await prisma.testSession.deleteMany({ where: { activationCodeId: existing.id } });
+    await prisma.activationCode.delete({ where: { id: existing.id } });
+  }
+  const existingBatch = await prisma.batch.findFirst({ where: { name: "admin-test-batch" } });
+  if (existingBatch) {
+    await prisma.activationCode.deleteMany({ where: { batchId: existingBatch.id } });
+    await prisma.batch.delete({ where: { id: existingBatch.id } });
+  }
+  const batch = await prisma.batch.create({ data: { name: "admin-test-batch" } });
+  const rec = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: "ADMINTEST", maxTests: null }
+  });
+  codeId = rec.id;
+  const word = await prisma.word.findUniqueOrThrow({ where: { headword: "abandon" } });
+  await prisma.testSession.create({
     data: {
-      headword: "zadminword1",
-      level: Level.K3,
-      bncLevel: "3k",
-      meanings: { create: [{ meaning: "管理员测试释义一", sortOrder: 0 }, { meaning: "管理员测试释义二", sortOrder: 1 }] }
+      activationCodeId: codeId,
+      type: "ADAPTIVE",
+      totalQuestions: 1,
+      correctCount: 1,
+      accuracy: 1,
+      finalLevel: Level.K3,
+      estimatedVocabulary: 3000,
+      finishedAt: new Date(),
+      items: {
+        create: [
+          {
+            seq: 1,
+            wordId: word.id,
+            testedLevel: Level.K3,
+            optionsSnapshot: JSON.stringify(["a", "b", "c", "d"]),
+            correctOptionIndex: 0,
+            userOptionIndex: 0,
+            isCorrect: true,
+            answerTimeMs: 100
+          }
+        ]
+      }
     }
   });
-  testWordId = testWord.id;
-  const admin = await prisma.user.create({
-    data: { username: "adminuser", passwordHash: "unused", role: "ADMIN", packageId: free.id }
-  });
-  const normal = await prisma.user.create({
-    data: { username: "normaluser", passwordHash: "unused", packageId: free.id }
-  });
-  adminToken = signToken({ userId: admin.id, role: "ADMIN" });
-  userToken = signToken({ userId: normal.id, role: "USER" });
-  targetUserId = normal.id;
 });
 
 afterAll(async () => {
-  if (createdQuestionId) {
-    await prisma.question.delete({ where: { id: createdQuestionId } }).catch(() => undefined);
+  await prisma.testSession.deleteMany({ where: { activationCodeId: codeId } });
+  const genBatch = await prisma.batch.findFirst({ where: { name: GEN_BATCH } });
+  if (genBatch) {
+    await prisma.activationCode.deleteMany({ where: { batchId: genBatch.id } });
+    await prisma.batch.delete({ where: { id: genBatch.id } });
   }
-  await prisma.word.delete({ where: { id: testWordId } }).catch(() => undefined);
-  await prisma.testSession.deleteMany({ where: { userId: targetUserId } });
-  await prisma.user.deleteMany({ where: { username: { in: ["adminuser", "normaluser", "statuser"] } } });
+  const adminBatch = await prisma.batch.findFirst({ where: { name: "admin-test-batch" } });
+  if (adminBatch) {
+    await prisma.activationCode.deleteMany({ where: { batchId: adminBatch.id } });
+    await prisma.batch.delete({ where: { id: adminBatch.id } });
+  }
   await prisma.$disconnect();
 });
 
 describe("admin api", () => {
-  it("blocks normal user", async () => {
-    const res = await request(createApp())
-      .get("/api/admin/users")
-      .set("Authorization", `Bearer ${userToken}`);
+  it("requires admin key", async () => {
+    const res = await request(createApp()).get("/api/admin/dashboard");
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe(40301);
   });
 
-  it("lists users with test counts", async () => {
-    const word = await prisma.word.findUniqueOrThrow({ where: { headword: "abandon" } });
-    await prisma.testSession.create({
-      data: {
-        userId: targetUserId,
-        type: "ADAPTIVE",
-        totalQuestions: 1,
-        correctCount: 1,
-        finalLevel: Level.K3,
-        estimatedVocabulary: 3000,
-        accuracy: 1,
-        finishedAt: new Date(),
-        items: {
-          create: [
-            {
-              seq: 1,
-              wordId: word.id,
-              testedLevel: Level.K3,
-              optionsSnapshot: JSON.stringify(["a", "b"]),
-              correctOptionIndex: 0,
-              userOptionIndex: 0,
-              isCorrect: true,
-              answerTimeMs: 100
-            }
-          ]
-        }
-      }
-    });
-    const res = await request(createApp())
-      .get("/api/admin/users?keyword=normaluser")
-      .set("Authorization", `Bearer ${adminToken}`);
+  it("returns dashboard stats", async () => {
+    const res = await adminGet(createApp(), "/api/admin/dashboard");
     expect(res.body.code).toBe(0);
-    const row = res.body.data.list.find((u: any) => u.username === "normaluser");
-    expect(row.testCount).toBe(1);
-    expect(row.currentLevel).toBe(Level.K3);
-  });
-
-  it("adjusts user package", async () => {
-    const monthly = await prisma.plan.findUniqueOrThrow({ where: { code: "MONTHLY" } });
-    const res = await request(createApp())
-      .put(`/api/admin/users/${targetUserId}/package`)
-      .set("Authorization", `Bearer ${adminToken}`)
-      .send({ packageId: monthly.id, remainingTestCount: 0 }); // 不传到期时间，应自动补 30 天
-    expect(res.body.code).toBe(0);
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: targetUserId } });
-    expect(user.packageId).toBe(monthly.id);
-    expect(user.packageExpireTime).not.toBeNull();
-    expect(user.packageExpireTime!.getTime()).toBeGreaterThan(Date.now());
-  });
-
-  it("creates and manages manual question", async () => {
-    const word = await prisma.word.findUniqueOrThrow({ where: { id: testWordId } });
-    const meaning = await prisma.wordMeaning.findFirstOrThrow({ where: { wordId: word.id } });
-    const res = await request(createApp())
-      .post("/api/admin/questions")
-      .set("Authorization", `Bearer ${adminToken}`)
-      .send({
-        wordId: word.id,
-        correctMeaningId: meaning.id,
-        options: [
-          { text: "管理员测试释义一", isCorrect: true },
-          { text: "干扰一", isCorrect: false },
-          { text: "干扰二", isCorrect: false },
-          { text: "干扰三", isCorrect: false }
-        ]
-      });
-    expect(res.body.code).toBe(0);
-    createdQuestionId = res.body.data.id;
-
-    const update = await request(createApp())
-      .put(`/api/admin/questions/${createdQuestionId}`)
-      .set("Authorization", `Bearer ${adminToken}`)
-      .send({ options: [
-        { text: "管理员测试释义一", isCorrect: true },
-        { text: "干扰一", isCorrect: false },
-        { text: "干扰二", isCorrect: false },
-        { text: "干扰三", isCorrect: false }
-      ] });
-    expect(update.body.code).toBe(0);
-  });
-
-  it("returns stats overview", async () => {
-    const res = await request(createApp())
-      .get("/api/admin/stats/overview")
-      .set("Authorization", `Bearer ${adminToken}`);
-    expect(res.body.code).toBe(0);
-    expect(res.body.data.userCount).toBeGreaterThanOrEqual(3);
+    expect(res.body.data.codeCount).toBeGreaterThanOrEqual(1);
     expect(res.body.data.testCount).toBeGreaterThanOrEqual(1);
     expect(res.body.data.levelDistribution).toHaveLength(6);
+  });
+
+  it("generates codes in batch and filters them", async () => {
+    const app = createApp();
+    const gen = await request(app)
+      .post("/api/admin/codes/generate")
+      .set("x-admin-key", ADMIN_KEY)
+      .send({ batchName: GEN_BATCH, count: 5, maxTests: "" });
+    expect(gen.body.code).toBe(0);
+    expect(gen.body.data.count).toBe(5);
+    expect(gen.body.data.codes).toHaveLength(5);
+
+    const list = await adminGet(app, `/api/admin/codes?batch=${encodeURIComponent(GEN_BATCH)}&page=1&pageSize=20`);
+    expect(list.body.data.total).toBe(5);
+    expect(list.body.data.list[0].remaining).toBeNull();
+
+    const id = list.body.data.list[0].id;
+    const update = await request(app)
+      .put(`/api/admin/codes/${id}`)
+      .set("x-admin-key", ADMIN_KEY)
+      .send({ status: "DISABLED", maxTests: 2 });
+    expect(update.body.code).toBe(0);
+
+    const batches = await adminGet(app, "/api/admin/batches");
+    expect(batches.body.data.some((b: any) => b.name === GEN_BATCH)).toBe(true);
+  });
+
+  it("lists and details tests", async () => {
+    const app = createApp();
+    const list = await adminGet(app, "/api/admin/tests?keyword=ADMINTEST");
+    expect(list.body.data.total).toBe(1);
+    expect(list.body.data.list[0].accessCode).toBe("ADMINTEST");
+    expect(list.body.data.list[0].finishedAt).not.toBeNull();
+
+    const detail = await adminGet(app, `/api/admin/tests/${list.body.data.list[0].id}`);
+    expect(detail.body.data.items).toHaveLength(1);
   });
 });

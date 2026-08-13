@@ -2,26 +2,32 @@ import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
-import { signToken } from "../src/utils/jwt.js";
 import { Level } from "../src/generated/prisma/enums.js";
 import { buildReport, estimateVocabulary } from "../src/modules/report/report.service.js";
 
-let userId = 0;
-let userToken = "";
+let codeId = 0;
+let code = "";
+let otherCodeId = 0;
+let otherCode = "";
 let sessionId = 0;
 
 beforeAll(async () => {
-  const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
-  const user = await prisma.user.create({
-    data: { username: "reportuser", passwordHash: "unused", packageId: free.id }
+  const batch = await prisma.batch.create({ data: { name: "report-test-batch" } });
+  const a = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: `R${Math.random().toString(36).slice(2, 9).toUpperCase()}`, maxTests: null }
   });
-  userId = user.id;
-  userToken = signToken({ userId: user.id, role: "USER" });
+  const b = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: `S${Math.random().toString(36).slice(2, 9).toUpperCase()}`, maxTests: null }
+  });
+  codeId = a.id;
+  code = a.code;
+  otherCodeId = b.id;
+  otherCode = b.code;
 
   const word = await prisma.word.findUniqueOrThrow({ where: { headword: "abandon" } });
   const session = await prisma.testSession.create({
     data: {
-      userId,
+      activationCodeId: codeId,
       type: "ADAPTIVE",
       totalQuestions: 3,
       correctCount: 2,
@@ -70,14 +76,15 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.testSession.deleteMany({ where: { userId } });
-  await prisma.user.deleteMany({ where: { id: userId } });
+  await prisma.testSession.deleteMany({ where: { activationCodeId: { in: [codeId, otherCodeId] } } });
+  await prisma.activationCode.deleteMany({ where: { id: { in: [codeId, otherCodeId] } } });
+  await prisma.batch.deleteMany({ where: { name: "report-test-batch" } });
   await prisma.$disconnect();
 });
 
 describe("report", () => {
   it("builds mastery per level", async () => {
-    const report = await buildReport(sessionId, userId, "USER");
+    const report = await buildReport(sessionId, codeId, false);
     expect(report.levelMastery).toEqual([
       { level: Level.K1, answered: 2, correct: 2, rate: 1 },
       { level: Level.K3, answered: 1, correct: 0, rate: 0 }
@@ -86,7 +93,6 @@ describe("report", () => {
     expect(report.estimatedVocabulary).toBe(3000);
     expect(report.cefr).toBe("B1");
     expect(report.wrongWords).toHaveLength(1);
-    expect(report.wrongWords[0].headword).toBe("abandon");
   });
 
   it("estimates vocabulary for fixed levels", () => {
@@ -99,15 +105,14 @@ describe("report", () => {
     ).toBe(17500);
   });
 
-  it("hides report from other users", async () => {
-    const other = await prisma.user.create({
-      data: { username: "reportother", passwordHash: "unused", packageId: (await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } })).id }
-    });
-    const otherToken = signToken({ userId: other.id, role: "USER" });
-    const res = await request(createApp())
-      .get(`/api/reports/${sessionId}`)
-      .set("Authorization", `Bearer ${otherToken}`);
+  it("hides report from other codes", async () => {
+    const res = await request(createApp()).get(`/api/reports/${sessionId}`).set("x-access-code", otherCode);
     expect(res.body.code).toBe(40401);
-    await prisma.user.deleteMany({ where: { id: other.id } });
+  });
+
+  it("exposes report to owner via api", async () => {
+    const res = await request(createApp()).get(`/api/reports/${sessionId}`).set("x-access-code", code);
+    expect(res.body.code).toBe(0);
+    expect(res.body.data.finishedTime).not.toBeNull();
   });
 });

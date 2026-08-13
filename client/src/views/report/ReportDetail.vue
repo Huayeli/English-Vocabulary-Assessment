@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <UserHeader />
+    <CodeHeader />
     <div v-if="report" class="card">
       <div class="head">
         <h1>测试报告</h1>
@@ -62,7 +62,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { reportApi, type Report } from "../../api/report";
 import RateBar from "../../components/RateBar.vue";
-import UserHeader from "../../components/UserHeader.vue";
+import CodeHeader from "../../components/CodeHeader.vue";
 
 const route = useRoute();
 const report = ref<Report | null>(null);

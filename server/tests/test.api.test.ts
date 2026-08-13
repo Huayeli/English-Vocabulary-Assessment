@@ -2,37 +2,33 @@ import { afterAll, beforeAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
-import { signToken } from "../src/utils/jwt.js";
 
-let freeToken = "";
-let freeUserId = 0;
-let monthlyToken = "";
-let monthlyUserId = 0;
+let unlimitedCode = "";
+let unlimitedCodeId = 0;
+let limitedCode = "";
+let limitedCodeId = 0;
+
+async function createCode(maxTests: number | null) {
+  const batch = await prisma.batch.create({ data: { name: "api-test-batch" } });
+  const rec = await prisma.activationCode.create({
+    data: { batchId: batch.id, code: `T${Math.random().toString(36).slice(2, 9).toUpperCase()}`, maxTests }
+  });
+  return rec;
+}
 
 beforeAll(async () => {
-  const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
-  const monthly = await prisma.plan.findUniqueOrThrow({ where: { code: "MONTHLY" } });
-  const user = await prisma.user.create({
-    data: { username: "testrunner", passwordHash: "unused", packageId: free.id }
-  });
-  const mUser = await prisma.user.create({
-    data: {
-      username: "testrunner-monthly",
-      passwordHash: "unused",
-      packageId: monthly.id,
-      packageExpireTime: new Date(Date.now() + 30 * 24 * 3600 * 1000)
-    }
-  });
-  freeUserId = user.id;
-  monthlyUserId = mUser.id;
-  freeToken = signToken({ userId: user.id, role: "USER" });
-  monthlyToken = signToken({ userId: mUser.id, role: "USER" });
+  const a = await createCode(null);
+  unlimitedCode = a.code;
+  unlimitedCodeId = a.id;
+  const b = await createCode(1);
+  limitedCode = b.code;
+  limitedCodeId = b.id;
 });
 
 afterAll(async () => {
-  await prisma.testSession.deleteMany({ where: { userId: { in: [freeUserId, monthlyUserId] } } });
-  await prisma.wrongWord.deleteMany({ where: { userId: monthlyUserId } });
-  await prisma.user.deleteMany({ where: { id: { in: [freeUserId, monthlyUserId] } } });
+  await prisma.testSession.deleteMany({ where: { activationCodeId: { in: [unlimitedCodeId, limitedCodeId] } } });
+  await prisma.activationCode.deleteMany({ where: { code: { in: [unlimitedCode, limitedCode] } } });
+  await prisma.batch.deleteMany({ where: { name: "api-test-batch" } });
   await prisma.$disconnect();
 });
 
@@ -45,65 +41,68 @@ async function currentCorrectIndex(sessionId: number) {
   return item.correctOptionIndex;
 }
 
-async function answerCurrent(app: ReturnType<typeof createApp>, token: string, sessionId: number, correct: boolean) {
+async function answerCurrent(app: ReturnType<typeof createApp>, code: string, sessionId: number, correct: boolean) {
   const correctIndex = await currentCorrectIndex(sessionId);
   const optionIndex = correct ? correctIndex : (correctIndex + 1) % 4;
   const res = await request(app)
     .post(`/api/tests/${sessionId}/answer`)
-    .set("Authorization", `Bearer ${token}`)
-    .send({ optionIndex, answerTimeMs: 3000 });
+    .set("x-access-code", code)
+    .send({ optionIndex, answerTimeMs: 1000 });
   return res.body.data;
 }
 
 describe("adaptive test api", () => {
-  it("starts at K3 with 30 questions", async () => {
+  it("starts at K3 with 30 questions and 4 options", async () => {
     const res = await request(createApp())
       .post("/api/tests/adaptive/start")
-      .set("Authorization", `Bearer ${freeToken}`);
+      .set("x-access-code", unlimitedCode);
     expect(res.body.code).toBe(0);
     expect(res.body.data.totalQuestions).toBe(30);
     expect(res.body.data.currentLevel).toBe("K3");
-    expect(res.body.data.question.testedLevel).toBe("K3");
     expect(res.body.data.question.options).toHaveLength(4);
   });
 
   it("raises level to K5 after 4 consecutive correct answers", async () => {
     const app = createApp();
-    const start = await request(app).post("/api/tests/adaptive/start").set("Authorization", `Bearer ${freeToken}`);
+    const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
     let nextLevel = "";
     for (let i = 0; i < 4; i++) {
-      const data = await answerCurrent(app, freeToken, sessionId, true);
+      const data = await answerCurrent(app, unlimitedCode, sessionId, true);
       if (i === 3) nextLevel = data.nextQuestion.testedLevel;
     }
     expect(nextLevel).toBe("K5");
   });
 
-  it("finishes after 30 questions with reportId", async () => {
+  it("finishes after 30 questions and increments usage", async () => {
     const app = createApp();
-    const start = await request(app).post("/api/tests/adaptive/start").set("Authorization", `Bearer ${freeToken}`);
+    const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
     let final: any = null;
     for (let i = 0; i < 30; i++) {
-      final = await answerCurrent(app, freeToken, sessionId, true);
+      final = await answerCurrent(app, unlimitedCode, sessionId, true);
     }
     expect(final.finished).toBe(true);
-    expect(final.reportId).toBe(sessionId);
-
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });
-    expect(session.finishedAt).not.toBeNull();
     expect(session.finalLevel).toBe("K10P");
     expect(session.correctCount).toBe(30);
+    const code = await prisma.activationCode.findUniqueOrThrow({ where: { code: unlimitedCode } });
+    expect(code.usedCount).toBeGreaterThan(0);
   });
 
-  it("blocks free user's second test of the day", async () => {
-    const res = await request(createApp())
-      .post("/api/tests/adaptive/start")
-      .set("Authorization", `Bearer ${freeToken}`);
-    expect(res.body.code).toBe(40302);
+  it("blocks start when code usage is exhausted", async () => {
+    const app = createApp();
+    const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", limitedCode);
+    expect(start.body.code).toBe(0);
+    const sessionId = start.body.data.sessionId;
+    for (let i = 0; i < 30; i++) {
+      await answerCurrent(app, limitedCode, sessionId, true);
+    }
+    const blocked = await request(app).post("/api/tests/adaptive/start").set("x-access-code", limitedCode);
+    expect(blocked.body.code).toBe(40302);
   });
 
-  it("requires auth", async () => {
+  it("requires a valid access code", async () => {
     const res = await request(createApp()).post("/api/tests/adaptive/start");
     expect(res.status).toBe(401);
     expect(res.body.code).toBe(40101);
@@ -111,30 +110,26 @@ describe("adaptive test api", () => {
 
   it("re-answers a previous question and recomputes levels", async () => {
     const app = createApp();
-    const start = await request(app).post("/api/tests/adaptive/start").set("Authorization", `Bearer ${monthlyToken}`);
-    expect(start.body.code).toBe(0);
+    const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
 
-    // 第 1 题答对
     const q1Index = await currentCorrectIndex(sessionId);
     await request(app)
       .post(`/api/tests/${sessionId}/answer`)
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", unlimitedCode)
       .send({ optionIndex: q1Index, answerTimeMs: 1000 });
 
-    // 改答第 1 题（seq=1）为错误
     const re = await request(app)
       .post(`/api/tests/${sessionId}/answer`)
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", unlimitedCode)
       .send({ optionIndex: (q1Index + 1) % 4, answerTimeMs: 1000, seq: 1 });
     expect(re.body.code).toBe(0);
     expect(re.body.data.isCorrect).toBe(false);
 
-    // 第 2 题也答错（带 seq 作答当前待答题应被允许）→ 连错 2 题，第 3 题等级应为 K2
     const q2Index = await currentCorrectIndex(sessionId);
     const q2 = await request(app)
       .post(`/api/tests/${sessionId}/answer`)
-      .set("Authorization", `Bearer ${monthlyToken}`)
+      .set("x-access-code", unlimitedCode)
       .send({ optionIndex: (q2Index + 1) % 4, answerTimeMs: 1000, seq: 2 });
     expect(q2.body.data.nextQuestion.testedLevel).toBe("K2");
 

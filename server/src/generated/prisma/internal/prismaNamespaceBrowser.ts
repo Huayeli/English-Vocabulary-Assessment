@@ -51,9 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
-  VerificationCode: 'VerificationCode',
-  Plan: 'Plan',
+  Batch: 'Batch',
+  ActivationCode: 'ActivationCode',
   Word: 'Word',
   WordMeaning: 'WordMeaning',
   Question: 'Question',
@@ -76,51 +75,28 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UserScalarFieldEnum = {
+export const BatchScalarFieldEnum = {
   id: 'id',
-  username: 'username',
-  passwordHash: 'passwordHash',
-  email: 'email',
-  avatar: 'avatar',
-  role: 'role',
-  packageId: 'packageId',
-  packageExpireTime: 'packageExpireTime',
-  remainingTestCount: 'remainingTestCount',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const VerificationCodeScalarFieldEnum = {
-  id: 'id',
-  email: 'email',
-  purpose: 'purpose',
-  code: 'code',
-  expireTime: 'expireTime',
-  used: 'used',
+  name: 'name',
+  note: 'note',
   createdAt: 'createdAt'
 } as const
 
-export type VerificationCodeScalarFieldEnum = (typeof VerificationCodeScalarFieldEnum)[keyof typeof VerificationCodeScalarFieldEnum]
+export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
 
 
-export const PlanScalarFieldEnum = {
+export const ActivationCodeScalarFieldEnum = {
   id: 'id',
+  batchId: 'batchId',
   code: 'code',
-  name: 'name',
-  dailyTestLimit: 'dailyTestLimit',
-  verificationEnabled: 'verificationEnabled',
-  wrongBookEnabled: 'wrongBookEnabled',
-  historyEnabled: 'historyEnabled',
-  reportLevel: 'reportLevel',
-  priceCents: 'priceCents',
-  sortOrder: 'sortOrder'
+  maxTests: 'maxTests',
+  usedCount: 'usedCount',
+  status: 'status',
+  createdAt: 'createdAt',
+  lastUsedAt: 'lastUsedAt'
 } as const
 
-export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
+export type ActivationCodeScalarFieldEnum = (typeof ActivationCodeScalarFieldEnum)[keyof typeof ActivationCodeScalarFieldEnum]
 
 
 export const WordScalarFieldEnum = {
@@ -175,7 +151,7 @@ export type QuestionOptionScalarFieldEnum = (typeof QuestionOptionScalarFieldEnu
 
 export const TestSessionScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
+  activationCodeId: 'activationCodeId',
   type: 'type',
   targetLevel: 'targetLevel',
   totalQuestions: 'totalQuestions',
@@ -210,7 +186,7 @@ export type TestSessionItemScalarFieldEnum = (typeof TestSessionItemScalarFieldE
 
 export const WrongWordScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
+  activationCodeId: 'activationCodeId',
   wordId: 'wordId',
   correctMeaningText: 'correctMeaningText',
   errorCount: 'errorCount',

@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { wordsApi } from "../../api/words";
+import { adminApi } from "../../api/admin";
 
 const LEVELS = ["K1", "K2", "K3", "K5", "K10", "K10P"];
 const keyword = ref("");
@@ -91,37 +91,37 @@ async function load() {
   if (keyword.value) params.keyword = keyword.value;
   if (level.value) params.level = level.value;
   if (hasMeaning.value !== "") params.hasMeaning = hasMeaning.value;
-  const res = await wordsApi.list(params);
+  const res = await adminApi.words(params);
   rows.value = res.list;
 }
 
 async function openEdit(w: any) {
   editing.value = w;
-  detail.value = await wordsApi.detail(w.id);
+  detail.value = await adminApi.wordDetail(w.id);
   form.value = { level: w.level, relatedForms: w.relatedForms ?? "", status: w.status };
 }
 
 async function save() {
-  await wordsApi.update(editing.value.id, form.value);
+  await adminApi.updateWord(editing.value.id, form.value);
   editing.value = null;
   await load();
 }
 
 async function addMeaning() {
   if (!newMeaning.value) return;
-  await wordsApi.addMeaning(editing.value.id, newMeaning.value);
+  await adminApi.addMeaning(editing.value.id, newMeaning.value);
   newMeaning.value = "";
-  detail.value = await wordsApi.detail(editing.value.id);
+  detail.value = await adminApi.wordDetail(editing.value.id);
 }
 
 async function removeMeaning(m: any) {
-  await wordsApi.deleteMeaning(m.id);
-  detail.value = await wordsApi.detail(editing.value.id);
+  await adminApi.deleteMeaning(m.id);
+  detail.value = await adminApi.wordDetail(editing.value.id);
 }
 
 async function updateMeaningText(m: any, e: Event) {
   const text = (e.target as HTMLInputElement).value;
-  await wordsApi.updateMeaning(m.id, text);
+  await adminApi.updateMeaning(m.id, text);
 }
 
 onMounted(load);

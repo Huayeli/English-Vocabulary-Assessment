@@ -3,8 +3,10 @@ import axios from "axios";
 const instance = axios.create({ baseURL: "/api" });
 
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const accessCode = localStorage.getItem("accessCode");
+  if (accessCode) config.headers["X-Access-Code"] = accessCode;
+  const adminKey = localStorage.getItem("adminKey");
+  if (adminKey) config.headers["X-Admin-Key"] = adminKey;
   return config;
 });
 
@@ -15,8 +17,8 @@ instance.interceptors.response.use(
   },
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      localStorage.removeItem("accessCode");
+      window.location.href = "/access";
     }
     const message = err.response?.data?.message ?? err.message ?? "请求失败";
     const e = new Error(message);
