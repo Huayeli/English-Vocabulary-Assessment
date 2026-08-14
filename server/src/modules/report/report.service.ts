@@ -1,25 +1,60 @@
 import type { Level } from "../../generated/prisma/enums.js";
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
-import { LEVEL_RANK } from "../../utils/level.js";
 
 const CEFR: Record<Level, string> = {
   K1: "A1",
   K2: "A2",
   K3: "B1",
+  K4: "B1",
   K5: "B2",
+  K6: "B2",
+  K7: "B2",
+  K8: "C1",
+  K9: "C1",
   K10: "C1",
   K10P: "C2"
 };
 
+const LEVEL_FLOOR: Record<Level, number> = {
+  K1: 0,
+  K2: 1000,
+  K3: 2000,
+  K4: 3000,
+  K5: 4000,
+  K6: 5000,
+  K7: 6000,
+  K8: 7000,
+  K9: 8000,
+  K10: 9000,
+  K10P: 10000
+};
+
+const LEVEL_BAND: Record<Level, number> = {
+  K1: 1000,
+  K2: 1000,
+  K3: 1000,
+  K4: 1000,
+  K5: 1000,
+  K6: 1000,
+  K7: 1000,
+  K8: 1000,
+  K9: 1000,
+  K10: 1000,
+  K10P: 15000
+};
+
 export function estimateVocabulary(finalLevel: Level, items: { testedLevel: Level; isCorrect: boolean }[]): number {
-  if (finalLevel !== "K10P") {
-    return LEVEL_RANK[finalLevel] * 1000;
+  const atLevel = items.filter((it) => it.testedLevel === finalLevel);
+  let mastery: number;
+  if (atLevel.length > 0) {
+    mastery = atLevel.filter((it) => it.isCorrect).length / atLevel.length;
+  } else if (items.length > 0) {
+    mastery = items.filter((it) => it.isCorrect).length / items.length;
+  } else {
+    mastery = 0.5;
   }
-  const k10pItems = items.filter((it) => it.testedLevel === "K10P");
-  if (k10pItems.length === 0) return 10000;
-  const rate = k10pItems.filter((it) => it.isCorrect).length / k10pItems.length;
-  return 10000 + Math.round(rate * 15000);
+  return Math.round(LEVEL_FLOOR[finalLevel] + LEVEL_BAND[finalLevel] * mastery);
 }
 
 export function cefrOf(level: Level): string {

@@ -66,7 +66,7 @@ describe("adaptive test api", () => {
     await abandon(app, unlimitedCode, res.body.data.sessionId);
   });
 
-  it("raises level to K5 after 4 consecutive correct answers", async () => {
+  it("raises level to K4 after 4 consecutive correct answers", async () => {
     const app = createApp();
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
@@ -75,7 +75,7 @@ describe("adaptive test api", () => {
       const data = await answerCurrent(app, unlimitedCode, sessionId, true);
       if (i === 3) nextLevel = data.nextQuestion.testedLevel;
     }
-    expect(nextLevel).toBe("K5");
+    expect(nextLevel).toBe("K4");
     await abandon(app, unlimitedCode, sessionId);
   });
 

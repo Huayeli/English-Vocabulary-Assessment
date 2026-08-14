@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import type { Level } from "../../generated/prisma/enums.js";
 import * as vocabularyService from "./vocabulary.service.js";
 
-const LEVELS = new Set(["K1", "K2", "K3", "K5", "K10", "K10P"]);
+const LEVELS = new Set(["K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8", "K9", "K10", "K10P"]);
 
 function parseLevel(value: unknown): Level | undefined {
   if (typeof value === "string" && LEVELS.has(value)) return value as Level;

@@ -4,7 +4,12 @@ const MAP: Record<string, Level> = {
   "1k": Level.K1,
   "2k": Level.K2,
   "3k": Level.K3,
+  "4k": Level.K4,
   "5k": Level.K5,
+  "6k": Level.K6,
+  "7k": Level.K7,
+  "8k": Level.K8,
+  "9k": Level.K9,
   "10k": Level.K10
 };
 
@@ -20,7 +25,12 @@ export const LEVEL_RANK: Record<Level, number> = {
   [Level.K1]: 1,
   [Level.K2]: 2,
   [Level.K3]: 3,
+  [Level.K4]: 4,
   [Level.K5]: 5,
+  [Level.K6]: 6,
+  [Level.K7]: 7,
+  [Level.K8]: 8,
+  [Level.K9]: 9,
   [Level.K10]: 10,
   [Level.K10P]: 10
 };

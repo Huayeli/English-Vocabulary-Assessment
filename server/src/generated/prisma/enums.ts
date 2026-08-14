@@ -13,7 +13,12 @@ export const Level = {
   K1: 'K1',
   K2: 'K2',
   K3: 'K3',
+  K4: 'K4',
   K5: 'K5',
+  K6: 'K6',
+  K7: 'K7',
+  K8: 'K8',
+  K9: 'K9',
   K10: 'K10',
   K10P: 'K10P'
 } as const

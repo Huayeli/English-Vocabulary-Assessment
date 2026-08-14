@@ -84,7 +84,7 @@ describe("admin api", () => {
     expect(res.body.code).toBe(0);
     expect(res.body.data.codeCount).toBeGreaterThanOrEqual(1);
     expect(res.body.data.testCount).toBeGreaterThanOrEqual(1);
-    expect(res.body.data.levelDistribution).toHaveLength(6);
+    expect(res.body.data.levelDistribution).toHaveLength(11);
   });
 
   it("generates codes in batch and filters them", async () => {

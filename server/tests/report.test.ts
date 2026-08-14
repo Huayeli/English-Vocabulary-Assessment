@@ -3,7 +3,7 @@ import request from "supertest";
 import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
 import { Level } from "../src/generated/prisma/enums.js";
-import { buildReport, estimateVocabulary } from "../src/modules/report/report.service.js";
+import { buildReport, cefrOf, estimateVocabulary } from "../src/modules/report/report.service.js";
 
 let codeId = 0;
 let code = "";
@@ -101,14 +101,28 @@ describe("report", () => {
     expect(report.wrongWords[0].explanation.length).toBeGreaterThan(0);
   });
 
-  it("estimates vocabulary for fixed levels", () => {
-    expect(estimateVocabulary(Level.K5, [])).toBe(5000);
+  it("estimates vocabulary from cumulative floor plus final-band accuracy", () => {
+    expect(estimateVocabulary(Level.K5, [])).toBe(4500);
+    expect(
+      estimateVocabulary(Level.K5, [
+        { testedLevel: Level.K5, isCorrect: true },
+        { testedLevel: Level.K5, isCorrect: false }
+      ])
+    ).toBe(4500);
+    expect(estimateVocabulary(Level.K5, [{ testedLevel: Level.K5, isCorrect: true }])).toBe(5000);
+    expect(
+      estimateVocabulary(Level.K10, [
+        { testedLevel: Level.K10, isCorrect: true },
+        { testedLevel: Level.K10, isCorrect: false }
+      ])
+    ).toBe(9500);
     expect(
       estimateVocabulary(Level.K10P, [
         { testedLevel: Level.K10P, isCorrect: true },
         { testedLevel: Level.K10P, isCorrect: false }
       ])
     ).toBe(17500);
+    expect(cefrOf(Level.K4)).toBe("B1");
   });
 
   it("hides report from other codes", async () => {

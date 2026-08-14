@@ -66,7 +66,7 @@ async function importWords() {
     try {
       level = bncToLevel(entry.list);
     } catch {
-      // 4k、6k-9k 词表不属于 6 个系统等级，跳过
+      // 理论上 1k-25k 全部可映射；保留跳过计数以防源数据出现未知档位
       skipped += 1;
       continue;
     }

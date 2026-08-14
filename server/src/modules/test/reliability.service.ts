@@ -1,6 +1,18 @@
 import { prisma } from "../../utils/prisma.js";
 
-const LEVEL_RANK: Record<string, number> = { K1: 1, K2: 2, K3: 3, K5: 5, K10: 10, K10P: 10 };
+const LEVEL_RANK: Record<string, number> = {
+  K1: 1,
+  K2: 2,
+  K3: 3,
+  K4: 4,
+  K5: 5,
+  K6: 6,
+  K7: 7,
+  K8: 8,
+  K9: 9,
+  K10: 10,
+  K10P: 10
+};
 
 export async function assessSession(sessionId: number) {
   const session = await prisma.testSession.findUniqueOrThrow({

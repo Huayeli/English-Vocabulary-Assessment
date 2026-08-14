@@ -1,6 +1,18 @@
 import { Level } from "../../generated/prisma/enums.js";
 
-export const LEVEL_SEQUENCE: Level[] = [Level.K1, Level.K2, Level.K3, Level.K5, Level.K10, Level.K10P];
+export const LEVEL_SEQUENCE: Level[] = [
+  Level.K1,
+  Level.K2,
+  Level.K3,
+  Level.K4,
+  Level.K5,
+  Level.K6,
+  Level.K7,
+  Level.K8,
+  Level.K9,
+  Level.K10,
+  Level.K10P
+];
 
 export function applyLevelRules(current: Level, streakCorrect: number, streakWrong: number): Level {
   const idx = LEVEL_SEQUENCE.indexOf(current);
