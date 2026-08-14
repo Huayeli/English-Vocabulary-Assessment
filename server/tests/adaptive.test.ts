@@ -67,4 +67,24 @@ describe("computeStreaks", () => {
   it("returns zeros for empty items", () => {
     expect(computeStreaks([])).toEqual({ streakCorrect: 0, streakWrong: 0 });
   });
+
+  it("resets streak when the level changes", () => {
+    expect(
+      computeStreaks([
+        { testedLevel: Level.K3, isCorrect: true },
+        { testedLevel: Level.K3, isCorrect: true },
+        { testedLevel: Level.K4, isCorrect: true }
+      ])
+    ).toEqual({ streakCorrect: 1, streakWrong: 0 });
+  });
+
+  it("counts wrong streak within the same level only", () => {
+    expect(
+      computeStreaks([
+        { testedLevel: Level.K4, isCorrect: false },
+        { testedLevel: Level.K3, isCorrect: false },
+        { testedLevel: Level.K3, isCorrect: false }
+      ])
+    ).toEqual({ streakCorrect: 0, streakWrong: 2 });
+  });
 });

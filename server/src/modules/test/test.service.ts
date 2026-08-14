@@ -12,7 +12,7 @@ export async function createSession(
   activationCodeId: number,
   type: SessionType,
   targetLevel?: Level,
-  totalQuestions = 30
+  totalQuestions = 40
 ) {
   return prisma.testSession.create({
     data: {
@@ -80,7 +80,7 @@ async function replayAdaptiveLevels(session: { items: ItemLike[] }): Promise<Lev
       it.testedLevel = level;
     }
     if (i < answered.length - 1) {
-      const streaks = computeStreaks(answered.slice(0, i + 1).map((x) => ({ isCorrect: x.isCorrect })));
+      const streaks = computeStreaks(answered.slice(0, i + 1));
       level = applyLevelRules(level, streaks.streakCorrect, streaks.streakWrong);
     }
   }
@@ -133,7 +133,7 @@ export async function answerQuestion(
   let nextLevel: Level;
   if (session.type === "ADAPTIVE") {
     const finalLevel = await replayAdaptiveLevels({ items: session.items });
-    const streaks = computeStreaks(answeredItems.map((x) => ({ isCorrect: x.isCorrect })));
+    const streaks = computeStreaks(answeredItems);
     nextLevel = applyLevelRules(finalLevel, streaks.streakCorrect, streaks.streakWrong);
   } else if (session.type === "VERIFICATION") {
     nextLevel = session.targetLevel!;

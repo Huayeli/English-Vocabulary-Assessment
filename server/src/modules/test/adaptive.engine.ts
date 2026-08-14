@@ -25,13 +25,18 @@ export function applyLevelRules(current: Level, streakCorrect: number, streakWro
   return current;
 }
 
-export function computeStreaks(items: { isCorrect: boolean }[]): { streakCorrect: number; streakWrong: number } {
+export function computeStreaks(
+  items: { isCorrect: boolean; testedLevel?: Level }[]
+): { streakCorrect: number; streakWrong: number } {
   const last = items[items.length - 1];
   if (!last) return { streakCorrect: 0, streakWrong: 0 };
   const target = last.isCorrect ? "correct" : "wrong";
   let count = 0;
   for (let i = items.length - 1; i >= 0; i--) {
-    const ok = items[i].isCorrect;
+    const it = items[i];
+    // 升级/降级后连对计数重置：只统计当前等级内的连续结果
+    if (last.testedLevel !== undefined && it.testedLevel !== last.testedLevel) break;
+    const ok = it.isCorrect;
     if ((target === "correct" && ok) || (target === "wrong" && !ok)) count += 1;
     else break;
   }
