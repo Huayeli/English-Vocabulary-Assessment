@@ -44,11 +44,12 @@ export function computeStreaks(
 }
 
 const MASTERY_THRESHOLD = 0.8;
-const MIN_SAMPLES = 2;
+const MIN_SAMPLES = 4;
 
 /**
- * 最终等级 = 从低到高最后一个"答题 >= 2 题且正确率 >= 80%"的档位；
- * 若没有任何档达标，回退到答题数最多的档位（并列取较低档）。
+ * 最终等级 = 从 K1 向上连续达标的最后一个档位：
+ * 每个有数据的档位必须满足"答题 >= 4 题且正确率 >= 80%"，一旦某档不达标就停止，
+ * 之后即使更高档全对也不算（可能是侥幸连对）。若没有任何档达标，回退到答题数最多的档位。
  */
 export function computeFinalLevel(items: { testedLevel: Level; isCorrect: boolean }[]): Level {
   const byLevel = new Map<Level, { answered: number; correct: number }>();
@@ -62,8 +63,11 @@ export function computeFinalLevel(items: { testedLevel: Level; isCorrect: boolea
   let passed: Level | null = null;
   for (const level of LEVEL_SEQUENCE) {
     const entry = byLevel.get(level);
-    if (entry && entry.answered >= MIN_SAMPLES && entry.correct / entry.answered >= MASTERY_THRESHOLD) {
+    if (!entry) continue;
+    if (entry.answered >= MIN_SAMPLES && entry.correct / entry.answered >= MASTERY_THRESHOLD) {
       passed = level;
+    } else {
+      break;
     }
   }
   if (passed) return passed;

@@ -122,6 +122,29 @@ describe("computeFinalLevel", () => {
     expect(computeFinalLevel(items)).toBe(Level.K4);
   });
 
+  it("stops at the first level below 80% even if a higher level is perfect", () => {
+    const items = [
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...Array.from({ length: 6 }, (_, i) => ({ testedLevel: Level.K4, isCorrect: i !== 5 })),
+      ...Array.from({ length: 12 }, (_, i) => ({ testedLevel: Level.K5, isCorrect: i < 10 })),
+      ...Array.from({ length: 12 }, (_, i) => ({ testedLevel: Level.K6, isCorrect: i < 8 })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K7, isCorrect: true }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K5);
+  });
+
+  it("requires at least 4 samples at a level to pass it", () => {
+    const items = [
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K5, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K6, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K7, isCorrect: true })),
+      ...[true, true].map((c) => ({ testedLevel: Level.K8, isCorrect: c }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K7);
+  });
+
   it("falls back to the most-answered level when nothing passes", () => {
     const items = [
       ...[false, false].map((c) => ({ testedLevel: Level.K3, isCorrect: c })),
