@@ -42,7 +42,7 @@ async function answer(app: ReturnType<typeof createApp>, sessionId: number, corr
 }
 
 describe("verification test", () => {
-  it("passes K3 verification with 40/40 correct", async () => {
+  it("passes K3 verification with 30/30 correct", async () => {
     const app = createApp();
     const start = await request(app)
       .post("/api/tests/verification/start")
@@ -51,7 +51,7 @@ describe("verification test", () => {
     expect(start.body.code).toBe(0);
     const sessionId = start.body.data.sessionId;
     let finalRes: any = null;
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       finalRes = await answer(app, sessionId, true);
     }
     expect(finalRes.body.data.finished).toBe(true);
@@ -60,7 +60,7 @@ describe("verification test", () => {
     expect(report.body.data.finalLevel).toBe(Level.K3);
   });
 
-  it("fails K3 verification with 30/40 correct", async () => {
+  it("fails K3 verification with 23/30 correct", async () => {
     const app = createApp();
     const start = await request(app)
       .post("/api/tests/verification/start")
@@ -68,12 +68,12 @@ describe("verification test", () => {
       .send({ level: "K3" });
     const sessionId = start.body.data.sessionId;
     let finalRes: any = null;
-    for (let i = 0; i < 40; i++) {
-      finalRes = await answer(app, sessionId, i < 30);
+    for (let i = 0; i < 30; i++) {
+      finalRes = await answer(app, sessionId, i < 23);
     }
     expect(finalRes.body.data.finished).toBe(true);
     const report = await request(app).get(`/api/reports/${sessionId}`).set("x-access-code", code);
-    expect(report.body.data.accuracy).toBeCloseTo(30 / 40, 2);
+    expect(report.body.data.accuracy).toBeCloseTo(23 / 30, 2);
     expect(report.body.data.passed).toBe(false);
   });
 });

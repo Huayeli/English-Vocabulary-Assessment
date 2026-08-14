@@ -8,12 +8,12 @@ import {
 } from "../src/modules/test/adaptive.engine.js";
 
 describe("applyLevelRules", () => {
-  it("4 correct in a row raises one level (K3 -> K4)", () => {
-    expect(applyLevelRules(Level.K3, 4, 0)).toBe(Level.K4);
+  it("3 correct in a row raises one level (K3 -> K4)", () => {
+    expect(applyLevelRules(Level.K3, 3, 0)).toBe(Level.K4);
   });
 
-  it("4 correct in a row raises one level (K4 -> K5)", () => {
-    expect(applyLevelRules(Level.K4, 4, 0)).toBe(Level.K5);
+  it("3 correct in a row raises one level (K4 -> K5)", () => {
+    expect(applyLevelRules(Level.K4, 3, 0)).toBe(Level.K5);
   });
 
   it("2 wrong in a row lowers one level (K5 -> K4)", () => {
@@ -33,7 +33,7 @@ describe("applyLevelRules", () => {
   });
 
   it("streaks below threshold keep level", () => {
-    expect(applyLevelRules(Level.K3, 3, 0)).toBe(Level.K3);
+    expect(applyLevelRules(Level.K3, 2, 0)).toBe(Level.K3);
     expect(applyLevelRules(Level.K5, 0, 1)).toBe(Level.K5);
   });
 
@@ -95,7 +95,7 @@ describe("computeStreaks", () => {
 });
 
 describe("computeFinalLevel", () => {
-  it("returns the highest level with >=2 answers and >=80% accuracy", () => {
+  it("returns the highest level with >=3 answers and >=80% accuracy", () => {
     const items = [
       ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
       ...[1, 2, 3, 4, 5, 6, 7, 8].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
@@ -133,16 +133,28 @@ describe("computeFinalLevel", () => {
     expect(computeFinalLevel(items)).toBe(Level.K5);
   });
 
-  it("requires at least 4 samples at a level to pass it", () => {
+  it("requires at least 3 samples at a level to pass it", () => {
     const items = [
-      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
-      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
-      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K5, isCorrect: true })),
-      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K6, isCorrect: true })),
-      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K7, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K5, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K6, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K7, isCorrect: true })),
       ...[true, true].map((c) => ({ testedLevel: Level.K8, isCorrect: c }))
     ];
     expect(computeFinalLevel(items)).toBe(Level.K7);
+  });
+
+  it("passes a level with exactly 3 samples", () => {
+    const items = [
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K5, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K6, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K7, isCorrect: true })),
+      ...[1, 2, 3].map(() => ({ testedLevel: Level.K8, isCorrect: true }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K8);
   });
 
   it("falls back to the most-answered level when nothing passes", () => {

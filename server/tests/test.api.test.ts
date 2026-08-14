@@ -56,60 +56,60 @@ async function abandon(app: ReturnType<typeof createApp>, code: string, sessionI
 }
 
 describe("adaptive test api", () => {
-  it("starts at K3 with 40 questions and 4 options", async () => {
+  it("starts at K3 with 30 questions and 4 options", async () => {
     const app = createApp();
     const res = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     expect(res.body.code).toBe(0);
-    expect(res.body.data.totalQuestions).toBe(40);
+    expect(res.body.data.totalQuestions).toBe(30);
     expect(res.body.data.currentLevel).toBe("K3");
     expect(res.body.data.question.options).toHaveLength(4);
     await abandon(app, unlimitedCode, res.body.data.sessionId);
   });
 
-  it("raises level to K4 after 4 consecutive correct answers", async () => {
+  it("raises level to K4 after 3 consecutive correct answers", async () => {
     const app = createApp();
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
     let nextLevel = "";
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       const data = await answerCurrent(app, unlimitedCode, sessionId, true);
-      if (i === 3) nextLevel = data.nextQuestion.testedLevel;
+      if (i === 2) nextLevel = data.nextQuestion.testedLevel;
     }
     expect(nextLevel).toBe("K4");
     await abandon(app, unlimitedCode, sessionId);
   });
 
-  it("requires 4 correct answers at the new level before promoting again", async () => {
+  it("requires 3 correct answers at the new level before promoting again", async () => {
     const app = createApp();
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await answerCurrent(app, unlimitedCode, sessionId, true);
     }
-    // 已升到 K4；K4 内前 3 题全对，连对计数应为 3，仍留在 K4
-    let after7: any = null;
-    for (let i = 0; i < 3; i++) {
-      after7 = await answerCurrent(app, unlimitedCode, sessionId, true);
+    // 已升到 K4；K4 内前 2 题全对，连对计数应为 2，仍留在 K4
+    let after5: any = null;
+    for (let i = 0; i < 2; i++) {
+      after5 = await answerCurrent(app, unlimitedCode, sessionId, true);
     }
-    expect(after7.nextQuestion.testedLevel).toBe("K4");
-    // K4 内第 4 题再对，才升到 K5
-    const after8 = await answerCurrent(app, unlimitedCode, sessionId, true);
-    expect(after8.nextQuestion.testedLevel).toBe("K5");
+    expect(after5.nextQuestion.testedLevel).toBe("K4");
+    // K4 内第 3 题再对，才升到 K5
+    const after6 = await answerCurrent(app, unlimitedCode, sessionId, true);
+    expect(after6.nextQuestion.testedLevel).toBe("K5");
     await abandon(app, unlimitedCode, sessionId);
   });
 
-  it("finishes after 40 questions and increments usage", async () => {
+  it("finishes after 30 questions and increments usage", async () => {
     const app = createApp();
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", unlimitedCode);
     const sessionId = start.body.data.sessionId;
     let final: any = null;
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       final = await answerCurrent(app, unlimitedCode, sessionId, true);
     }
     expect(final.finished).toBe(true);
     const session = await prisma.testSession.findUniqueOrThrow({ where: { id: sessionId } });
     expect(session.finalLevel).toBe("K10P");
-    expect(session.correctCount).toBe(40);
+    expect(session.correctCount).toBe(30);
     expect(session.reliability).not.toBeNull();
   });
 
@@ -160,7 +160,7 @@ describe("adaptive test api", () => {
     const start = await request(app).post("/api/tests/adaptive/start").set("x-access-code", limitedCode);
     expect(start.body.code).toBe(0);
     const sessionId = start.body.data.sessionId;
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       await answerCurrent(app, limitedCode, sessionId, true);
     }
     const blocked = await request(app).post("/api/tests/adaptive/start").set("x-access-code", limitedCode);

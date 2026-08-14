@@ -16,7 +16,7 @@ export const LEVEL_SEQUENCE: Level[] = [
 
 export function applyLevelRules(current: Level, streakCorrect: number, streakWrong: number): Level {
   const idx = LEVEL_SEQUENCE.indexOf(current);
-  if (streakCorrect >= 4 && idx >= 0 && idx < LEVEL_SEQUENCE.length - 1) {
+  if (streakCorrect >= 3 && idx >= 0 && idx < LEVEL_SEQUENCE.length - 1) {
     return LEVEL_SEQUENCE[idx + 1];
   }
   if (streakWrong >= 2 && idx > 0) {
@@ -44,11 +44,11 @@ export function computeStreaks(
 }
 
 const MASTERY_THRESHOLD = 0.8;
-const MIN_SAMPLES = 4;
+const MIN_SAMPLES = 3;
 
 /**
  * 最终等级 = 从 K1 向上连续达标的最后一个档位：
- * 每个有数据的档位必须满足"答题 >= 4 题且正确率 >= 80%"，一旦某档不达标就停止，
+ * 每个有数据的档位必须满足"答题 >= 3 题且正确率 >= 80%"，一旦某档不达标就停止，
  * 之后即使更高档全对也不算（可能是侥幸连对）。若没有任何档达标，回退到答题数最多的档位。
  */
 export function computeFinalLevel(items: { testedLevel: Level; isCorrect: boolean }[]): Level {

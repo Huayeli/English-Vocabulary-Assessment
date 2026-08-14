@@ -12,7 +12,7 @@ export async function createSession(
   activationCodeId: number,
   type: SessionType,
   targetLevel?: Level,
-  totalQuestions = 40
+  totalQuestions = 30
 ) {
   return prisma.testSession.create({
     data: {
