@@ -42,3 +42,40 @@ export function computeStreaks(
   }
   return target === "correct" ? { streakCorrect: count, streakWrong: 0 } : { streakCorrect: 0, streakWrong: count };
 }
+
+const MASTERY_THRESHOLD = 0.8;
+const MIN_SAMPLES = 2;
+
+/**
+ * 最终等级 = 从低到高最后一个"答题 >= 2 题且正确率 >= 80%"的档位；
+ * 若没有任何档达标，回退到答题数最多的档位（并列取较低档）。
+ */
+export function computeFinalLevel(items: { testedLevel: Level; isCorrect: boolean }[]): Level {
+  const byLevel = new Map<Level, { answered: number; correct: number }>();
+  for (const it of items) {
+    const entry = byLevel.get(it.testedLevel) ?? { answered: 0, correct: 0 };
+    entry.answered += 1;
+    if (it.isCorrect) entry.correct += 1;
+    byLevel.set(it.testedLevel, entry);
+  }
+
+  let passed: Level | null = null;
+  for (const level of LEVEL_SEQUENCE) {
+    const entry = byLevel.get(level);
+    if (entry && entry.answered >= MIN_SAMPLES && entry.correct / entry.answered >= MASTERY_THRESHOLD) {
+      passed = level;
+    }
+  }
+  if (passed) return passed;
+
+  let fallback: Level = LEVEL_SEQUENCE[0];
+  let maxAnswered = 0;
+  for (const level of LEVEL_SEQUENCE) {
+    const entry = byLevel.get(level);
+    if (entry && entry.answered > maxAnswered) {
+      maxAnswered = entry.answered;
+      fallback = level;
+    }
+  }
+  return fallback;
+}

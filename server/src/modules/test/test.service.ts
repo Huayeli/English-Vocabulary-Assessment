@@ -2,7 +2,7 @@ import type { Level } from "../../generated/prisma/enums.js";
 import { prisma } from "../../utils/prisma.js";
 import { ApiError } from "../../utils/errors.js";
 import { getOrCreateQuestion, toClientQuestion } from "../question/question.service.js";
-import { applyLevelRules, computeStreaks } from "./adaptive.engine.js";
+import { applyLevelRules, computeFinalLevel, computeStreaks } from "./adaptive.engine.js";
 import { estimateVocabulary } from "../report/report.service.js";
 import { assessSession } from "./reliability.service.js";
 
@@ -181,7 +181,9 @@ async function finishSession(
   if (session.type === "VERIFICATION") {
     finalLevel = session.targetLevel!;
   } else if (session.type === "ADAPTIVE") {
-    finalLevel = await replayAdaptiveLevels({ items: session.items });
+    // 重放保证标签一致；最终等级按"该档掌握率"计算，而不是最后一题所在档位
+    await replayAdaptiveLevels({ items: session.items });
+    finalLevel = computeFinalLevel(answeredItems.length > 0 ? answeredItems : session.items);
   } else {
     finalLevel =
       answeredItems.length > 0

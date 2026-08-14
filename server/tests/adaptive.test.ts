@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { Level } from "../src/generated/prisma/enums.js";
-import { applyLevelRules, computeStreaks, LEVEL_SEQUENCE } from "../src/modules/test/adaptive.engine.js";
+import {
+  applyLevelRules,
+  computeFinalLevel,
+  computeStreaks,
+  LEVEL_SEQUENCE
+} from "../src/modules/test/adaptive.engine.js";
 
 describe("applyLevelRules", () => {
   it("4 correct in a row raises one level (K3 -> K4)", () => {
@@ -86,5 +91,59 @@ describe("computeStreaks", () => {
         { testedLevel: Level.K3, isCorrect: false }
       ])
     ).toEqual({ streakCorrect: 0, streakWrong: 2 });
+  });
+});
+
+describe("computeFinalLevel", () => {
+  it("returns the highest level with >=2 answers and >=80% accuracy", () => {
+    const items = [
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3, 4, 5, 6, 7, 8].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      ...Array.from({ length: 12 }, (_, i) => ({ testedLevel: Level.K5, isCorrect: i === 0 }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K4);
+  });
+
+  it("ignores a single correct answer at a level", () => {
+    const items = [
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      { testedLevel: Level.K5, isCorrect: true }
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K4);
+  });
+
+  it("requires 80% mastery within a level", () => {
+    const items = [
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K3, isCorrect: true })),
+      ...[1, 2, 3, 4].map(() => ({ testedLevel: Level.K4, isCorrect: true })),
+      ...[true, true, false, false].map((c) => ({ testedLevel: Level.K5, isCorrect: c }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K4);
+  });
+
+  it("falls back to the most-answered level when nothing passes", () => {
+    const items = [
+      ...[false, false].map((c) => ({ testedLevel: Level.K3, isCorrect: c })),
+      { testedLevel: Level.K2, isCorrect: false },
+      ...Array.from({ length: 27 }, () => ({ testedLevel: Level.K1, isCorrect: false }))
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K1);
+  });
+
+  it("returns K10P when all levels are mastered", () => {
+    const mastered = (level: Level, n: number) => Array.from({ length: n }, () => ({ testedLevel: level, isCorrect: true }));
+    const items = [
+      ...mastered(Level.K3, 4),
+      ...mastered(Level.K4, 4),
+      ...mastered(Level.K5, 4),
+      ...mastered(Level.K6, 4),
+      ...mastered(Level.K7, 4),
+      ...mastered(Level.K8, 4),
+      ...mastered(Level.K9, 4),
+      ...mastered(Level.K10, 4),
+      ...mastered(Level.K10P, 8)
+    ];
+    expect(computeFinalLevel(items)).toBe(Level.K10P);
   });
 });
