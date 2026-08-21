@@ -5,7 +5,10 @@
       <button class="exit-btn" @click="confirmExit = true">退出测试</button>
     </div>
 
-    <div v-if="!test.questions.length" class="loading">测试加载中…</div>
+    <div v-if="!test.questions.length" class="loading">
+      <span class="lds"><i></i><i></i><i></i></span>
+      <p>测试加载中…</p>
+    </div>
     <template v-else>
       <TestProgress :seq="test.seq" :total="test.totalQuestions" />
       <QuestionCard :question="current.q" :selected="current.selectedIndex" @select="onSelect" />
@@ -18,9 +21,9 @@
     </template>
 
     <div v-if="confirmExit" class="overlay">
-      <div class="modal">
+      <div class="dialog">
         <p>退出后本次测试记录不会保存，且不消耗测试次数。确定退出吗？</p>
-        <div class="modal-actions">
+        <div class="dialog-actions">
           <button class="btn ghost" @click="confirmExit = false">继续答题</button>
           <button class="btn danger" @click="doExit">退出测试</button>
         </div>
@@ -125,18 +128,66 @@ onBeforeUnmount(abandonQuietly);
   z-index: 1;
 }
 .exit-btn {
-  padding: 9px 18px;
-  border: 1.5px solid rgba(194, 107, 94, 0.6);
-  border-radius: 12px;
+  padding: 9px 20px;
+  border: 2px solid #000;
+  border-radius: 0;
   background: #fff;
-  color: var(--danger);
+  color: #FF6B6B;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 900;
+  box-shadow: 2px 2px 0 0 #000;
+  transition: transform 0.1s linear, background 0.1s linear, box-shadow 0.1s linear;
+}
+.exit-btn:hover {
+  background: #FFE9E9;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 #000;
 }
 .loading {
   text-align: center;
-  color: #6b7280;
-  padding: 60px 0;
+  color: #000;
+  font-weight: 700;
+  padding: 80px 0;
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 0 #000;
+}
+.loading p {
+  margin: 14px 0 0;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+.lds {
+  display: inline-flex;
+  gap: 8px;
+}
+.lds i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: bounce 1s ease-in-out infinite;
+}
+.lds i:nth-child(1) {
+  background: #FF6B6B;
+}
+.lds i:nth-child(2) {
+  background: #FFD93D;
+  animation-delay: 0.15s;
+}
+.lds i:nth-child(3) {
+  background: #C4B5FD;
+  animation-delay: 0.3s;
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 .nav-row {
   display: flex;
@@ -146,22 +197,32 @@ onBeforeUnmount(abandonQuietly);
   gap: 12px;
 }
 .nav-btn {
-  padding: 12px 30px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
+  padding: 12px 34px;
+  border: 2px solid #000;
+  border-radius: 0;
   background: #fff;
-  color: var(--ink);
+  color: #000;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 900;
+  font-family: var(--font-display);
+  box-shadow: 2px 2px 0 0 #000;
+  transition: transform 0.1s linear, background 0.1s linear, box-shadow 0.1s linear;
+}
+.nav-btn:not(:disabled):hover {
+  background: #FFD93D;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 #000;
 }
 .nav-btn.primary {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #FF6B6B;
+  border-color: #000;
   color: #fff;
+  box-shadow: 3px 3px 0 0 #000;
 }
 .nav-btn.primary:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: #E85353;
+  box-shadow: 4px 4px 0 0 #000;
 }
 .nav-btn:disabled {
   opacity: 0.5;
@@ -176,39 +237,51 @@ onBeforeUnmount(abandonQuietly);
   justify-content: center;
   z-index: 1000;
 }
-.modal {
-  min-width: 320px;
+.dialog {
+  min-width: 340px;
   max-width: 420px;
   background: #fff;
-  border-radius: 12px;
-  padding: 28px 24px;
+  border: 3px solid #000;
+  border-radius: 0;
+  padding: 32px 28px;
   text-align: center;
+  box-shadow: 6px 6px 0 0 #000;
 }
-.modal p {
+.dialog p {
   margin: 0 0 20px;
   font-size: 15px;
-  color: #374151;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.7;
 }
-.modal-actions {
+.dialog-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
 .btn {
   padding: 9px 22px;
-  border: none;
-  border-radius: 12px;
-  background: var(--primary);
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #FF6B6B;
   color: #fff;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 900;
+  box-shadow: 2px 2px 0 0 #000;
+  transition: transform 0.1s linear, box-shadow 0.1s linear;
 }
 .btn.ghost {
   background: #fff;
-  color: var(--primary);
-  border: 1.5px solid var(--primary);
+  color: #000;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
 }
 .btn.danger {
-  background: var(--danger);
+  background: #FF6B6B;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 </style>

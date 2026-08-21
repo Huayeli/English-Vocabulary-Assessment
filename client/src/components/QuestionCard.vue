@@ -36,67 +36,95 @@ function optionClass(i: number) {
 <style scoped>
 .q-card {
   background: var(--card);
-  border-radius: var(--radius-lg);
-  padding: 36px 34px 30px;
-  box-shadow: var(--shadow);
+  border: 3px solid #000;
+  border-radius: 0;
+  padding: 38px 36px 32px;
+  box-shadow: 6px 6px 0 0 #000;
+  position: relative;
+  overflow: hidden;
+}
+.q-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  border-left: 2px solid #000;
+  border-bottom: 2px solid #000;
+  pointer-events: none;
 }
 .q-word {
-  font-size: 38px;
-  font-weight: 700;
+  font-size: 46px;
+  font-weight: 800;
+  font-family: "Times New Roman", Times, serif;
   text-align: center;
   color: var(--ink);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  position: relative;
 }
 .q-text {
   text-align: center;
-  color: var(--muted);
-  margin: 10px 0 28px;
+  color: #000;
+  font-weight: 700;
+  margin: 12px 0 30px;
   font-size: 15px;
+  position: relative;
 }
 .options {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 16px;
+  position: relative;
 }
 .option {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 18px;
-  border: 1.5px solid var(--line);
-  border-radius: 16px;
+  gap: 14px;
+  padding: 15px 20px;
+  border: 2px solid #000;
+  border-radius: 0;
   background: #fff;
-  font-size: 15px;
+  font-size: 17px;
+  font-weight: 700;
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.15s, background 0.15s;
+  transition: transform 0.1s linear, box-shadow 0.1s linear, background 0.1s linear;
+  box-shadow: 2px 2px 0 0 #000;
 }
 .option:not(:disabled):hover {
-  border-color: var(--primary);
-  background: var(--primary-soft);
+  background: #FFF3F3;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 #000;
 }
 .index {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--primary-soft);
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+  border: 2px solid #000;
+  background: #C4B5FD;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  color: var(--primary);
-  font-weight: 700;
+  font-size: 15px;
+  color: #000;
+  font-weight: 900;
+  font-family: var(--font-display);
+  flex-shrink: 0;
 }
 .option.selected {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-  font-weight: 600;
+  background: #FFD93D;
+  font-weight: 900;
+  box-shadow: 2px 2px 0 0 #000;
 }
 .option.selected .index {
-  background: var(--primary);
+  background: #FF6B6B;
   color: #fff;
+  box-shadow: 2px 2px 0 0 #000;
 }
 .option.dim {
-  opacity: 0.6;
+  opacity: 0.55;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>激活码管理</h2>
+    <h2 class="page-title">激活码管理</h2>
 
-    <div class="card gen">
+    <div class="panel gen">
       <h3>生成激活码</h3>
       <div class="gen-row">
         <input v-model="gen.batchName" placeholder="批次名称（必填）" />
@@ -38,7 +38,8 @@
       <button class="btn danger" :disabled="selected.size === 0" @click="batchDelete">批量删除</button>
     </div>
 
-    <table>
+    <div class="table-wrap">
+      <table>
       <thead>
         <tr>
           <th><input type="checkbox" :checked="allSelected" @change="toggleAll" /></th>
@@ -60,7 +61,11 @@
           <td>{{ c.batchName }}</td>
           <td>{{ c.usedCount }}{{ c.maxTests == null ? "" : `/${c.maxTests}` }}</td>
           <td>{{ c.remaining === null ? "不限" : c.remaining }}</td>
-          <td>{{ c.status === "ACTIVE" ? "启用" : "禁用" }}</td>
+          <td>
+            <span class="status-badge" :class="c.status === 'ACTIVE' ? 'ok' : 'flat'">
+              {{ c.status === "ACTIVE" ? "启用" : "禁用" }}
+            </span>
+          </td>
           <td>{{ formatTime(c.createdAt) }}</td>
           <td>{{ formatTime(c.lastUsedAt) }}</td>
           <td>
@@ -73,7 +78,8 @@
           <td><button class="mini" @click="openEdit(c)">次数/状态</button></td>
         </tr>
       </tbody>
-    </table>
+      </table>
+    </div>
     <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="editing" class="modal">
@@ -295,40 +301,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  margin-top: 12px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-th,
-td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 14px;
-}
-th {
-  background: #f8fafc;
-}
 .mono {
   font-family: Consolas, monospace;
   font-weight: 600;
 }
 .none {
-  color: #9ca3af;
+  color: #8A7A9E;
 }
 .bad {
-  color: #dc2626;
-}
-.gen {
-  padding: 20px;
-  margin-bottom: 16px;
-}
-.gen h3 {
-  margin: 0 0 12px;
+  color: #4E3282;
 }
 .gen-row {
   display: flex;
@@ -338,20 +319,17 @@ th {
 .gen-row input {
   flex: 1;
   min-width: 140px;
-  padding: 9px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
 }
 .result {
   margin-top: 12px;
-  background: #f8fafc;
-  border-radius: 10px;
+  background: #F3EDF9;
+  border-radius: 20px;
   padding: 14px;
 }
 .result p {
   margin: 0 0 8px;
   font-size: 13px;
-  color: #6b7280;
+  color: #8A7A9E;
 }
 .codes {
   display: flex;
@@ -360,97 +338,18 @@ th {
   margin-bottom: 10px;
 }
 .code-chip {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border-radius: 8px;
+  background: #EDE6F7;
+  color: #3B328C;
+  border-radius: 999px;
   padding: 5px 10px;
   font-family: Consolas, monospace;
   font-size: 13px;
-}
-.toolbar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 14px 0;
 }
 .spacer {
   flex: 1;
 }
 .sel-info {
   font-size: 13px;
-  color: #6b7280;
-}
-input,
-select {
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-}
-.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: #fff;
-  cursor: pointer;
-}
-.btn.ghost {
-  background: #fff;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-}
-.btn.danger {
-  background: #dc2626;
-}
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.mini {
-  padding: 5px 12px;
-  border: 1px solid #2563eb;
-  border-radius: 6px;
-  background: #fff;
-  color: #2563eb;
-  cursor: pointer;
-  margin-left: 6px;
-}
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.modal-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 24px;
-  width: 380px;
-  max-height: 80vh;
-  overflow: auto;
-}
-.modal-card.wide {
-  width: 720px;
-}
-label {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-label input,
-label select {
-  width: 100%;
-  margin-top: 4px;
-  box-sizing: border-box;
-}
-.actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 12px;
+  color: #8A7A9E;
 }
 </style>

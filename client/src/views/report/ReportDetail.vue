@@ -1,5 +1,6 @@
 <template>
   <div class="page">
+    <DecoCircles />
     <CodeHeader />
     <div v-if="report" class="card">
       <div class="head">
@@ -79,6 +80,7 @@ import { useRoute } from "vue-router";
 import { reportApi, type Report } from "../../api/report";
 import RateBar from "../../components/RateBar.vue";
 import CodeHeader from "../../components/CodeHeader.vue";
+import DecoCircles from "../../components/DecoCircles.vue";
 
 const route = useRoute();
 const report = ref<Report | null>(null);
@@ -116,123 +118,182 @@ onMounted(load);
   padding: 24px;
 }
 .card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: var(--card);
+  border-radius: 28px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(78, 50, 130, 0.06);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(162, 205, 243, 0.18), rgba(162, 205, 243, 0) 70%);
+  pointer-events: none;
 }
 .head {
   display: flex;
   align-items: center;
   gap: 12px;
+  position: relative;
+}
+h1 {
+  font-family: var(--font-display);
+  color: var(--primary-dark);
+  letter-spacing: 2px;
 }
 .type {
-  background: #ecf5ff;
-  color: #409eff;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 999px;
   font-size: 13px;
+  font-weight: 600;
 }
 .passed {
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 999px;
   font-size: 13px;
+  font-weight: 600;
 }
 .passed.ok {
-  background: #ecfdf5;
-  color: #059669;
+  background: #EDE6F7;
+  color: #8E6CBB;
 }
 .passed.bad {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #FCE9EE;
+  color: var(--accent-red);
 }
 .warn {
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 14px;
   font-size: 13px;
   margin: 14px 0 0;
+  position: relative;
 }
 .warn.bad {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #FCE9EE;
+  color: var(--accent-red);
 }
 .warn.mid {
-  background: #fffbeb;
-  color: #b45309;
+  background: #FFF7E0;
+  color: #F1A9BE;
 }
 .warn.flags {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #EDE6F7;
+  color: #4E3282;
 }
 .meta {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin: 20px 0;
+  position: relative;
 }
 .meta-item {
-  background: #f9fafb;
-  border-radius: 8px;
+  background: #F3EDF9;
+  border-radius: 16px;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  border: 1px solid rgba(78, 50, 130, 0.06);
+  border-left: 4px solid var(--primary);
 }
 .meta-item span {
-  color: #9ca3af;
+  color: var(--muted);
   font-size: 12px;
 }
+.meta-item b {
+  font-family: var(--font-display);
+  font-size: 15px;
+}
 h2 {
-  margin: 24px 0 12px;
+  margin: 26px 0 14px;
   font-size: 16px;
+  font-family: var(--font-display);
+  color: var(--primary-dark);
+  position: relative;
+}
+.mastery {
+  position: relative;
 }
 .wrong-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #F3EDF9;
+  border-radius: 16px;
+  border: 1px solid rgba(78, 50, 130, 0.08);
+  position: relative;
 }
 .wrong-head {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+.wrong-head b {
+  font-size: 17px;
+  font-family: var(--font-display);
+  color: var(--ink);
+}
 .lv {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  border-radius: 999px;
   padding: 2px 8px;
   font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-display);
 }
 .line {
   margin: 4px 0;
   font-size: 14px;
-  color: #374151;
+  color: var(--ink);
 }
 .ok {
-  color: #059669;
+  color: #8E6CBB;
+  font-weight: 600;
 }
 .bad {
-  color: #dc2626;
+  color: var(--accent-red);
+  font-weight: 600;
 }
 .empty {
-  color: #9ca3af;
+  color: var(--muted);
   font-size: 14px;
 }
 .actions {
   margin-top: 24px;
+  position: relative;
 }
 .btn {
-  padding: 10px 20px;
-  border-radius: 6px;
-  background: #409eff;
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4E3282, #8E6CBB);
   color: #fff;
   text-decoration: none;
   font-size: 14px;
   border: none;
   cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(78, 50, 130, 0.25);
+  transition: transform 0.15s;
+}
+.btn:hover {
+  transform: translateY(-2px);
 }
 .btn.ghost {
   background: #fff;
-  color: #409eff;
-  border: 1px solid #409eff;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  box-shadow: none;
 }
 </style>

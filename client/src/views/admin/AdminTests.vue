@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>测试管理</h2>
+    <h2 class="page-title">测试管理</h2>
     <div class="toolbar">
       <input v-model="keyword" placeholder="激活码" @keyup.enter="load(1)" />
       <select v-model="type">
@@ -10,7 +10,8 @@
       </select>
       <button class="btn" @click="load(1)">查询</button>
     </div>
-    <table>
+    <div class="table-wrap">
+      <table>
       <thead>
         <tr>
           <th>ID</th>
@@ -30,16 +31,18 @@
         <tr v-for="t in rows" :key="t.id">
           <td>{{ t.id }}</td>
           <td>{{ t.accessCode }}</td>
-          <td>{{ typeLabel(t.type) }}</td>
+          <td>
+            <span class="status-badge" :class="t.type === 'ADAPTIVE' ? 'ok' : 'mid'">{{ typeLabel(t.type) }}</span>
+          </td>
           <td>{{ t.totalQuestions }}</td>
           <td>{{ Math.round((t.accuracy ?? 0) * 100) }}%</td>
           <td>{{ t.finalLevel ?? "-" }}</td>
           <td>{{ durationText(t.durationSec) }}</td>
           <td :class="reliabilityClass(t)">{{ t.reliability ?? "-" }}</td>
           <td>
-            <span v-if="t.invalid" class="bad">无效</span>
-            <span v-else-if="t.suspicious" class="mid">{{ t.flags }}</span>
-            <span v-else>-</span>
+            <span v-if="t.invalid" class="status-badge bad">无效</span>
+            <span v-else-if="t.suspicious" class="status-badge mid">{{ t.flags }}</span>
+            <span v-else class="status-badge flat">正常</span>
           </td>
           <td>{{ formatTime(t.finishedAt) }}</td>
           <td>
@@ -48,7 +51,8 @@
           </td>
         </tr>
       </tbody>
-    </table>
+      </table>
+    </div>
     <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="detail" class="modal">
@@ -118,8 +122,8 @@ function durationText(sec: number | null) {
 }
 
 function reliabilityClass(t: any) {
-  if (t.invalid || (t.reliability !== null && t.reliability < 40)) return "bad";
-  if (t.reliability !== null && t.reliability < 60) return "mid";
+  if (t.invalid || (t.reliability !== null && t.reliability < 40)) return "rel-bad";
+  if (t.reliability !== null && t.reliability < 60) return "rel-mid";
   return "";
 }
 
@@ -153,83 +157,17 @@ onMounted(load);
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  margin-top: 12px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-th,
-td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 14px;
-}
-th {
-  background: #f8fafc;
-}
-.toolbar {
-  display: flex;
-  gap: 8px;
-}
-input,
-select {
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-}
-.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: #fff;
-  cursor: pointer;
-}
-.btn.ghost {
-  background: #fff;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-}
-.mini {
-  padding: 5px 12px;
-  border: 1px solid #2563eb;
-  border-radius: 6px;
-  background: #fff;
-  color: #2563eb;
-  cursor: pointer;
-}
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.modal-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 24px;
-  max-width: 720px;
-  max-height: 80vh;
-  overflow: auto;
-}
 .meta {
-  color: #6b7280;
+  color: #000;
   font-size: 13px;
+  font-weight: 700;
 }
-.ok {
-  color: #059669;
+.rel-bad {
+  color: #FF6B6B;
+  font-weight: 900;
 }
-.bad {
-  color: #dc2626;
-}
-.mid {
-  color: #b45309;
+.rel-mid {
+  color: #E8862E;
+  font-weight: 900;
 }
 </style>

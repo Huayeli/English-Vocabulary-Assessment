@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>词库管理</h2>
+    <h2 class="page-title">词库管理</h2>
     <div class="toolbar">
       <input v-model="keyword" placeholder="关键词" @keyup.enter="load(1)" />
       <select v-model="level">
@@ -14,7 +14,8 @@
       </select>
       <button class="btn" @click="load(1)">查询</button>
     </div>
-    <table>
+    <div class="table-wrap">
+      <table>
       <thead>
         <tr>
           <th>ID</th>
@@ -30,14 +31,19 @@
         <tr v-for="w in rows" :key="w.id">
           <td>{{ w.id }}</td>
           <td>{{ w.headword }}</td>
-          <td>{{ w.level }}</td>
+          <td><span class="status-badge" :style="lvBadgeStyle(w.level)">{{ levelLabel(w.level) }}</span></td>
           <td>{{ w.bncLevel }}</td>
           <td>{{ w.meaningCount }}</td>
-          <td>{{ w.status }}</td>
+          <td>
+            <span class="status-badge" :class="w.status === 'ENABLED' ? 'ok' : 'flat'">
+              {{ w.status === "ENABLED" ? "启用" : "停用" }}
+            </span>
+          </td>
           <td><button class="mini" @click="openEdit(w)">编辑</button></td>
         </tr>
       </tbody>
-    </table>
+      </table>
+    </div>
     <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="editing" class="modal">
@@ -78,7 +84,7 @@ import { onMounted, ref } from "vue";
 import { adminApi } from "../../api/admin";
 import Pagination from "../../components/Pagination.vue";
 
-const LEVELS = ["K1", "K2", "K3", "K5", "K10", "K10P"];
+const LEVELS = ["K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8", "K9", "K10", "K10P"];
 const keyword = ref("");
 const level = ref("");
 const hasMeaning = ref("");
@@ -90,6 +96,42 @@ const editing = ref<any>(null);
 const detail = ref<any>(null);
 const form = ref({ level: "K1", relatedForms: "", status: "ENABLED" });
 const newMeaning = ref("");
+
+const LEVEL_LABELS: Record<string, string> = {
+  K1: "1K",
+  K2: "2K",
+  K3: "3K",
+  K4: "4K",
+  K5: "5K",
+  K6: "6K",
+  K7: "7K",
+  K8: "8K",
+  K9: "9K",
+  K10: "10K",
+  K10P: "10K+"
+};
+
+const LEVEL_COLORS: Record<string, string> = {
+  K1: "#8E6CBB",
+  K2: "#4CBFA6",
+  K3: "#5B8FF9",
+  K4: "#F5A623",
+  K5: "#D97AB0",
+  K6: "#B69CD2",
+  K7: "#A2CDF3",
+  K8: "#C9A7E8",
+  K9: "#F8C7CE",
+  K10: "#F1A9BE",
+  K10P: "#E59BB4"
+};
+
+function levelLabel(level: string) {
+  return LEVEL_LABELS[level] ?? level;
+}
+
+function lvBadgeStyle(level: string) {
+  return { background: LEVEL_COLORS[level] ?? "#4E3282", color: "#fff" };
+}
 
 async function load(p = 1) {
   page.value = p;
@@ -135,85 +177,6 @@ onMounted(load);
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  margin-top: 12px;
-}
-th,
-td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
-}
-th {
-  background: #f9fafb;
-}
-.toolbar {
-  display: flex;
-  gap: 8px;
-}
-input,
-select {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-.btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #409eff;
-  color: #fff;
-  cursor: pointer;
-}
-.btn.ghost {
-  background: #fff;
-  color: #409eff;
-  border: 1px solid #409eff;
-}
-.mini {
-  padding: 5px 10px;
-  border: 1px solid #409eff;
-  border-radius: 6px;
-  background: #fff;
-  color: #409eff;
-  cursor: pointer;
-}
-.mini.danger {
-  border-color: #f87171;
-  color: #dc2626;
-}
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 24px;
-  width: 440px;
-  max-height: 80vh;
-  overflow: auto;
-}
-label {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-select,
-input {
-  display: block;
-  width: 100%;
-  margin-top: 4px;
-  box-sizing: border-box;
-}
 .meaning-row {
   display: flex;
   gap: 8px;
@@ -221,11 +184,5 @@ input {
 }
 .meaning-row input {
   flex: 1;
-}
-.actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 12px;
 }
 </style>

@@ -17,7 +17,7 @@ const ui = useUiStore();
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,24 +27,34 @@ const ui = useUiStore();
   min-width: 300px;
   max-width: 420px;
   background: #fff;
-  border-radius: 12px;
-  padding: 28px 24px;
+  border: 3px solid #000;
+  border-radius: 0;
+  padding: 32px 28px;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 6px 6px 0 0 #000;
 }
 .modal p {
   margin: 0 0 20px;
   font-size: 15px;
-  color: #374151;
+  font-weight: 700;
+  color: #000;
   word-break: break-all;
+  line-height: 1.7;
 }
 .btn {
-  padding: 9px 28px;
-  border: none;
-  border-radius: 12px;
-  background: var(--primary);
+  padding: 10px 30px;
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #FF6B6B;
   color: #fff;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 900;
+  box-shadow: 2px 2px 0 0 #000;
+  transition: transform 0.1s linear, box-shadow 0.1s linear;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 </style>

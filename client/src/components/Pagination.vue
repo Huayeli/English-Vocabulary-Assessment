@@ -24,19 +24,25 @@ const totalPages = computed(() => Math.max(1, Math.ceil(props.total / props.page
   margin-top: 14px;
 }
 .pager button {
-  padding: 7px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  padding: 8px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
   background: #fff;
-  color: #374151;
+  color: var(--ink);
   cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pager button:not(:disabled):hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
 }
 .pager button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .pager span {
-  color: #6b7280;
+  color: var(--muted);
   font-size: 13px;
 }
 </style>

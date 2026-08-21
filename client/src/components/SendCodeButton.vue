@@ -49,10 +49,10 @@ onBeforeUnmount(() => {
 <style scoped>
 .code-btn {
   padding: 8px 12px;
-  border: 1px solid #409eff;
-  border-radius: 6px;
-  background: #ecf5ff;
-  color: #409eff;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
   cursor: pointer;
   white-space: nowrap;
 }

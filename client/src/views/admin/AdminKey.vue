@@ -64,49 +64,75 @@ async function submit() {
   padding: 24px;
 }
 .key-card {
-  width: 400px;
-  padding: 44px 40px 38px;
+  width: 420px;
+  padding: 48px 42px 40px;
   text-align: center;
   position: relative;
   z-index: 1;
+  overflow: hidden;
+}
+.key-card::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(151, 80, 226, 0.16), rgba(151, 80, 226, 0) 70%);
+  pointer-events: none;
 }
 .lock {
-  width: 74px;
-  height: 74px;
+  width: 80px;
+  height: 80px;
   margin: 0 auto 18px;
   border-radius: 50%;
-  background: var(--primary-soft);
-  color: var(--primary);
+  background: linear-gradient(135deg, #4E3282, #8E6CBB);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 10px 26px rgba(78, 50, 130, 0.3);
+  position: relative;
+  z-index: 1;
 }
 h1 {
   margin: 0 0 4px;
   font-size: 26px;
-  color: var(--ink);
-  letter-spacing: 4px;
+  font-family: var(--font-display);
+  color: var(--primary-dark);
+  letter-spacing: 3px;
+  position: relative;
+  z-index: 1;
 }
 .tip {
   margin: 0 0 24px;
   color: var(--muted);
   font-size: 14px;
+  position: relative;
+  z-index: 1;
 }
 .enter {
   width: 100%;
   margin-top: 16px;
   padding: 14px;
+  position: relative;
+  z-index: 1;
 }
 .error {
   color: var(--danger);
   font-size: 13px;
   min-height: 18px;
   margin: 12px 0 0;
+  position: relative;
+  z-index: 1;
 }
 .back {
   display: block;
   margin-top: 12px;
   color: var(--muted);
   font-size: 13px;
+  position: relative;
+  z-index: 1;
 }
 </style>

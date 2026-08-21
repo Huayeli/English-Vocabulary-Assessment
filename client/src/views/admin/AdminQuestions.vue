@@ -1,12 +1,13 @@
 <template>
   <div>
-    <h2>题库管理</h2>
+    <h2 class="page-title">题库管理</h2>
     <div class="toolbar">
       <input v-model="keyword" placeholder="单词关键词" @keyup.enter="load(1)" />
       <button class="btn" @click="load(1)">查询</button>
       <button class="btn ghost" @click="openCreate">人工录题</button>
     </div>
-    <table>
+    <div class="table-wrap">
+      <table>
       <thead>
         <tr>
           <th>ID</th>
@@ -23,14 +24,19 @@
           <td>{{ q.headword }}</td>
           <td>{{ q.level }}</td>
           <td>{{ q.source }}</td>
-          <td>{{ q.disabled ? "已禁用" : "正常" }}</td>
+          <td>
+            <span class="status-badge" :class="q.disabled ? 'bad' : 'ok'">
+              {{ q.disabled ? "已禁用" : "正常" }}
+            </span>
+          </td>
           <td>
             <button class="mini" @click="openEdit(q)">编辑</button>
             <button class="mini danger" @click="remove(q)">删除</button>
           </td>
         </tr>
       </tbody>
-    </table>
+      </table>
+    </div>
     <Pagination :page="page" :page-size="pageSize" :total="total" @change="load" />
 
     <div v-if="editing || creating" class="modal">
@@ -117,71 +123,6 @@ onMounted(load);
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  margin-top: 12px;
-}
-th,
-td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
-}
-th {
-  background: #f9fafb;
-}
-.toolbar {
-  display: flex;
-  gap: 8px;
-}
-input {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-.btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #409eff;
-  color: #fff;
-  cursor: pointer;
-}
-.btn.ghost {
-  background: #fff;
-  color: #409eff;
-  border: 1px solid #409eff;
-}
-.mini {
-  padding: 5px 10px;
-  border: 1px solid #409eff;
-  border-radius: 6px;
-  background: #fff;
-  color: #409eff;
-  cursor: pointer;
-  margin-right: 6px;
-}
-.mini.danger {
-  border-color: #f87171;
-  color: #dc2626;
-}
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 24px;
-  width: 480px;
-}
 .option-row {
   display: flex;
   gap: 8px;
@@ -190,21 +131,5 @@ input {
 }
 .option-row input[type="text"] {
   flex: 1;
-}
-label {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-label input {
-  width: 100%;
-  margin-top: 4px;
-  box-sizing: border-box;
-}
-.actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 12px;
 }
 </style>
