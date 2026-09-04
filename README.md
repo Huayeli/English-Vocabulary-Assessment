@@ -38,7 +38,7 @@ cd server
 Copy-Item .env.example .env
 ```
 
-修改 `server/.env` 中的 `ADMIN_KEY`（管理后台密钥，默认 `REDACTED`）。
+修改 `server/.env` 中的 `ADMIN_KEY`（管理后台密钥，请自行设置为强随机值，默认值已移除，切勿公开密钥）。
 
 ### 3. 初始化数据库与词库
 

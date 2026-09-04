@@ -4,7 +4,9 @@ import { prisma } from "../src/utils/prisma.js";
 import { createApp } from "../src/app.js";
 import { Level } from "../src/generated/prisma/enums.js";
 
-const ADMIN_KEY = "REDACTED";
+const TEST_ADMIN_KEY = "vocab-test-admin-key";
+process.env.ADMIN_KEY ??= TEST_ADMIN_KEY;
+const ADMIN_KEY = process.env.ADMIN_KEY;
 
 function adminGet(app: ReturnType<typeof createApp>, url: string) {
   return request(app).get(url).set("x-admin-key", ADMIN_KEY);

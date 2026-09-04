@@ -189,7 +189,7 @@ SMTP_PORT=465
 SMTP_USER="your_account@163.com"
 SMTP_PASS="your_smtp_auth_code"
 ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="REDACTED"
+ADMIN_PASSWORD="<your-strong-admin-password>"
 ```
 
 - [ ] **Step 2: 编写完整 schema**
@@ -514,7 +514,7 @@ async function seedPlans() {
 
 async function seedAdmin() {
   const username = process.env.ADMIN_USERNAME ?? "admin";
-  const password = process.env.ADMIN_PASSWORD ?? "REDACTED";
+  const password = process.env.ADMIN_PASSWORD ?? "<your-strong-admin-password>";
   const free = await prisma.plan.findUniqueOrThrow({ where: { code: "FREE" } });
   const exists = await prisma.user.findUnique({ where: { username } });
   if (!exists) {

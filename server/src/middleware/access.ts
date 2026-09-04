@@ -35,8 +35,14 @@ export async function requireCode(req: CodeRequest, res: Response, next: NextFun
 }
 
 export function requireAdminKey(req: Request, res: Response, next: NextFunction) {
+  const configuredKey = process.env.ADMIN_KEY;
+  if (!configuredKey) {
+    console.error("[admin] ADMIN_KEY is not configured; admin access is denied");
+    res.status(500).json({ code: 50001, message: "ADMIN_KEY is not configured", data: null });
+    return;
+  }
   const key = req.headers["x-admin-key"];
-  if (key !== (process.env.ADMIN_KEY ?? "REDACTED")) {
+  if (key !== configuredKey) {
     res.status(403).json({ code: 40301, message: "管理密钥错误", data: null });
     return;
   }
