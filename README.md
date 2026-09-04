@@ -76,7 +76,3 @@ npm run build
 cd client
 npm run build
 ```
-
-## 文档
-
-设计文档见 [docs/](docs/README.md)。
